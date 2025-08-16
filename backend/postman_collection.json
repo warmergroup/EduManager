@@ -1,0 +1,610 @@
+{
+  "info": {
+    "name": "Student Assignment Management API",
+    "description": "Complete API collection for testing the student assignment management backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Teacher",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Teacher\",\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"teacher\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Student\",\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"student\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', response.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/profile",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "profile"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "Create Task (Teacher Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"JavaScript Fundamentals\",\n  \"description\": \"Complete the JavaScript exercises and submit your solutions\",\n  \"deadline\": \"2024-12-31T23:59:59.000Z\",\n  \"maxScore\": 100\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"]
+            }
+          }
+        },
+        {
+          "name": "Get All Tasks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["tasks"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Task by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/:taskId",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", ":taskId"],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "TASK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Task (Teacher Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated JavaScript Fundamentals\",\n  \"description\": \"Updated description\",\n  \"deadline\": \"2024-12-31T23:59:59.000Z\",\n  \"maxScore\": 120\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/tasks/:taskId",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", ":taskId"],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "TASK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Task (Teacher Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/:taskId",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", ":taskId"],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "TASK_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Task Statistics (Teacher Only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tasks/:taskId/stats",
+              "host": ["{{base_url}}"],
+              "path": ["tasks", ":taskId", "stats"],
+              "variable": [
+                {
+                  "key": "taskId",
+                  "value": "TASK_ID_HERE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Submissions",
+      "item": [
+        {
+          "name": "Submit Task (Student Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "taskId",
+                  "value": "TASK_ID_HERE",
+                  "type": "text"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/submissions",
+              "host": ["{{base_url}}"],
+              "path": ["submissions"]
+            }
+          }
+        },
+        {
+          "name": "Get My Submissions (Student)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/submissions/my",
+              "host": ["{{base_url}}"],
+              "path": ["submissions", "my"]
+            }
+          }
+        },
+        {
+          "name": "Get All Submissions (Teacher Only)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/submissions?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["submissions"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Grade Submission (Teacher Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"score\": 85,\n  \"feedback\": \"Good work! Consider improving the error handling.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/submissions/:submissionId/grade",
+              "host": ["{{base_url}}"],
+              "path": ["submissions", ":submissionId", "grade"],
+              "variable": [
+                {
+                  "key": "submissionId",
+                  "value": "SUBMISSION_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Download Submission File",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/submissions/:submissionId/download",
+              "host": ["{{base_url}}"],
+              "path": ["submissions", ":submissionId", "download"],
+              "variable": [
+                {
+                  "key": "submissionId",
+                  "value": "SUBMISSION_ID_HERE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Videos",
+      "item": [
+        {
+          "name": "Create Video (Teacher Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"JavaScript Basics Tutorial\",\n  \"description\": \"Learn the fundamentals of JavaScript programming\",\n  \"youtubeUrl\": \"https://www.youtube.com/watch?v=dQw4w9WgXcQ\",\n  \"duration\": 1800\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/videos",
+              "host": ["{{base_url}}"],
+              "path": ["videos"]
+            }
+          }
+        },
+        {
+          "name": "Get All Videos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/videos?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["videos"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Video by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/videos/:videoId",
+              "host": ["{{base_url}}"],
+              "path": ["videos", ":videoId"],
+              "variable": [
+                {
+                  "key": "videoId",
+                  "value": "VIDEO_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Video (Teacher Only)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated JavaScript Tutorial\",\n  \"description\": \"Updated description\",\n  \"youtubeUrl\": \"https://www.youtube.com/watch?v=newVideoId\",\n  \"duration\": 2100\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/videos/:videoId",
+              "host": ["{{base_url}}"],
+              "path": ["videos", ":videoId"],
+              "variable": [
+                {
+                  "key": "videoId",
+                  "value": "VIDEO_ID_HERE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Video (Teacher Only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/videos/:videoId",
+              "host": ["{{base_url}}"],
+              "path": ["videos", ":videoId"],
+              "variable": [
+                {
+                  "key": "videoId",
+                  "value": "VIDEO_ID_HERE"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI Features",
+      "item": [
+        {
+          "name": "Ask AI Assistant (Student Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"JavaScript da array metodlari qanday ishlaydi?\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/ask",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "ask"]
+            }
+          }
+        },
+        {
+          "name": "Generate Task with AI (Teacher Only)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{jwt_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"topic\": \"JavaScript functions\",\n  \"difficulty\": \"intermediate\",\n  \"type\": \"practical\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/ai/generate-task",
+              "host": ["{{base_url}}"],
+              "path": ["ai", "generate-task"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
