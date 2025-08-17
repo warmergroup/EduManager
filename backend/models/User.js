@@ -60,4 +60,8 @@ userSchema.methods.toJSON = function () {
   return userObject
 }
 
+// Create indexes for better performance
+userSchema.index({ email: 1 }, { unique: true })
+userSchema.index({ role: 1 })
+
 export const User = mongoose.model("User", userSchema)

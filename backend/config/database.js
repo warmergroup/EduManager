@@ -34,12 +34,14 @@ const connectDB = async () => {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
       maxPoolSize: 1, // Vercel uchun minimal pool
       minPoolSize: 0, // Vercel uchun minimal pool
-      maxIdleTimeMS: 10000, // 10 soniya
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      maxIdleTimeMS: 30000, // 30 soniya
+      serverSelectionTimeoutMS: 30000, // 30 soniya
+      socketTimeoutMS: 60000, // 60 soniya
+      connectTimeoutMS: 30000, // 30 soniya
       retryWrites: true,
       retryReads: true,
       bufferCommands: false, // Vercel uchun
+      bufferMaxEntries: 0, // Vercel uchun
     });
 
     cachedConnection = conn;

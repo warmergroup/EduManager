@@ -77,7 +77,10 @@ export const login = async (req, res) => {
     safeLog('info', 'User login attempt', { email })
 
     // Check if user exists and include password for comparison
-    const user = await User.findOne({ email }).select("+password")
+    const user = await User.findOne({ email })
+      .select("+password")
+      .maxTimeMS(30000) // 30 second timeout
+      .exec()
     if (!user) {
       safeLog('warn', 'Login failed - user not found', { email })
       return res.status(401).json({ message: "Invalid email or password" })
