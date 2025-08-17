@@ -88,6 +88,11 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     token.value = null
     localStorage.removeItem('token')
+    
+    // Logout'dan keyin asosiy sahifaga qaytarish
+    if (typeof window !== 'undefined') {
+      window.location.href = '/'
+    }
   }
 
   return {

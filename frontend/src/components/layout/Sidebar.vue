@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
 import {
   HomeIcon,
   VideoCameraIcon,
@@ -13,7 +12,6 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '../../stores/auth'
 
-const router = useRouter()
 const authStore = useAuthStore()
 
 const user = computed(() => authStore.user)
@@ -60,7 +58,7 @@ const navigationItems = computed(() => {
 
 const handleLogout = () => {
   authStore.logout()
-  router.push('/login')
+  // Router push kerak emas, chunki auth store'da window.location.href ishlatiladi
 }
 </script>
 

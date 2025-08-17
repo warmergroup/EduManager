@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import Home from '@/views/Home.vue'
 import Login from '@/views/auth/Login.vue'
 import Register from '@/views/auth/Register.vue'
 import StudentLayout from '@/components/layout/StudentLayout.vue'
@@ -21,7 +22,9 @@ import NotFound from '../views/NotFound.vue'
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    name: 'Home',
+    component: Home,
+    meta: { requiresGuest: true }
   },
   {
     path: '/login',
@@ -101,14 +104,14 @@ const routes = [
         component: TeacherVideos
       },
       {
-        path: 'students',
-        name: 'TeacherStudents',
-        component: TeacherStudents
-      },
-      {
         path: 'ai',
         name: 'TeacherAI',
         component: TeacherAI
+      },
+      {
+        path: 'students',
+        name: 'TeacherStudents',
+        component: TeacherStudents
       },
       {
         path: 'profile',
@@ -132,8 +135,16 @@ const router = createRouter({
 router.beforeEach(async (to) => {
   const authStore = useAuthStore()
   
+  // Ro'yxatdan o'tgan foydalanuvchilar login/register sahifalariga kira olmasin
+  if (to.meta.requiresGuest && authStore.token && authStore.user?.role) {
+    // Role'ga qarab redirect qilish
+    return { path: `/${authStore.user.role}/dashboard` }
+  }
+  
+  // Auth kerak bo'lgan sahifalar uchun
   if (to.meta.requiresAuth) {
     if (!authStore.token) {
+      // Token yo'q bo'lsa login sahifasiga yuborish
       return { path: '/login' }
     }
     
@@ -142,33 +153,29 @@ router.beforeEach(async (to) => {
         await authStore.fetchCurrentUser()
       } catch (error) {
         console.error('Failed to fetch current user:', error)
+        authStore.logout()
         return { path: '/login' }
       }
     }
     
-    // Check if user role is valid
+    // User role'ni tekshirish
     if (!authStore.user?.role) {
       console.error('User role is undefined')
       authStore.logout()
       return { path: '/login' }
     }
     
-    // Check role-based access
+    // Role-based access control
     if (to.meta.role && authStore.user.role !== to.meta.role) {
       console.log(`Role mismatch: user role is ${authStore.user.role}, required role is ${to.meta.role}`)
+      // Boshqa role'ga kirishga urinishda o'zining dashboard'iga qaytarish
       return { path: `/${authStore.user.role}/dashboard` }
     }
   }
   
-  if (to.meta.requiresGuest && authStore.token) {
-    // Ensure user role exists before redirecting
-    if (authStore.user?.role) {
-      return { path: `/${authStore.user.role}/dashboard` }
-    } else {
-      // If role is undefined, logout and redirect to login
-      authStore.logout()
-      return { path: '/login' }
-    }
+  // Asosiy sahifaga kirishda ro'yxatdan o'tgan foydalanuvchilarni role'ga qarab redirect qilish
+  if (to.path === '/' && authStore.token && authStore.user?.role) {
+    return { path: `/${authStore.user.role}/dashboard` }
   }
 })
 
