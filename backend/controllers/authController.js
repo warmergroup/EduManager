@@ -82,7 +82,7 @@ export const login = async (req, res) => {
     // Check if user exists and include password for comparison
     const user = await User.findOne({ email })
       .select("+password")
-      .maxTimeMS(60000) // 60 second timeout for Vercel
+      .maxTimeMS(120000) // 120 second timeout for Vercel
       .exec()
       
     if (!user) {
