@@ -7,7 +7,6 @@ const connectDB = async () => {
       console.error("❌ MONGODB_URI environment variable is not set");
       return null;
     }
-
     console.log("🔌 Connecting to MongoDB...");
     
     // Vercel serverless environment uchun optimize qilingan options
@@ -70,7 +69,7 @@ const connectDB = async () => {
     
     console.log('🔗 Optimized MongoDB URI:', mongoUri);
     
-    const conn = await mongoose.connect(mongoUri, options);
+    const conn = await mongoose.connect(mongoUri);
     
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     console.log(`📊 Database: ${conn.connection.name}`);
