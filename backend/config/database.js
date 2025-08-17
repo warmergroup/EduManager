@@ -8,9 +8,15 @@ let cachedConnection = null;
 const connectDB = async () => {
   try {
     // Vercel'da connection'ni cache qilish
-    if (cachedConnection) {
+    if (cachedConnection && cachedConnection.readyState === 1) {
       console.log("✅ Using cached MongoDB connection");
       return cachedConnection;
+    }
+
+    // Close existing connection if it's not ready
+    if (cachedConnection) {
+      await mongoose.disconnect();
+      cachedConnection = null;
     }
 
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
@@ -21,6 +27,8 @@ const connectDB = async () => {
       socketTimeoutMS: 45000,
       retryWrites: true,
       retryReads: true,
+      bufferCommands: false, // Vercel uchun
+      bufferMaxEntries: 0, // Vercel uchun
     });
 
     cachedConnection = conn;
@@ -48,6 +56,11 @@ export const closeConnection = async () => {
     cachedConnection = null;
     console.log("🔌 MongoDB connection closed");
   }
+};
+
+// Vercel uchun connection status check
+export const isConnected = () => {
+  return cachedConnection && cachedConnection.readyState === 1;
 };
 
 export default connectDB;

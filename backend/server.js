@@ -8,6 +8,14 @@ import { securityHeaders, generalLimiter, authLimiter, aiLimiter } from "./middl
 import { corsOptions } from "./config/cors.js";
 import { validateEnv } from "./config/validateEnv.js";
 
+// Import routes statically
+import authRoutes from "./routes/auth.js";
+import aiRoutes from "./routes/ai.js";
+import taskRoutes from "./routes/tasks.js";
+import submissionRoutes from "./routes/submissions.js";
+import videoRoutes from "./routes/videos.js";
+import userRoutes from "./routes/users.js";
+
 // Vercel uchun serverless function
 const app = express();
 
@@ -28,12 +36,12 @@ app.get("/api/health", (req, res) => {
 });
 
 // API Routes
-app.use("/api/auth", authLimiter, (await import("./routes/auth.js")).default);
-app.use("/api/ai", aiLimiter, (await import("./routes/ai.js")).default);
-app.use("/api/tasks", (await import("./routes/tasks.js")).default);
-app.use("/api/submissions", (await import("./routes/submissions.js")).default);
-app.use("/api/videos", (await import("./routes/videos.js")).default);
-app.use("/api/users", (await import("./routes/users.js")).default);
+app.use("/api/auth", authLimiter, authRoutes);
+app.use("/api/ai", aiLimiter, aiRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/submissions", submissionRoutes);
+app.use("/api/videos", videoRoutes);
+app.use("/api/users", userRoutes);
 
 // Error handling
 app.use(errorHandler);
