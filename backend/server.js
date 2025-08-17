@@ -19,6 +19,9 @@ import userRoutes from "./routes/users.js";
 // Vercel uchun serverless function
 const app = express();
 
+// Trust Vercel proxy for rate limiting
+app.set('trust proxy', 1);
+
 // Basic error handling for Vercel
 process.on('uncaughtException', (error) => {
   console.error('❌ Uncaught Exception:', error);

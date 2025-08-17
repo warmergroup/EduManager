@@ -35,6 +35,14 @@ export const generalLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Vercel proxy handling
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'unknown'
+  },
+  skip: (req) => {
+    // Skip rate limiting for health checks
+    return req.path === '/api/health' || req.path === '/'
+  }
 })
 
 // More lenient rate limiting for auth endpoints
@@ -47,6 +55,10 @@ export const authLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Vercel proxy handling
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'unknown'
+  }
 })
 
 // More lenient AI endpoints rate limiting
@@ -59,4 +71,8 @@ export const aiLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  // Vercel proxy handling
+  keyGenerator: (req) => {
+    return req.ip || req.connection.remoteAddress || 'unknown'
+  }
 })
