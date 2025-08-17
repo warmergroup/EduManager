@@ -41,7 +41,13 @@ const connectDB = async () => {
       retryWrites: true,
       retryReads: true,
       bufferCommands: false, // Vercel uchun
-      bufferMaxEntries: 0, // Vercel uchun
+      // Vercel uchun qo'shimcha optimizatsiya
+      maxConnecting: 1,
+      serverApi: {
+        version: '1',
+        strict: false,
+        deprecationErrors: false,
+      }
     });
 
     cachedConnection = conn;
@@ -77,7 +83,18 @@ export const closeConnection = async () => {
 
 // Vercel uchun connection status check
 export const isConnected = () => {
-  return cachedConnection && cachedConnection.readyState === 1;
+  // Check both cached connection and mongoose default connection
+  const hasCachedConnection = cachedConnection && cachedConnection.readyState === 1;
+  const hasMongooseConnection = mongoose.connection.readyState === 1;
+  
+  console.log('🔍 Connection check:', {
+    cachedConnection: cachedConnection?.readyState,
+    mongooseConnection: mongoose.connection.readyState,
+    hasCachedConnection,
+    hasMongooseConnection
+  });
+  
+  return hasCachedConnection || hasMongooseConnection;
 };
 
 // Vercel uchun connection test

@@ -76,11 +76,32 @@ export const login = async (req, res) => {
 
     safeLog('info', 'User login attempt', { email })
 
+    // Check MongoDB connection first (temporarily disabled for debugging)
+    /*
+    const { isConnected } = await import('../config/database.js')
+    const dbConnected = isConnected()
+    
+    safeLog('info', 'Database connection check', { 
+      isConnected: dbConnected,
+      email 
+    })
+    
+    if (!dbConnected) {
+      safeLog('error', 'Database not connected during login attempt', { email })
+      return res.status(503).json({ 
+        message: "Database temporarily unavailable. Please try again." 
+      })
+    }
+    */
+    
+    safeLog('info', 'Skipping connection check for debugging', { email })
+
     // Check if user exists and include password for comparison
     const user = await User.findOne({ email })
       .select("+password")
       .maxTimeMS(30000) // 30 second timeout
       .exec()
+      
     if (!user) {
       safeLog('warn', 'Login failed - user not found', { email })
       return res.status(401).json({ message: "Invalid email or password" })
@@ -113,6 +134,14 @@ export const login = async (req, res) => {
     })
   } catch (error) {
     safeLog('error', 'Login error', { error: error.message, email: req.body.email })
+    
+    // Handle specific MongoDB errors
+    if (error.name === 'MongooseError' || error.message.includes('buffering timed out')) {
+      return res.status(503).json({ 
+        message: "Database temporarily unavailable. Please try again." 
+      })
+    }
+    
     res.status(500).json({ message: "Server error during login" })
   }
 }
