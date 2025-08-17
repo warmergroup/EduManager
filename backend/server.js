@@ -35,6 +35,44 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "🎓 EduManager Backend API",
+    version: "1.0.0",
+    endpoints: {
+      health: "/api/health",
+      auth: "/api/auth",
+      tasks: "/api/tasks",
+      submissions: "/api/submissions",
+      videos: "/api/videos",
+      users: "/api/users",
+      ai: "/api/ai"
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
+// API info endpoint
+app.get("/api", (req, res) => {
+  res.json({ 
+    success: true, 
+    message: "EduManager API Endpoints",
+    version: "1.0.0",
+    endpoints: {
+      health: "/api/health",
+      auth: "/api/auth",
+      tasks: "/api/tasks",
+      submissions: "/api/submissions",
+      videos: "/api/videos",
+      users: "/api/users",
+      ai: "/api/ai"
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API Routes
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/ai", aiLimiter, aiRoutes);
