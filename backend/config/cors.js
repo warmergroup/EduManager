@@ -1,26 +1,25 @@
 export const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true)
+    if (!origin) return callback(null, true); // mobile apps, curl
     
     const allowedOrigins = [
       process.env.CORS_ORIGIN || 'http://localhost:3000',
       'http://localhost:3000',
-      'http://localhost:5173', // Vite default port
+      'http://localhost:5173',
       'http://127.0.0.1:3000',
       'http://127.0.0.1:5173',
-      // Vercel frontend domains
       'https://edu-manager-three.vercel.app',
       'https://edu-manager-frontend.vercel.app'
-    ]
+    ];
     
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true)
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'))
+      console.warn(`🚫 Blocked by CORS: ${origin}`);
+      callback(null, false); // ❌ error tashlash o‘rniga false qaytar
     }
   },
-  credentials: true, // Allow cookies and authorization headers
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
     'Origin',
@@ -31,5 +30,5 @@ export const corsOptions = {
     'X-API-Key'
   ],
   exposedHeaders: ['X-Total-Count', 'X-Page-Count'],
-  maxAge: 86400 // 24 hours
-}
+  maxAge: 86400
+};
