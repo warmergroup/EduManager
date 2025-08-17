@@ -16,10 +16,32 @@ import userRoutes from "./routes/users.js";
 
 const app = express();
 
-// Middleware
+// CORS Middleware - eng yuqorida bo'lishi kerak
 app.use(cors(corsOptions));
+
+// CORS Error handling
+app.use((err, req, res, next) => {
+  if (err.message && err.message.includes('CORS')) {
+    console.error('🚫 CORS Error:', err.message);
+    return res.status(403).json({
+      success: false,
+      message: 'CORS policy violation',
+      error: err.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+  next(err);
+});
+
+// Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+// Request logging
+app.use((req, res, next) => {
+  console.log(`🌐 ${req.method} ${req.path} - Origin: ${req.get('Origin') || 'No Origin'}`);
+  next();
+});
 
 // Health check
 app.get("/api/health", (req, res) => {
@@ -28,6 +50,7 @@ app.get("/api/health", (req, res) => {
     message: "EduManager API is running",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
+    cors: "enabled"
   });
 });
 
@@ -48,6 +71,7 @@ app.get("/", (req, res) => {
     },
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
+    cors: "enabled"
   });
 });
 
@@ -71,7 +95,7 @@ app.use("*", (req, res) => {
   });
 });
 
-// ✅ DB ulanishini productionda ham qo‘shamiz
+// ✅ DB ulanishini productionda ham qo'shamiz
 const startServer = async () => {
   try {
     await connectDB(); // har doim ulanish kerak
@@ -81,7 +105,11 @@ const startServer = async () => {
         console.log(`🚀 Server running on port ${PORT}`);
         console.log(`📊 Environment: ${process.env.NODE_ENV}`);
         console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+        console.log(`🌐 CORS enabled for Vercel domains`);
       });
+    } else {
+      console.log(`🚀 Production server ready`);
+      console.log(`🌐 CORS enabled for Vercel domains`);
     }
   } catch (error) {
     console.error("❌ Server startup error:", error);
