@@ -21,18 +21,18 @@ const connectDB = async () => {
       connectTimeoutMS: 30000,
       
       // Authentication options
-      authSource: 'admin',
+      // authSource: 'admin',
       retryWrites: true,
       w: 'majority',
       
       // Vercel uchun
-      bufferCommands: false,
-      bufferMaxEntries: 0
+      // bufferCommands: false,
+      // bufferMaxEntries: 0
     };
 
     console.log("⚙️ Connection options:", JSON.stringify(options, null, 2));
 
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    const conn = await mongoose.connect(process.env.MONGODB_URI, options);
 
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     console.log(`📊 Database: ${conn.connection.name}`);
