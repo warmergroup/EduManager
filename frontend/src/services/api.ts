@@ -8,9 +8,12 @@ const API_BASE_URL = import.meta.env.VITE_API_URL ||
     : 'http://localhost:5000'
   )
 
+console.log('🔗 API Base URL:', API_BASE_URL)
+console.log('🌍 Environment:', import.meta.env.PROD ? 'production' : 'development')
+
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 30000, // 30 seconds for local development
   headers: {
     'Content-Type': 'application/json',
   },
@@ -19,6 +22,13 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
+    console.log('🚀 API Request:', {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      baseURL: config.baseURL,
+      fullURL: `${config.baseURL}${config.url}`
+    })
+    
     const authStore = useAuthStore()
     const token = authStore.token
     
@@ -29,6 +39,7 @@ api.interceptors.request.use(
     return config
   },
   (error) => {
+    console.error('❌ Request interceptor error:', error)
     return Promise.reject(error)
   }
 )
@@ -36,9 +47,21 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (response) => {
+    console.log('✅ API Response:', {
+      status: response.status,
+      url: response.config.url,
+      data: response.data
+    })
     return response
   },
   (error) => {
+    console.error('❌ API Error:', {
+      message: error.message,
+      status: error.response?.status,
+      url: error.config?.url,
+      data: error.response?.data
+    })
+    
     if (error.response?.status === 401) {
       const authStore = useAuthStore()
       authStore.logout()
