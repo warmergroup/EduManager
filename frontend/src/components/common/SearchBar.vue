@@ -27,7 +27,7 @@ interface Props {
     showClear?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     placeholder: 'Qidirish...',
     showClear: true
 })

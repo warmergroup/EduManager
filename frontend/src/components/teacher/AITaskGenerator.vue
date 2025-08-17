@@ -4,7 +4,6 @@ import { generateTask as generateAITask } from '../../services/ai'
 // import type { AIRequest, AIResponse } from '@/types'
 import { useTasksStore } from '../../stores/tasks'
 import type { TaskCreate } from '@/types'
-import Loading from '../ui/Loading.vue'
 import Alert from '../ui/Alert.vue'
 
 const tasksStore = useTasksStore()
