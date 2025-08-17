@@ -15,12 +15,12 @@ const connectDB = async () => {
       // Connection pool optimization for Vercel
       maxPoolSize: 1,
       minPoolSize: 0,
-      maxIdleTimeMS: 30000,
+      maxIdleTimeMS: 120000, // 2 daqiqa
       
-      // Timeout settings for Vercel
-      serverSelectionTimeoutMS: 30000,
-      socketTimeoutMS: 45000,
-      connectTimeoutMS: 30000,
+      // Timeout settings for Vercel - juda katta timeout'lar
+      serverSelectionTimeoutMS: 120000, // 2 daqiqa
+      socketTimeoutMS: 180000, // 3 daqiqa
+      connectTimeoutMS: 120000, // 2 daqiqa
       
       // Buffer settings for Vercel
       bufferCommands: false,
@@ -39,8 +39,8 @@ const connectDB = async () => {
       
       // Vercel uchun qo'shimcha optimizatsiya
       maxConnecting: 1,
-      heartbeatFrequencyMS: 30000,
-      minHeartbeatFrequencyMS: 10000,
+      heartbeatFrequencyMS: 60000, // 1 daqiqa
+      minHeartbeatFrequencyMS: 30000, // 30 soniya
     };
     
     // Connection string'ni optimize qilish
@@ -53,6 +53,19 @@ const connectDB = async () => {
     
     if (!mongoUri.includes('maxPoolSize')) {
       mongoUri += (mongoUri.includes('?') ? '&' : '?') + 'maxPoolSize=1&minPoolSize=0';
+    }
+    
+    // Vercel uchun timeout parametrlarini qo'shish
+    if (!mongoUri.includes('serverSelectionTimeoutMS')) {
+      mongoUri += (mongoUri.includes('?') ? '&' : '?') + 'serverSelectionTimeoutMS=120000';
+    }
+    
+    if (!mongoUri.includes('socketTimeoutMS')) {
+      mongoUri += (mongoUri.includes('?') ? '&' : '?') + 'socketTimeoutMS=180000';
+    }
+    
+    if (!mongoUri.includes('connectTimeoutMS')) {
+      mongoUri += (mongoUri.includes('?') ? '&' : '?') + 'connectTimeoutMS=120000';
     }
     
     console.log('🔗 Optimized MongoDB URI:', mongoUri);
