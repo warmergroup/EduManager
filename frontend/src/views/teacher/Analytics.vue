@@ -1,3 +1,73 @@
+<script setup lang="ts">
+import { ref, onMounted, computed } from 'vue'
+
+const loading = ref(false)
+const analytics = ref({
+    totalTasks: 0,
+    totalVideos: 0,
+    totalSubmissions: 0,
+    averageScore: 0
+})
+
+const recentTasks = ref([
+    { id: 1, title: 'Matematika vazifasi', submissionCount: 15, completionRate: 80 },
+    { id: 2, title: 'Fizika loyihasi', submissionCount: 12, completionRate: 65 },
+    { id: 3, title: 'Ingliz tili', submissionCount: 18, completionRate: 90 }
+])
+
+const monthlyActivity = ref([
+    { name: 'Yanvar', count: 25, percentage: 80 },
+    { name: 'Fevral', count: 30, percentage: 95 },
+    { name: 'Mart', count: 22, percentage: 70 },
+    { name: 'Aprel', count: 28, percentage: 85 }
+])
+
+const recentActivity = ref([
+    { id: 1, type: 'task', description: 'Yangi vazifa yaratildi: "Matematika vazifasi"', createdAt: new Date() },
+    { id: 2, type: 'grade', description: '5 ta topshiriq baholandi', createdAt: new Date(Date.now() - 86400000) },
+    { id: 3, type: 'video', description: "Video dars qo'shildi: 'Fizika asoslari'", createdAt: new Date(Date.now() - 172800000) }
+])
+
+const getActivityIcon = (type: string) => {
+    const icons: Record<string, string> = {
+        task: 'TaskIcon',
+        grade: 'GradeIcon',
+        video: 'VideoIcon'
+    }
+    return icons[type] || 'TaskIcon'
+}
+
+const getActivityIconClass = (type: string) => {
+    const classes: Record<string, string> = {
+        task: 'bg-blue-500',
+        grade: 'bg-green-500',
+        video: 'bg-purple-500'
+    }
+    return classes[type] || 'bg-gray-500'
+}
+
+const formatDate = (date: string | Date) => {
+    if (!date) return 'N/A'
+    return new Date(date).toLocaleDateString('uz-UZ')
+}
+
+const loadAnalytics = async () => {
+    try {
+        loading.value = true
+        // TODO: Load analytics data from API
+        // analytics.value = await api.getTeacherAnalytics()
+    } catch (error) {
+        console.error('Error loading analytics:', error)
+    } finally {
+        loading.value = false
+    }
+}
+
+onMounted(async () => {
+    await loadAnalytics()
+})
+</script>
+
 <template>
     <div class="min-h-screen bg-gray-50 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -149,73 +219,3 @@
         </div>
     </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-
-const loading = ref(false)
-const analytics = ref({
-    totalTasks: 0,
-    totalVideos: 0,
-    totalSubmissions: 0,
-    averageScore: 0
-})
-
-const recentTasks = ref([
-    { id: 1, title: 'Matematika vazifasi', submissionCount: 15, completionRate: 80 },
-    { id: 2, title: 'Fizika loyihasi', submissionCount: 12, completionRate: 65 },
-    { id: 3, title: 'Ingliz tili', submissionCount: 18, completionRate: 90 }
-])
-
-const monthlyActivity = ref([
-    { name: 'Yanvar', count: 25, percentage: 80 },
-    { name: 'Fevral', count: 30, percentage: 95 },
-    { name: 'Mart', count: 22, percentage: 70 },
-    { name: 'Aprel', count: 28, percentage: 85 }
-])
-
-const recentActivity = ref([
-    { id: 1, type: 'task', description: 'Yangi vazifa yaratildi: "Matematika vazifasi"', createdAt: new Date() },
-    { id: 2, type: 'grade', description: '5 ta topshiriq baholandi', createdAt: new Date(Date.now() - 86400000) },
-    { id: 3, type: 'video', description: "Video dars qo'shildi: 'Fizika asoslari'", createdAt: new Date(Date.now() - 172800000) }
-])
-
-const getActivityIcon = (type: string) => {
-    const icons: Record<string, string> = {
-        task: 'TaskIcon',
-        grade: 'GradeIcon',
-        video: 'VideoIcon'
-    }
-    return icons[type] || 'TaskIcon'
-}
-
-const getActivityIconClass = (type: string) => {
-    const classes: Record<string, string> = {
-        task: 'bg-blue-500',
-        grade: 'bg-green-500',
-        video: 'bg-purple-500'
-    }
-    return classes[type] || 'bg-gray-500'
-}
-
-const formatDate = (date: string | Date) => {
-    if (!date) return 'N/A'
-    return new Date(date).toLocaleDateString('uz-UZ')
-}
-
-const loadAnalytics = async () => {
-    try {
-        loading.value = true
-        // TODO: Load analytics data from API
-        // analytics.value = await api.getTeacherAnalytics()
-    } catch (error) {
-        console.error('Error loading analytics:', error)
-    } finally {
-        loading.value = false
-    }
-}
-
-onMounted(async () => {
-    await loadAnalytics()
-})
-</script>

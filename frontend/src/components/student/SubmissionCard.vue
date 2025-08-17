@@ -3,7 +3,7 @@
         <!-- Header -->
         <div class="flex justify-between items-start mb-4">
             <div>
-                <h3 class="text-lg font-semibold">{{ taskTitle }}</h3>
+                <h3 class="text-lg font-semibold">{{ submission.taskTitle }}</h3>
                 <p class="text-sm text-gray-500">Submitted: {{ formatDate(submission.submittedAt) }}</p>
             </div>
             <div :class="[
@@ -24,7 +24,7 @@
             </svg>
             <div>
                 <p class="font-medium">{{ submission.fileName }}</p>
-                <p class="text-sm text-gray-500">{{ formatFileSize(submission.fileSize) }}</p>
+                <p class="text-sm text-gray-500">File uploaded</p>
             </div>
             <a :href="submission.fileUrl" target="_blank" class="ml-auto text-blue-500 hover:text-blue-600">
                 Download
@@ -45,9 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { Submission } from '@/types'
-import { formatDate, formatFileSize } from '@/utils/date'
+import { formatDate } from '@/utils/date'
 
 interface SubmissionData {
     id: string
@@ -67,10 +65,4 @@ interface SubmissionData {
 defineProps<{
     submission: SubmissionData
 }>()
-
-const taskTitle = computed(() => {
-    return typeof props.submission.taskId === 'string'
-        ? 'Task'
-        : props.submission.taskId.title
-})
 </script>

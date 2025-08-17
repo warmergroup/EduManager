@@ -1,96 +1,80 @@
 <template>
   <div class="space-y-6">
-    <div class="card">
+    <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-semibold text-gray-900">Video Lessons</h3>
-        <button
-          @click="fetchVideos"
-          :disabled="loading"
-          class="btn-secondary text-sm"
-        >
-          Refresh
-        </button>
+        <h3 class="text-xl font-semibold text-gray-900">🎥 Video Darslar</h3>
+        <div class="text-sm text-gray-500">
+          Jami: {{ videos.length }} ta video
+        </div>
       </div>
-      
-      <Loading v-if="loading" text="Loading videos..." />
-      
-      <div v-else-if="videos.length === 0" class="text-center py-8">
-        <VideoCameraIcon class="mx-auto h-12 w-12 text-gray-400" />
-        <h3 class="mt-2 text-sm font-medium text-gray-900">No videos</h3>
-        <p class="mt-1 text-sm text-gray-500">No video lessons available yet.</p>
+
+      <Loading v-if="loading" text="Video darslar yuklanmoqda..." />
+
+      <div v-else-if="videos.length === 0" class="text-center py-12">
+        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+          </path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Hali video darslar mavjud emas</h3>
+        <p class="text-gray-500">O'qituvchi video darslarni qo'shgandan so'ng bu yerda ko'rinadi</p>
       </div>
-      
+
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div
-          v-for="video in videos"
-          :key="video._id"
-          class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
-        >
-          <div class="aspect-video bg-gray-200 flex items-center justify-center">
-            <img
-              v-if="video.thumbnail"
-              :src="video.thumbnail"
-              :alt="video.title"
-              class="w-full h-full object-cover"
-            />
-            <div v-else class="text-gray-400">
-              <VideoCameraIcon class="w-12 h-12" />
-            </div>
-          </div>
-          
+        <div v-for="video in videos" :key="video._id"
+          class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1">
+          <VideoPlayer :url="video.url" />
+
           <div class="p-4">
             <h4 class="font-semibold text-gray-900 text-sm mb-2">{{ video.title }}</h4>
             <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ video.description }}</p>
-            
+
             <div class="flex items-center justify-between">
-              <span v-if="video.duration" class="text-xs text-gray-500">
-                {{ formatDuration(video.duration) }}
+              <span v-if="video.duration" class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                ⏱️ {{ formatDuration(video.duration) }}
               </span>
-              <a
-                :href="video.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-primary text-sm"
-              >
-                Watch
-              </a>
+              <div class="space-x-2">
+                <a :href="video.url" target="_blank" rel="noopener noreferrer"
+                  class="px-3 py-1 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition-colors">
+                  🎬 YouTube'da ochish
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
-      <Alert
-        :show="!!error"
-        type="error"
-        title="Error"
-        :message="error || ''"
-        @close="error = null"
-      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { VideoCameraIcon } from '@heroicons/vue/24/outline'
-import { useVideosStore } from '../../stores/videos'
+import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useVideosStore } from '@/stores/videos'
+import VideoPlayer from '../ui/VideoPlayer.vue'
 import Loading from '../ui/Loading.vue'
-import Alert from '../ui/Alert.vue'
 
 const videosStore = useVideosStore()
-const { videos, loading, error } = videosStore
+const { videos, loading } = storeToRefs(videosStore)
 
-const formatDuration = (seconds: number) => {
+onMounted(async () => {
+  if (videos.value.length === 0) {
+    await videosStore.fetchVideos()
+  }
+})
+
+const formatDuration = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60)
   const remainingSeconds = seconds % 60
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
 }
-
-const fetchVideos = async () => {
-  await videosStore.fetchVideos()
-}
-
-onMounted(() => {
-  fetchVideos()
-})
 </script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>

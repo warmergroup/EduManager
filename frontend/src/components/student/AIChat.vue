@@ -80,45 +80,49 @@ const clearChat = () => {
 </script>
 
 <template>
-  <div class="card h-96 flex flex-col">
+  <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100 h-96 flex flex-col">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-gray-900">AI Assistant</h3>
-      <button @click="clearChat" class="btn-secondary text-sm">
-        Clear Chat
+      <h3 class="text-xl font-semibold text-gray-900">🤖 AI Yordamchisi</h3>
+      <button @click="clearChat"
+        class="px-3 py-1 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 transition-colors">
+        🗑️ Chatni tozalash
       </button>
     </div>
 
     <div ref="messagesContainer" class="flex-1 overflow-y-auto space-y-4 mb-4 p-4 bg-gray-50 rounded-lg">
       <div v-if="messages.length === 0" class="text-center text-gray-500 py-8">
         <ChatBubbleLeftRightIcon class="mx-auto h-8 w-8 mb-2" />
-        <p>Ask me anything about your studies!</p>
+        <p>O'qish bo'yicha savollaringizni bering!</p>
       </div>
 
       <div v-for="message in messages" :key="message.id" class="flex"
         :class="message.isUser ? 'justify-end' : 'justify-start'">
         <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg text-sm" :class="message.isUser
-          ? 'bg-primary-500 text-white'
-          : 'bg-white text-gray-900 border border-gray-200'">
-          <p>{{ message.isUser ? message.message : message.response }}</p>
-          <p class="text-xs opacity-70 mt-1">{{ formatTime(message.timestamp) }}</p>
+          ? 'bg-blue-500 text-white'
+          : 'bg-white text-gray-800 border border-gray-200'">
+          <p class="mb-1">{{ message.message }}</p>
+          <p v-if="message.response" class="text-xs opacity-75">{{ message.response }}</p>
+          <p class="text-xs opacity-50 mt-1">{{ formatTime(message.timestamp) }}</p>
         </div>
       </div>
 
       <div v-if="loading" class="flex justify-start">
-        <div class="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm">
-          <Loading text="AI is thinking..." />
+        <div class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm">
+          <Loading text="Javob yozilmoqda..." />
         </div>
       </div>
     </div>
 
-    <form @submit.prevent="sendMessage" class="flex space-x-2">
-      <input v-model="newMessage" type="text" placeholder="Type your message..." required :disabled="loading"
-        class="flex-1 input-field" />
-      <button type="submit" :disabled="loading || !newMessage.trim()" class="btn-primary">
-        Send
+    <form @submit.prevent="sendMessage" class="flex gap-2">
+      <input v-model="newMessage" type="text" placeholder="Savolingizni yozing..."
+        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
+        :disabled="loading" />
+      <button type="submit" :disabled="loading || !newMessage.trim()"
+        class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+        {{ loading ? '⏳' : '📤' }}
       </button>
     </form>
 
-    <Alert :show="!!error" type="error" title="Error" :message="error" @close="error = undefined" />
+    <Alert v-if="error" :show="!!error" type="error" title="Xatolik" :message="error" @close="error = undefined" />
   </div>
 </template>

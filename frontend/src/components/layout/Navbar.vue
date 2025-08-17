@@ -15,7 +15,6 @@ const pageTitle = computed(() => {
     'StudentTasks': 'Vazifalar',
     'StudentSubmissions': 'Topshiriqlar',
     'StudentVideos': 'Video Darslar',
-    'StudentProgress': 'Progress',
     'StudentAI': 'AI Yordamchisi',
     'StudentProfile': 'Profil',
 
@@ -25,7 +24,6 @@ const pageTitle = computed(() => {
     'TeacherSubmissions': 'Topshiriqlar',
     'TeacherVideos': 'Video Menejeri',
     'TeacherStudents': 'Student\'lar',
-    'TeacherAnalytics': 'Analitika',
     'TeacherAI': 'AI Generator',
     'TeacherProfile': 'Profil'
   }

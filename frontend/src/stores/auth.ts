@@ -56,12 +56,29 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const fetchCurrentUser = async () => {
-    if (!token.value) return
+    if (!token.value) {
+      throw new Error('No token available')
+    }
     
     try {
       const response = await api.get('api/auth/profile')
-      user.value = response.data.data.user
-    } catch (err) {
+      
+      if (response.data.success && response.data.data.user) {
+        const userData = response.data.data.user
+        
+        // Ensure user has required fields
+        if (!userData.role) {
+          console.error('User data missing role:', userData)
+          throw new Error('Invalid user data: missing role')
+        }
+        
+        user.value = userData
+        return userData
+      } else {
+        throw new Error('Invalid response format')
+      }
+    } catch (err: any) {
+      console.error('Failed to fetch current user:', err)
       logout()
       throw err
     }

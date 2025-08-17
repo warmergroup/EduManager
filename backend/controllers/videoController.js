@@ -5,7 +5,7 @@ import { Video } from "../models/Video.js"
 // @access  Private
 export const getVideos = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = "" } = req.query
+    const { page = 1, limit = 50, search = "" } = req.query // Increased default limit
 
     // Build search query
     let query = {}
@@ -19,12 +19,21 @@ export const getVideos = async (req, res) => {
     const skip = (page - 1) * limit
     const total = await Video.countDocuments(query)
 
-    // Get videos with creator info
+    // Get videos with creator info - optimized query
     const videos = await Video.find(query)
-      .populate("createdBy", "fullName email")
+      .select('title description url thumbnail duration createdAt createdBy') // Select only needed fields
+      .populate("createdBy", "fullName") // Only populate name
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(Number.parseInt(limit))
+      .lean() // Convert to plain objects for better performance
+
+    // Add cache headers for better performance
+    res.set({
+      'Cache-Control': 'public, max-age=300', // 5 minutes cache
+      'ETag': `videos-${total}-${page}-${limit}`,
+      'Last-Modified': new Date().toUTCString()
+    })
 
     res.json({
       success: true,
@@ -41,7 +50,10 @@ export const getVideos = async (req, res) => {
     })
   } catch (error) {
     console.error("Get videos error:", error)
-    res.status(500).json({ message: "Server error while fetching videos" })
+    res.status(500).json({ 
+      success: false,
+      message: "Server error while fetching videos" 
+    })
   }
 }
 

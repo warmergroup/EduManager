@@ -24,10 +24,13 @@ export const useProgressStore = defineStore('progress', () => {
       loading.value = true
       error.value = null
       
-      const response = await api.get('/submissions/progress')
+      const response = await api.get('/api/submissions/progress')
       
-      // Backend returns: { success: true, data: { progress: {...} } }
-      if (response.data.success && response.data.data.progress) {
+      // Backend returns: { success: true, data: { stats: {...} } }
+      if (response.data.success && response.data.data.stats) {
+        progress.value = response.data.data.stats
+      } else if (response.data.success && response.data.data.progress) {
+        // Fallback for old endpoint structure
         progress.value = response.data.data.progress
       }
     } catch (err: any) {

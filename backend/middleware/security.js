@@ -25,37 +25,37 @@ export const securityHeaders = helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 })
 
-// General rate limiting
+// General rate limiting - much more lenient
 export const generalLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 1000, // limit each IP to 1000 requests per minute
   message: {
     message: 'Too many requests from this IP, please try again later.',
-    retryAfter: Math.ceil(parseInt(process.env.RATE_LIMIT_WINDOW_MS) / 1000 / 60) || 15
+    retryAfter: 1
   },
   standardHeaders: true,
   legacyHeaders: false,
 })
 
-// Stricter rate limiting for auth endpoints
+// More lenient rate limiting for auth endpoints
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 50, // limit each IP to 50 requests per 5 minutes
   message: {
     message: 'Too many authentication attempts, please try again later.',
-    retryAfter: 15
+    retryAfter: 5
   },
   standardHeaders: true,
   legacyHeaders: false,
 })
 
-// AI endpoints rate limiting
+// More lenient AI endpoints rate limiting
 export const aiLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 10, // limit each IP to 10 requests per minute
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // limit each IP to 100 requests per minute
   message: {
     message: 'Too many AI requests, please try again later.',
-    retryAfter: 60
+    retryAfter: 1
   },
   standardHeaders: true,
   legacyHeaders: false,

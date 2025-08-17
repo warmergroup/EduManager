@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { api } from '../services/api'
 import type { Video, VideoCreate } from '../types'
 
@@ -7,17 +7,41 @@ export const useVideosStore = defineStore('videos', () => {
   const videos = ref<Video[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const lastFetch = ref<number>(0)
+  const cacheTimeout = 5 * 60 * 1000 // 5 minutes cache
 
-  const fetchVideos = async () => {
+  // Computed properties for better performance
+  const totalVideos = computed(() => videos.value.length)
+  const hasVideos = computed(() => videos.value.length > 0)
+  const isLoading = computed(() => loading.value)
+  const hasError = computed(() => error.value !== null)
+
+  const fetchVideos = async (forceRefresh = false) => {
+    // Check if we have recent data and don't need to refresh
+    const now = Date.now()
+    if (!forceRefresh && hasVideos.value && (now - lastFetch.value) < cacheTimeout) {
+      console.log('Using cached videos data')
+      return
+    }
+
     loading.value = true
     error.value = null
     
     try {
       const response = await api.get('/api/videos')
-      videos.value = response.data.data.videos || []
+      
+      if (response.data.success && response.data.data.videos) {
+        videos.value = response.data.data.videos
+        lastFetch.value = now
+        console.log(`Fetched ${videos.value.length} videos from backend`)
+      } else {
+        videos.value = []
+        console.warn('No videos data in response')
+      }
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch videos'
+      error.value = err.response?.data?.message || 'Video darslarni yuklashda xatolik yuz berdi'
       videos.value = []
+      console.error('Videos fetch error:', err)
     } finally {
       loading.value = false
     }
@@ -29,22 +53,43 @@ export const useVideosStore = defineStore('videos', () => {
     
     try {
       const response = await api.post('/api/videos', videoData)
-      const newVideo = response.data.data.video
-      videos.value = [newVideo, ...videos.value]
-      return newVideo
+      
+      if (response.data.success && response.data.data.video) {
+        const newVideo = response.data.data.video
+        videos.value = [newVideo, ...videos.value]
+        lastFetch.value = Date.now() // Update cache timestamp
+        return newVideo
+      } else {
+        throw new Error('Video qo\'shishda xatolik yuz berdi')
+      }
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to add video'
+      error.value = err.response?.data?.message || 'Video qo\'shishda xatolik yuz berdi'
       throw err
     } finally {
       loading.value = false
     }
   }
 
+  const clearCache = () => {
+    lastFetch.value = 0
+    videos.value = []
+  }
+
+  const refreshVideos = () => {
+    return fetchVideos(true)
+  }
+
   return {
     videos,
     loading,
     error,
+    totalVideos,
+    hasVideos,
+    isLoading,
+    hasError,
     fetchVideos,
-    addVideo
+    addVideo,
+    clearCache,
+    refreshVideos
   }
 })

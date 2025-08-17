@@ -116,90 +116,112 @@ const handleCreateTask = async () => {
 </script>
 
 <template>
-  <div class="card">
-    <h3 class="text-lg font-semibold text-gray-900 mb-6">AI Task Generator</h3>
+  <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
+    <!-- Generate Task Section -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">🚀 Vazifa Yaratish</h2>
+      <p class="text-gray-600 mb-6">Sun'iy intellekt yordamida yaratuvchan vazifalar yarating</p>
 
-    <form @submit.prevent="handleGenerateTask" class="space-y-4 mb-8">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Topic</label>
-        <input v-model="form.topic" type="text" required class="input-field"
-          placeholder="e.g., JavaScript Functions, Linear Algebra, Essay Writing" />
-      </div>
+      <form @submit.prevent="handleGenerateTask" class="space-y-5">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">📚 Mavzu yoki fan</label>
+          <input v-model="form.topic" type="text" placeholder="Masalan: Matematika, Fizika, Tarix..."
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            required />
+        </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Difficulty Level</label>
-        <select v-model="form.difficulty" required class="input-field">
-          <option value="">Select difficulty</option>
-          <option value="beginner">Beginner</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
-        </select>
-      </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">📊 Qiyinlik darajasi</label>
+          <select v-model="form.difficulty"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            required>
+            <option value="">Qiyinlik darajasini tanlang</option>
+            <option value="beginner">🟢 Boshlang'ich</option>
+            <option value="intermediate">🟡 O'rta</option>
+            <option value="advanced">🔴 Yuqori</option>
+          </select>
+        </div>
 
-      <button type="submit" :disabled="loading" class="btn-primary w-full">
-        <span v-if="!loading">Generate Task</span>
-        <Loading v-else text="Generating..." />
-      </button>
-    </form>
-
-    <div v-if="generatedTask" class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-      <h4 class="font-medium text-gray-900 mb-2">Generated Task:</h4>
-      <div class="prose prose-sm max-w-none">
-        <p class="whitespace-pre-wrap">{{ generatedTask }}</p>
-      </div>
-
-      <div class="flex items-center justify-end space-x-3 mt-4">
-        <button @click="copyToClipboard" class="btn-secondary text-sm">
-          Copy Text
+        <button type="submit" :disabled="loading"
+          class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+          {{ loading ? '⏳ Vazifa yaratilmoqda...' : '🤖 AI yordamida vazifa yaratish' }}
         </button>
-        <button @click="createTaskFromGenerated" class="btn-primary text-sm">
-          Create Task
+      </form>
+    </div>
+
+    <!-- Generated Task Section -->
+    <div v-if="generatedTask" class="mb-8">
+      <h3 class="text-xl font-semibold text-gray-900 mb-4">✨ Yaratilgan Vazifa</h3>
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+        <p class="text-gray-800 whitespace-pre-wrap">{{ generatedTask }}</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button @click="copyToClipboard" :class="[
+          'px-4 py-2 rounded-lg font-medium transition-all duration-200',
+          copied
+            ? 'bg-green-500 text-white'
+            : 'bg-gray-500 text-white hover:bg-gray-600'
+        ]">
+          {{ copied ? '✅ Nusxalandi!' : '📋 Nusxalash' }}
+        </button>
+
+        <button @click="createTaskFromGenerated"
+          class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+          💾 Vazifa sifatida saqlash
         </button>
       </div>
     </div>
 
-    <Alert :show="!!error" type="error" title="Error" :message="error" @close="error = undefined" />
-
-    <Alert :show="copied" type="success" title="Copied!" message="Task text copied to clipboard"
-      @close="copied = false" />
-
-    <Alert :show="taskCreated" type="success" title="Success!" message="Task created successfully"
-      @close="taskCreated = false" />
-
     <!-- Create Task Modal -->
-    <div v-if="showCreateModal"
-      class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Create Task from AI Generation</h3>
+    <div v-if="showCreateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+        <h3 class="text-xl font-bold text-gray-900 mb-4">💾 Vazifani Saqlash</h3>
 
-        <form @submit.prevent="handleCreateTask">
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-              <input v-model="createForm.title" type="text" required class="input-field" placeholder="Task title" />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea v-model="createForm.description" required rows="6" class="input-field"
-                placeholder="Task description"></textarea>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-              <input v-model="createForm.dueDate" type="datetime-local" required class="input-field" />
-            </div>
+        <form @submit.prevent="handleCreateTask" class="space-y-4">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">📝 Vazifa nomi</label>
+            <input v-model="createForm.title" type="text"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required />
           </div>
 
-          <div class="flex items-center justify-end space-x-3 mt-6">
-            <button type="button" @click="showCreateModal = false" class="btn-secondary">
-              Cancel
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">📅 Muddat</label>
+            <input v-model="createForm.dueDate" type="datetime-local"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required />
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button type="button" @click="showCreateModal = false"
+              class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              Bekor qilish
             </button>
-            <button type="submit" :disabled="createLoading" class="btn-primary">
-              <span v-if="!createLoading">Create Task</span>
-              <Loading v-else text="Creating..." />
+
+            <button type="submit" :disabled="createLoading"
+              class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-200">
+              {{ createLoading ? '⏳ Saqlanmoqda...' : 'Saqlash' }}
             </button>
           </div>
         </form>
       </div>
     </div>
+
+    <!-- Success Message -->
+    <div v-if="taskCreated" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4 text-center">
+        <div class="text-6xl mb-4">🎉</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Muvaffaqiyatli!</h3>
+        <p class="text-gray-600 mb-4">Vazifa muvaffaqiyatli yaratildi va saqlandi</p>
+        <button @click="taskCreated = false"
+          class="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-green-700 transition-all duration-200">
+          Tushunarli
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Display -->
+    <Alert v-if="error" :show="!!error" type="error" title="Xatolik" :message="error" class="mb-4" />
   </div>
 </template>

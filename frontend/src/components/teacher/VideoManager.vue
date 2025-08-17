@@ -1,24 +1,25 @@
 <template>
   <div class="space-y-6">
-    <div class="card">
+    <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-lg font-semibold text-gray-900">Video Management</h3>
-        <button @click="openAddModal" class="btn-primary">
-          Add New Video
+        <h3 class="text-xl font-semibold text-gray-900">🎥 Video Darslar</h3>
+        <button @click="openAddModal"
+          class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+          ➕ Yangi Video Qo'shish
         </button>
       </div>
 
-      <Loading v-if="loading" text="Loading videos..." />
+      <Loading v-if="loading" text="Video darslar yuklanmoqda..." />
 
-      <div v-else-if="videos.length === 0" class="text-center py-8">
-        <VideoCameraIcon class="mx-auto h-12 w-12 text-gray-400" />
-        <h3 class="mt-2 text-sm font-medium text-gray-900">No videos</h3>
-        <p class="mt-1 text-sm text-gray-500">Add your first video lesson.</p>
+      <div v-else-if="videos.length === 0" class="text-center py-12">
+        <VideoCameraIcon class="mx-auto h-16 w-16 text-gray-400 mb-4" />
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Hali video darslar mavjud emas</h3>
+        <p class="text-gray-500">Birinchi video darsingizni qo'shing</p>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="video in videos" :key="video._id"
-          class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+          class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1">
           <VideoPlayer :url="video.url" />
 
           <div class="p-4">
@@ -26,12 +27,13 @@
             <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ video.description }}</p>
 
             <div class="flex items-center justify-between">
-              <span v-if="video.duration" class="text-xs text-gray-500">
-                {{ formatDuration(video.duration) }}
+              <span v-if="video.duration" class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                ⏱️ {{ formatDuration(video.duration) }}
               </span>
               <div class="space-x-2">
-                <a :href="video.url" target="_blank" rel="noopener noreferrer" class="btn-secondary text-sm">
-                  Open in YouTube
+                <a :href="video.url" target="_blank" rel="noopener noreferrer"
+                  class="px-3 py-1 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition-colors">
+                  🎬 YouTube'da ochish
                 </a>
               </div>
             </div>
@@ -41,56 +43,66 @@
     </div>
 
     <!-- Add Video Modal -->
-    <div v-if="showAddModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Add New Video</h3>
+    <div v-if="showAddModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-bold text-gray-900 mb-4">➕ Yangi Video Qo'shish</h3>
 
         <form @submit.prevent="handleAddVideo">
           <div class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
-              <input v-model="videoForm.title" type="text" required class="input-field" placeholder="Video title" />
+              <label class="block text-sm font-semibold text-gray-700 mb-2">📝 Video nomi</label>
+              <input v-model="videoForm.title" type="text" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Video dars nomi" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea v-model="videoForm.description" required rows="3" class="input-field"
-                placeholder="Video description"></textarea>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">📖 Tavsif</label>
+              <textarea v-model="videoForm.description" required rows="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Video dars haqida qisqacha ma'lumot"></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Video URL</label>
-              <input v-model="videoForm.url" type="url" required class="input-field" placeholder="https://..." />
+              <label class="block text-sm font-semibold text-gray-700 mb-2">🔗 Video havolasi</label>
+              <input v-model="videoForm.url" type="url" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="https://youtube.com/watch?v=..." />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Thumbnail URL (optional)
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                🖼️ Rasim havolasi (ixtiyoriy)
               </label>
-              <input v-model="videoForm.thumbnail" type="url" class="input-field" placeholder="https://..." />
+              <input v-model="videoForm.thumbnail" type="url"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="https://..." />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Duration (seconds, optional)
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                ⏱️ Davomiyligi (soniyada, ixtiyoriy)
               </label>
-              <input v-model.number="videoForm.duration" type="number" min="1" class="input-field"
-                placeholder="Duration in seconds" />
+              <input v-model.number="videoForm.duration" type="number" min="1"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Davomiyligi soniyada" />
             </div>
           </div>
 
-          <div class="flex items-center justify-end space-x-3 mt-6">
-            <button type="button" @click="closeAddModal" class="btn-secondary">
-              Cancel
+          <div class="flex gap-3 mt-6">
+            <button type="button" @click="closeAddModal"
+              class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+              Bekor qilish
             </button>
-            <button type="submit" :disabled="videoLoading" class="btn-primary">
-              <span v-if="!videoLoading">Add Video</span>
-              <Loading v-else text="Adding..." />
+            <button type="submit" :disabled="videoLoading"
+              class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-200">
+              {{ videoLoading ? '⏳ Qo\'shilmoqda...' : 'Video qo\'shish' }}
             </button>
           </div>
         </form>
       </div>
     </div>
 
-    <Alert :show="!!error" type="error" title="Error" :message="error || ''" @close="error = null" />
+    <Alert :show="!!error" type="error" title="Xatolik" :message="error || ''" @close="error = null" />
 
-    <Alert :show="success" type="success" title="Success" message="Video added successfully" @close="success = false" />
+    <Alert :show="success" type="success" title="Muvaffaqiyatli" message="Video dars muvaffaqiyatli qo'shildi"
+      @close="success = false" />
   </div>
 </template>
 

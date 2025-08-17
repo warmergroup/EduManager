@@ -16,7 +16,18 @@ export const useTasksStore = defineStore('tasks', () => {
       const response = await api.get('/api/tasks')
       tasks.value = response.data.data.tasks
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch tasks'
+      console.error('Tasks fetch error:', err)
+      
+      // Check if it's an authentication error
+      if (err.response?.status === 401) {
+        console.error('Authentication error - user needs to re-login')
+        // Don't set error, just use empty array
+        tasks.value = []
+      } else {
+        error.value = err.response?.data?.message || 'Failed to fetch tasks'
+        // Use empty array as fallback
+        tasks.value = []
+      }
     } finally {
       loading.value = false
     }

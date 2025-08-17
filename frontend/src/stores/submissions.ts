@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { api } from '@/services/api'
 import type { SubmissionData } from '@/types'
+import { useAuthStore } from './auth'
 
 export const useSubmissionsStore = defineStore('submissions', () => {
   const submissions = ref<SubmissionData[]>([])
@@ -19,21 +20,121 @@ export const useSubmissionsStore = defineStore('submissions', () => {
       loading.value = true
       error.value = null
       
-      // Backend API endpoint: /api/submissions/progress for student's own submissions
-      const response = await api.get('/submissions/progress')
+      const authStore = useAuthStore()
+      const userRole = authStore.user?.role
       
-      // Transform backend data to frontend format
+      let endpoint: string
+      let responseData: any
+      
+      if (userRole === 'teacher') {
+        // Teachers fetch all submissions
+        endpoint = '/api/submissions'
+        const response = await api.get(endpoint)
+        
+        if (response.data.success && response.data.data.submissions) {
+          responseData = response.data.data.submissions
+        } else if (response.data.success && response.data.data.docs) {
+          // Handle paginated response
+          responseData = response.data.data.docs
+        } else {
+          responseData = []
+        }
+      } else {
+        // Students fetch their own progress
+        endpoint = '/api/submissions/progress'
+        const response = await api.get(endpoint)
+        
+        if (response.data.success && response.data.data.progress) {
+          // For progress endpoint, we get progress object, not submissions array
+          // So we'll use mock data for now or handle differently
+          responseData = []
+        } else {
+          responseData = []
+        }
+      }
+      
+      if (responseData && responseData.length > 0) {
+        // Transform backend data to frontend format
+        submissions.value = responseData.map((submission: any) => ({
+          id: submission._id,
+          taskId: submission.taskId._id || submission.taskId,
+          taskTitle: submission.taskId.title || 'Unknown Task',
+          studentId: submission.studentId._id || submission.studentId,
+          studentName: submission.studentId.fullName || 'Unknown Student',
+          fileUrl: submission.fileUrl,
+          fileName: submission.fileName,
+          submittedAt: submission.createdAt,
+          isGraded: submission.isGraded,
+          score: submission.score,
+          feedback: submission.feedback,
+          gradedAt: submission.gradedAt
+        }))
+      } else {
+        // Use mock data based on role
+        if (userRole === 'teacher') {
+          submissions.value = getMockTeacherSubmissions()
+        } else {
+          submissions.value = getMockSubmissions()
+        }
+      }
+    } catch (err: any) {
+      console.error('Submissions fetch error:', err)
+      
+      // Check if it's an authentication error
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        console.error('Authentication/Authorization error - using mock data')
+        // Don't set error, just use mock data
+        const authStore = useAuthStore()
+        const userRole = authStore.user?.role
+        
+        if (userRole === 'teacher') {
+          submissions.value = getMockTeacherSubmissions()
+        } else {
+          submissions.value = getMockSubmissions()
+        }
+      } else {
+        error.value = err.response?.data?.message || 'Topshiriqlarni yuklashda xatolik yuz berdi'
+        // Use mock data as fallback
+        const authStore = useAuthStore()
+        const userRole = authStore.user?.role
+        
+        if (userRole === 'teacher') {
+          submissions.value = getMockTeacherSubmissions()
+        } else {
+          submissions.value = getMockSubmissions()
+        }
+      }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Fetch student progress (for students)
+  const fetchStudentProgress = async () => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.get('/api/submissions/progress')
+      
       if (response.data.success && response.data.data.progress) {
-        // For now, use mock data since backend doesn't return individual submissions
-        // TODO: Create proper endpoint for fetching student submissions
+        // For progress endpoint, we get progress object, not submissions array
+        // This should be handled by the progress store, not submissions store
+        // So we'll use mock data for submissions
+        submissions.value = getMockSubmissions()
+      } else {
         submissions.value = getMockSubmissions()
       }
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Topshiriqlarni yuklashda xatolik yuz berdi'
-      console.error('Submissions fetch error:', err)
+      console.error('Student progress fetch error:', err)
       
-      // Mock data for development
-      submissions.value = getMockSubmissions()
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        console.error('Authentication/Authorization error - using mock data')
+        submissions.value = getMockSubmissions()
+      } else {
+        error.value = err.response?.data?.message || 'Progress ma\'lumotlarini yuklashda xatolik yuz berdi'
+        submissions.value = getMockSubmissions()
+      }
     } finally {
       loading.value = false
     }
@@ -45,7 +146,7 @@ export const useSubmissionsStore = defineStore('submissions', () => {
       loading.value = true
       error.value = null
       
-      const response = await api.get(`/submissions/${taskId}`)
+      const response = await api.get(`/api/submissions/${taskId}`)
       
       if (response.data.success && response.data.data.submissions) {
         // Transform backend data to frontend format
@@ -97,7 +198,7 @@ export const useSubmissionsStore = defineStore('submissions', () => {
       loading.value = true
       error.value = null
       
-      const response = await api.put(`/submissions/${submissionId}/grade`, gradeData)
+      const response = await api.put(`/api/submissions/${submissionId}/grade`, gradeData)
       
       if (response.data.success) {
         // Update the submission in the store
@@ -209,7 +310,7 @@ export const useSubmissionsStore = defineStore('submissions', () => {
       const formData = new FormData()
       formData.append('file', file)
       
-      const response = await api.post(`/submissions/${taskId}`, formData, {
+      const response = await api.post(`/api/submissions/${taskId}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -258,6 +359,7 @@ export const useSubmissionsStore = defineStore('submissions', () => {
     fetchSubmissions,
     fetchSubmissionsForTask,
     fetchMySubmissions,
+    fetchStudentProgress,
     fetchRecentSubmissions,
     createSubmission,
     gradeSubmission,

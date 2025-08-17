@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import mongoosePaginate from "mongoose-paginate-v2"
 
 const submissionSchema = new mongoose.Schema(
   {
@@ -45,6 +46,9 @@ const submissionSchema = new mongoose.Schema(
     timestamps: true,
   },
 )
+
+// Add pagination plugin
+submissionSchema.plugin(mongoosePaginate)
 
 // Ensure one submission per student per task
 submissionSchema.index({ taskId: 1, studentId: 1 }, { unique: true })

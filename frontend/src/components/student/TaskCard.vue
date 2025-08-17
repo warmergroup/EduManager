@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { formatDate } from '../../utils/date'
-import type { Task, Submission } from '../../types'
+import type { Task, SubmissionData } from '../../types'
 import TaskStatus from './TaskStatus.vue'
 
 defineProps<{
     task: Task
-    submission?: Submission
+    submission?: SubmissionData
 }>()
 
 defineEmits<{
@@ -14,7 +14,6 @@ defineEmits<{
 </script>
 
 <template>
-
     <div class="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow cursor-pointer"
         @click="$emit('click')">
         <!-- Task header -->

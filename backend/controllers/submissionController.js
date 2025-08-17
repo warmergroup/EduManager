@@ -79,6 +79,48 @@ export const submitAssignment = async (req, res) => {
   }
 }
 
+// @desc    Get all submissions (for teachers)
+// @route   GET /api/submissions
+// @access  Private (Teacher only)
+export const getAllSubmissions = async (req, res) => {
+  try {
+    const { page = 1, limit = 10, status } = req.query
+    
+    const query = {}
+    
+    // Filter by status if provided
+    if (status === 'graded') {
+      query.score = { $exists: true, $ne: null }
+    } else if (status === 'pending') {
+      query.score = { $exists: false }
+    }
+    
+    const options = {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      populate: [
+        { path: 'taskId', select: 'title description deadline' },
+        { path: 'studentId', select: 'fullName email' }
+      ],
+      sort: { createdAt: -1 }
+    }
+    
+    const submissions = await Submission.paginate(query, options)
+    
+    res.json({
+      success: true,
+      message: 'Submissions retrieved successfully',
+      data: { submissions }
+    })
+  } catch (error) {
+    console.error('Get all submissions error:', error)
+    res.status(500).json({ 
+      success: false,
+      message: 'Server error while fetching submissions' 
+    })
+  }
+}
+
 // @desc    Get submissions for a task
 // @route   GET /api/submissions/:taskId
 // @access  Private

@@ -2,6 +2,7 @@ import express from "express"
 import {
   submitAssignment,
   getSubmissions,
+  getAllSubmissions,
   getSubmissionById,
   getStudentProgress,
   gradeSubmission,
@@ -26,6 +27,22 @@ const validateGrade = [
 ]
 
 // SPECIFIC ENDPOINTS FIRST (before generic ones)
+// @route   GET /api/submissions
+// @desc    Get all submissions (for teachers)
+// @access  Private (Teacher only)
+router.get("/", teacherOnly, async (req, res) => {
+  try {
+    const submissions = await getAllSubmissions(req, res)
+    return submissions
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch submissions',
+      error: error.message
+    })
+  }
+})
+
 // @route   GET /api/submissions/progress
 // @desc    Get student progress
 // @access  Private (Student only)

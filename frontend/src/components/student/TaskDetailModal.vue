@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { Task, Submission } from '@/types'
+import type { Task, SubmissionData } from '@/types'
 
 const props = defineProps<{
     task: Task
-    submission?: Submission
-
+    submission?: SubmissionData
 }>()
 
 const emit = defineEmits<{
@@ -26,6 +25,7 @@ const submit = () => {
     }
 }
 </script>
+
 <template>
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
         <div class="bg-white p-6 rounded-lg w-full max-w-2xl">
@@ -37,7 +37,7 @@ const submit = () => {
             </div>
 
             <div v-else class="mb-4">
-                <p>Submitted at: {{ new Date(submission.createdAt).toLocaleString() }}</p>
+                <p>Submitted at: {{ new Date(submission.submittedAt).toLocaleString() }}</p>
             </div>
 
             <div class="flex justify-end gap-2">

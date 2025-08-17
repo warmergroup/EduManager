@@ -107,7 +107,7 @@ export const getTeacherStats = async (req, res) => {
     try {
         const teacherId = req.user.id;
 
-        const [totalTasks, totalVideos, totalSubmissions, gradedSubmissions] = await Promise.all([
+        const [totalTasks, totalVideos, totalSubmissions, gradedSubmissions, averageScoreResult, totalStudents] = await Promise.all([
             Task.countDocuments({ createdBy: teacherId }),
             Video.countDocuments({ createdBy: teacherId }),
             Submission.countDocuments({ 
@@ -116,8 +116,23 @@ export const getTeacherStats = async (req, res) => {
             Submission.countDocuments({ 
                 taskId: { $in: await Task.find({ createdBy: teacherId }).select('_id') },
                 isGraded: true
-            })
+            }),
+            Submission.aggregate([
+                { 
+                    $lookup: {
+                        from: 'tasks',
+                        localField: 'taskId',
+                        foreignField: '_id',
+                        as: 'task'
+                    }
+                },
+                { $match: { 'task.createdBy': teacherId, isGraded: true } },
+                { $group: { _id: null, avgScore: { $avg: '$score' } } }
+            ]),
+            User.countDocuments({ role: 'student' })
         ]);
+
+        const averageScore = averageScoreResult.length > 0 ? Math.round(averageScoreResult[0].avgScore) : 0;
 
         res.json({
             success: true,
@@ -126,7 +141,9 @@ export const getTeacherStats = async (req, res) => {
                     totalTasks,
                     totalVideos,
                     totalSubmissions,
-                    gradedSubmissions
+                    gradedSubmissions,
+                    averageScore,
+                    totalStudents
                 }
             }
         });

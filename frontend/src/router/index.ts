@@ -18,7 +18,6 @@ import TeacherProfile from '@/views/teacher/Profile.vue'
 import TeacherAnalytics from '@/views/teacher/Analytics.vue'
 import TeacherStudents from '@/views/teacher/Students.vue'
 import TeacherTasks from '@/views/teacher/Tasks.vue'
-import TeacherSubmissions from '@/views/teacher/Submissions.vue'
 import NotFound from '../views/NotFound.vue'
 
 const routes = [
@@ -76,11 +75,6 @@ const routes = [
         path: 'profile',
         name: 'StudentProfile',
         component: StudentProfile
-      },
-      {
-        path: 'progress',
-        name: 'StudentProgress',
-        component: StudentProgress
       }
     ]
   },
@@ -104,14 +98,14 @@ const routes = [
         component: TeacherTasks
       },
       {
-        path: 'submissions',
-        name: 'TeacherSubmissions',
-        component: TeacherSubmissions
-      },
-      {
         path: 'videos',
         name: 'TeacherVideos',
         component: TeacherVideos
+      },
+      {
+        path: 'students',
+        name: 'TeacherStudents',
+        component: TeacherStudents
       },
       {
         path: 'ai',
@@ -122,16 +116,6 @@ const routes = [
         path: 'profile',
         name: 'TeacherProfile',
         component: TeacherProfile
-      },
-      {
-        path: 'analytics',
-        name: 'TeacherAnalytics',
-        component: TeacherAnalytics
-      },
-      {
-        path: 'students',
-        name: 'TeacherStudents',
-        component: TeacherStudents
       }
     ]
   },
@@ -159,17 +143,34 @@ router.beforeEach(async (to) => {
       try {
         await authStore.fetchCurrentUser()
       } catch (error) {
+        console.error('Failed to fetch current user:', error)
         return { path: '/login' }
       }
     }
     
-    if (to.meta.role && authStore.user?.role !== to.meta.role) {
-      return { path: `/${authStore.user?.role}/dashboard` }
+    // Check if user role is valid
+    if (!authStore.user?.role) {
+      console.error('User role is undefined')
+      authStore.logout()
+      return { path: '/login' }
+    }
+    
+    // Check role-based access
+    if (to.meta.role && authStore.user.role !== to.meta.role) {
+      console.log(`Role mismatch: user role is ${authStore.user.role}, required role is ${to.meta.role}`)
+      return { path: `/${authStore.user.role}/dashboard` }
     }
   }
   
   if (to.meta.requiresGuest && authStore.token) {
-    return { path: `/${authStore.user?.role}/dashboard` }
+    // Ensure user role exists before redirecting
+    if (authStore.user?.role) {
+      return { path: `/${authStore.user.role}/dashboard` }
+    } else {
+      // If role is undefined, logout and redirect to login
+      authStore.logout()
+      return { path: '/login' }
+    }
   }
 })
 

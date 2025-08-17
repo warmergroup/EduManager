@@ -24,32 +24,25 @@ api.interceptors.response.use(
   (error) => {
     const { response } = error
 
-    // Authentication error
-    if (response?.status === 401) {
-      localStorage.removeItem('token')
-      window.location.href = '/login'
-    }
+    // Log error for debugging
+    console.error('API Error:', {
+      status: response?.status,
+      message: response?.data?.message,
+      url: error.config?.url
+    })
 
-    // Forbidden error
-    if (response?.status === 403) {
-      window.location.href = '/'
-    }
-
-    // Server error message or fallback
-    const message = response?.data?.message || 'An unexpected error occurred'
-    
-    // You can implement a toast notification here
-    console.error(message)
+    // Don't automatically logout or redirect
+    // Let individual components handle authentication errors
 
     return Promise.reject(error)
   }
 )
 
-// User management
-export const getUserProfile = () => api.get('/users/profile')
-export const updateUserProfile = (data: any) => api.put('/users/profile', data)
-export const getAllUsers = () => api.get('/users')
+// User-related API calls
+export const getUserProfile = () => api.get('/api/users/profile')
+export const updateUserProfile = (data: any) => api.put('/api/users/profile', data)
+export const getAllUsers = () => api.get('/api/users')
 
-// Statistics
-export const getTeacherStats = () => api.get('/users/stats/teacher')
-export const getStudentStats = () => api.get('/users/stats/student')
+// Statistics API calls
+export const getTeacherStats = () => api.get('/api/users/stats/teacher')
+export const getStudentStats = () => api.get('/api/users/stats/student')

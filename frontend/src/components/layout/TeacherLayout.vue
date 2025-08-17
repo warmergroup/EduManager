@@ -8,7 +8,7 @@
             <Sidebar />
 
             <!-- Main Content -->
-            <main class="flex-1 ml-64">
+            <main class="flex-1 h-[90vh] overflow-auto p-4">
                 <router-view />
             </main>
         </div>
