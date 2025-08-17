@@ -11,6 +11,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  define: {
+    // Environment variables for Vercel deployment
+    'import.meta.env.VITE_API_URL': JSON.stringify(
+      process.env.VITE_API_URL || 'https://edumanager-backend-rust.vercel.app'
+    )
+  },
   build: {
     target: 'esnext',
     rollupOptions: {

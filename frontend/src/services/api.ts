@@ -4,8 +4,8 @@ import { useAuthStore } from '@/stores/auth'
 // Vercel deployment uchun API URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
   (import.meta.env.PROD 
-    ? 'https://your-vercel-app.vercel.app/api' 
-    : 'http://localhost:5000/api'
+    ? 'https://edumanager-backend-rust.vercel.app' 
+    : 'http://localhost:5000'
   )
 
 const api = axios.create({
