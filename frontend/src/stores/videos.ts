@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { api } from '../services/api'
+import api from '../services/api'
 import type { Video, VideoCreate } from '../types'
 
 export const useVideosStore = defineStore('videos', () => {
@@ -20,8 +20,7 @@ export const useVideosStore = defineStore('videos', () => {
     // Check if we have recent data and don't need to refresh
     const now = Date.now()
     if (!forceRefresh && hasVideos.value && (now - lastFetch.value) < cacheTimeout) {
-      console.log('Using cached videos data')
-      return
+      return videos.value
     }
 
     loading.value = true
@@ -33,15 +32,12 @@ export const useVideosStore = defineStore('videos', () => {
       if (response.data.success && response.data.data.videos) {
         videos.value = response.data.data.videos
         lastFetch.value = now
-        console.log(`Fetched ${videos.value.length} videos from backend`)
       } else {
         videos.value = []
-        console.warn('No videos data in response')
       }
     } catch (err: any) {
       error.value = err.response?.data?.message || 'Video darslarni yuklashda xatolik yuz berdi'
       videos.value = []
-      console.error('Videos fetch error:', err)
     } finally {
       loading.value = false
     }

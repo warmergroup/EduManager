@@ -20,11 +20,7 @@ export const corsOptions = {
       ...(process.env.CORS_ORIGIN ? [process.env.CORS_ORIGIN] : [])
     ];
     
-    console.log(`🌐 CORS check for origin: ${origin}`);
-    console.log(`✅ Allowed origins:`, allowedOrigins);
-    
     if (allowedOrigins.includes(origin)) {
-      console.log(`✅ CORS allowed for: ${origin}`);
       callback(null, true);
     } else {
       console.warn(`🚫 CORS blocked for: ${origin}`);

@@ -26,7 +26,6 @@ const updateProfile = async () => {
   try {
     loading.value = true
     // TODO: Implement profile update API call
-    console.log('Profile update:', form.value)
     // Show success message
   } catch (error) {
     console.error('Profile update error:', error)

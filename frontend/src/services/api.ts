@@ -2,14 +2,11 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 
 // Vercel deployment uchun API URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
-  (import.meta.env.PROD 
-    ? 'https://edumanager-backend-rust.vercel.app' 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD
+    ? 'https://edumanager-backend-rust.vercel.app'
     : 'http://localhost:5000'
   )
-
-console.log('🔗 API Base URL:', API_BASE_URL)
-console.log('🌍 Environment:', import.meta.env.PROD ? 'production' : 'development')
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -22,24 +19,14 @@ const api = axios.create({
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
-    console.log('🚀 API Request:', {
-      method: config.method?.toUpperCase(),
-      url: config.url,
-      baseURL: config.baseURL,
-      fullURL: `${config.baseURL}${config.url}`
-    })
-    
-    const authStore = useAuthStore()
-    const token = authStore.token
-    
+    // Add auth token if available
+    const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    
     return config
   },
   (error) => {
-    console.error('❌ Request interceptor error:', error)
     return Promise.reject(error)
   }
 )
@@ -47,31 +34,19 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (response) => {
-    console.log('✅ API Response:', {
-      status: response.status,
-      url: response.config.url,
-      data: response.data
-    })
     return response
   },
   (error) => {
-    console.error('❌ API Error:', {
-      message: error.message,
-      status: error.response?.status,
-      url: error.config?.url,
-      data: error.response?.data
-    })
-    
+    // Handle token expiration
     if (error.response?.status === 401) {
-      const authStore = useAuthStore()
-      authStore.logout()
+      localStorage.removeItem('token')
+      window.location.href = '/login'
     }
-    
     return Promise.reject(error)
   }
 )
 
-export { api }
+export default api
 
 // User-related API calls
 export const getUserProfile = () => api.get('/api/users/profile')

@@ -167,9 +167,12 @@ router.beforeEach(async (to) => {
     
     // Role-based access control
     if (to.meta.role && authStore.user.role !== to.meta.role) {
-      console.log(`Role mismatch: user role is ${authStore.user.role}, required role is ${to.meta.role}`)
-      // Boshqa role'ga kirishga urinishda o'zining dashboard'iga qaytarish
-      return { path: `/${authStore.user.role}/dashboard` }
+      // Redirect to appropriate dashboard based on user role
+      if (authStore.user.role === 'student') {
+        return '/student/dashboard'
+      } else if (authStore.user.role === 'teacher') {
+        return '/teacher/dashboard'
+      }
     }
   }
   

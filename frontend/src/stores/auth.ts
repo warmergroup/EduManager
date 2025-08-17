@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { api } from '../services/api'
+import api from '../services/api'
 import type { User, LoginData, RegisterData } from '../types'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -16,24 +16,18 @@ export const useAuthStore = defineStore('auth', () => {
   const login = async (credentials: LoginData) => {
     loading.value = true
     error.value = null
-    
+
     try {
-      console.log('🔐 Login attempt with:', { email: credentials.email })
       const response = await api.post('api/auth/login', credentials)
-      
-      console.log('📡 Login response:', response.data)
-      
+
       // Backend response format: { success: true, data: { user: {...}, token: "..." } }
       if (response.data.success && response.data.data) {
         const { token: authToken, user: userData } = response.data.data
-        
-        console.log('🔑 Extracted data:', { hasToken: !!authToken, hasUser: !!userData })
-        
+
         if (authToken && userData) {
           token.value = authToken
           user.value = userData
           localStorage.setItem('token', authToken)
-          console.log('✅ Login successful for user:', userData.email)
           return userData
         } else {
           throw new Error('Invalid response: missing token or user data')
@@ -42,7 +36,6 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error('Invalid response format')
       }
     } catch (err: any) {
-      console.error('❌ Login error:', err)
       error.value = err.response?.data?.message || err.message || 'Login failed'
       throw err
     } finally {
