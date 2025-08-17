@@ -1,3 +1,34 @@
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useVideosStore } from '@/stores/videos'
+import VideoPlayer from '../ui/VideoPlayer.vue'
+import Loading from '../ui/Loading.vue'
+
+const videosStore = useVideosStore()
+const { videos, loading } = storeToRefs(videosStore)
+
+onMounted(async () => {
+  if (videos.value.length === 0) {
+    await videosStore.fetchVideos()
+  }
+})
+
+const formatDuration = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+}
+</script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>
 <template>
   <div class="space-y-6">
     <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
@@ -46,35 +77,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useVideosStore } from '@/stores/videos'
-import VideoPlayer from '../ui/VideoPlayer.vue'
-import Loading from '../ui/Loading.vue'
-
-const videosStore = useVideosStore()
-const { videos, loading } = storeToRefs(videosStore)
-
-onMounted(async () => {
-  if (videos.value.length === 0) {
-    await videosStore.fetchVideos()
-  }
-})
-
-const formatDuration = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-}
-</script>
-
-<style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>

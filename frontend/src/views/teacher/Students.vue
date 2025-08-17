@@ -47,10 +47,10 @@ const clearFilters = () => {
     currentPage.value = 1
 }
 
-const viewStudentDetails = (student: any) => {
-    // TODO: Navigate to student details page or open modal
-    console.log('View student details:', student)
-}
+// const viewStudentDetails = (student: any) => {
+//     // TODO: Navigate to student details page or open modal
+//     console.log('View student details:', student)
+// }
 
 onMounted(async () => {
     await teacherStore.fetchStudents()
@@ -113,7 +113,7 @@ onMounted(async () => {
                                 <h4 class="text-lg font-medium text-gray-900">{{ student.fullName }}</h4>
                                 <p class="text-sm text-gray-600">{{ student.email }}</p>
                                 <p class="text-xs text-gray-500">Ro'yxatdan o'tgan: {{ formatDate(student.createdAt)
-                                }}</p>
+                                    }}</p>
                             </div>
                         </div>
 

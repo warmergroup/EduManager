@@ -151,10 +151,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useProgressStore } from '@/stores/progress'
-import { useSubmissionsStore } from '@/stores/submissions'
+// import { useSubmissionsStore } from '@/stores/submissions'
 
 const progressStore = useProgressStore()
-const submissionsStore = useSubmissionsStore()
+// const submissionsStore = useSubmissionsStore()
 
 const loading = ref(false)
 const recentSubmissions = ref<any[]>([])
