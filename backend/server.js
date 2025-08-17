@@ -98,7 +98,18 @@ app.use("*", (req, res) => {
 // ✅ DB ulanishini productionda ham qo'shamiz
 const startServer = async () => {
   try {
-    await connectDB(); // har doim ulanish kerak
+    console.log("🚀 Starting server...");
+    
+    // Database connection attempt
+    const dbConnection = await connectDB();
+    
+    if (!dbConnection) {
+      console.warn("⚠️ Database connection failed, but server will continue");
+      console.warn("💡 API endpoints may not work without database");
+    } else {
+      console.log("✅ Database connected successfully");
+    }
+    
     if (process.env.NODE_ENV !== "production") {
       const PORT = process.env.PORT || 5000;
       app.listen(PORT, () => {
@@ -106,14 +117,23 @@ const startServer = async () => {
         console.log(`📊 Environment: ${process.env.NODE_ENV}`);
         console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
         console.log(`🌐 CORS enabled for Vercel domains`);
+        console.log(`💾 Database: ${dbConnection ? 'Connected' : 'Failed'}`);
       });
     } else {
       console.log(`🚀 Production server ready`);
       console.log(`🌐 CORS enabled for Vercel domains`);
+      console.log(`💾 Database: ${dbConnection ? 'Connected' : 'Failed'}`);
     }
   } catch (error) {
     console.error("❌ Server startup error:", error);
-    process.exit(1);
+    
+    // Production'da server crash qilmaslik
+    if (process.env.NODE_ENV === 'production') {
+      console.log("🔄 Server will continue without database connection");
+      console.log("💡 Some API endpoints may not work");
+    } else {
+      process.exit(1);
+    }
   }
 };
 
