@@ -1,3 +1,36 @@
+        <script setup lang="ts">
+        import { reactive } from 'vue'
+        import { useRouter } from 'vue-router'
+        import { useAuthStore } from '../../stores/auth'
+        import Loading from '../../components/ui/Loading.vue'
+        import Alert from '../../components/ui/Alert.vue'
+
+        const router = useRouter()
+        const authStore = useAuthStore()
+
+        const form = reactive({
+          email: '',
+          password: ''
+        })
+
+        const handleLogin = async () => {
+          try {
+            const user = await authStore.login(form)
+
+            // Role'ga qarab redirect qilish
+            if (user.role === 'student') {
+              router.push('/student/dashboard')
+            } else if (user.role === 'teacher') {
+              router.push('/teacher/dashboard')
+            } else {
+              // Agar role aniqlanmagan bo'lsa, home'ga qaytarish
+              router.push('/')
+            }
+          } catch (error) {
+            // Error is handled in the store
+          }
+        }
+</script>
 <template>
   <div
     class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -114,37 +147,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../../stores/auth'
-import Loading from '../../components/ui/Loading.vue'
-import Alert from '../../components/ui/Alert.vue'
-
-const router = useRouter()
-const authStore = useAuthStore()
-
-const form = reactive({
-  email: '',
-  password: ''
-})
-
-const handleLogin = async () => {
-  try {
-    const user = await authStore.login(form)
-
-    // Role'ga qarab redirect qilish
-    if (user.role === 'student') {
-      router.push('/student/dashboard')
-    } else if (user.role === 'teacher') {
-      router.push('/teacher/dashboard')
-    } else {
-      // Agar role aniqlanmagan bo'lsa, home'ga qaytarish
-      router.push('/')
-    }
-  } catch (error) {
-    // Error is handled in the store
-  }
-}
-</script>

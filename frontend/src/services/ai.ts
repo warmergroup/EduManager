@@ -1,4 +1,4 @@
-import { api } from './api'
+import api  from './api'
 import type { AIRequest, AIResponse } from '@/types'
 
 export const askAI = async (question: string) => {

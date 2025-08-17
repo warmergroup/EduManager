@@ -1,4 +1,4 @@
-import { api } from './api'
+import api from './api'
 import type { Video, VideoCreate } from '../types'
 
 interface VideoResponse {

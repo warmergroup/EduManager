@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth'
+// import { useAuthStore } from '@/stores/auth'
 
 // Vercel deployment uchun API URL
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
