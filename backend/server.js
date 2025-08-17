@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
-import { connectDB } from "./config/database.js";
+import connectDB from "./config/database.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { securityHeaders, generalLimiter, authLimiter, aiLimiter } from "./middleware/security.js";
 import { corsOptions } from "./config/cors.js";
