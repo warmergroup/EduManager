@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   HomeIcon,
@@ -7,10 +7,8 @@ import {
   ChatBubbleLeftRightIcon,
   ArrowLeftOnRectangleIcon,
   DocumentTextIcon,
-  AcademicCapIcon,
   CpuChipIcon,
   UserIcon,
-  ChartBarIcon,
   UsersIcon
 } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '../../stores/auth'
@@ -50,15 +48,15 @@ const navigationItems = computed(() => {
   return items
 })
 
-const handleNavigation = (to: string) => {
-  // Validate route before navigation
-  if (!user.value?.role) {
-    console.error('Cannot navigate: user role is undefined')
-    return
-  }
+// const handleNavigation = (to: string) => {
+//   // Validate route before navigation
+//   if (!user.value?.role) {
+//     console.error('Cannot navigate: user role is undefined')
+//     return
+//   }
 
-  router.push(to)
-}
+//   router.push(to)
+// }
 
 const handleLogout = () => {
   authStore.logout()
