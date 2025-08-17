@@ -18,16 +18,32 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
     
     try {
+      console.log('🔐 Login attempt with:', { email: credentials.email })
       const response = await api.post('api/auth/login', credentials)
-      const { token: authToken, user: userData } = response.data.data
       
-      token.value = authToken
-      user.value = userData
-      localStorage.setItem('token', authToken)
+      console.log('📡 Login response:', response.data)
       
-      return userData
+      // Backend response format: { success: true, data: { user: {...}, token: "..." } }
+      if (response.data.success && response.data.data) {
+        const { token: authToken, user: userData } = response.data.data
+        
+        console.log('🔑 Extracted data:', { hasToken: !!authToken, hasUser: !!userData })
+        
+        if (authToken && userData) {
+          token.value = authToken
+          user.value = userData
+          localStorage.setItem('token', authToken)
+          console.log('✅ Login successful for user:', userData.email)
+          return userData
+        } else {
+          throw new Error('Invalid response: missing token or user data')
+        }
+      } else {
+        throw new Error('Invalid response format')
+      }
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Login failed'
+      console.error('❌ Login error:', err)
+      error.value = err.response?.data?.message || err.message || 'Login failed'
       throw err
     } finally {
       loading.value = false
@@ -40,15 +56,25 @@ export const useAuthStore = defineStore('auth', () => {
     
     try {
       const response = await api.post('api/auth/register', userData)
-      const { token: authToken, user: newUser } = response.data.data
       
-      token.value = authToken
-      user.value = newUser
-      localStorage.setItem('token', authToken)
-      
-      return newUser
+      // Backend response format: { success: true, data: { user: {...}, token: "..." } }
+      if (response.data.success && response.data.data) {
+        const { token: authToken, user: newUser } = response.data.data
+        
+        if (authToken && newUser) {
+          token.value = authToken
+          user.value = newUser
+          localStorage.setItem('token', authToken)
+          return newUser
+        } else {
+          throw new Error('Invalid response: missing token or user data')
+        }
+      } else {
+        throw new Error('Invalid response format')
+      }
     } catch (err: any) {
-      error.value = err.response?.data?.message || 'Registration failed'
+      console.error('Registration error:', err)
+      error.value = err.response?.data?.message || err.message || 'Registration failed'
       throw err
     } finally {
       loading.value = false
