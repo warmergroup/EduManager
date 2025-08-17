@@ -4,7 +4,7 @@ import express from "express";
 import cors from "cors";
 import connectDB from "./config/database.js";
 import { errorHandler } from "./middleware/errorHandler.js";
-import { securityHeaders, generalLimiter, authLimiter, aiLimiter } from "./middleware/security.js";
+import { securityHeaders, generalLimiter, authLimiter, aiLimiter, productionGeneralLimiter, productionAuthLimiter, productionAiLimiter } from "./middleware/security.js";
 import { corsOptions } from "./config/cors.js";
 import { validateEnv } from "./config/validateEnv.js";
 
@@ -35,7 +35,14 @@ process.on('unhandledRejection', (reason, promise) => {
 try {
   app.use(securityHeaders);
   app.use(cors(corsOptions));
-  app.use(generalLimiter);
+  
+  // Use production rate limiters (disabled) in production, development rate limiters in development
+  if (process.env.NODE_ENV === 'production') {
+    app.use(productionGeneralLimiter);
+  } else {
+    app.use(generalLimiter);
+  }
+  
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 } catch (error) {
@@ -133,8 +140,15 @@ app.get("/api", async (req, res) => {
 
 // API Routes with error handling
 try {
-  app.use("/api/auth", authLimiter, authRoutes);
-  app.use("/api/ai", aiLimiter, aiRoutes);
+  // Use production rate limiters (disabled) in production, development rate limiters in development
+  if (process.env.NODE_ENV === 'production') {
+    app.use("/api/auth", productionAuthLimiter, authRoutes);
+    app.use("/api/ai", productionAiLimiter, aiRoutes);
+  } else {
+    app.use("/api/auth", authLimiter, authRoutes);
+    app.use("/api/ai", aiLimiter, aiRoutes);
+  }
+  
   app.use("/api/tasks", taskRoutes);
   app.use("/api/submissions", submissionRoutes);
   app.use("/api/videos", videoRoutes);

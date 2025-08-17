@@ -76,3 +76,19 @@ export const aiLimiter = rateLimit({
     return req.ip || req.connection.remoteAddress || 'unknown'
   }
 })
+
+// Vercel production environment uchun rate limiting'ni o'chirish
+export const productionGeneralLimiter = (req, res, next) => {
+  // Production'da rate limiting o'chirilgan
+  next()
+}
+
+export const productionAuthLimiter = (req, res, next) => {
+  // Production'da rate limiting o'chirilgan
+  next()
+}
+
+export const productionAiLimiter = (req, res, next) => {
+  // Production'da rate limiting o'chirilgan
+  next()
+}
