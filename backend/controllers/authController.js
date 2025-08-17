@@ -2,6 +2,15 @@ import jwt from "jsonwebtoken"
 import { User } from "../models/User.js"
 import logger from "../config/logger.js"
 
+// Safe logger function that handles errors gracefully
+const safeLog = (level, message, meta = {}) => {
+  try {
+    logger[level](message, meta)
+  } catch (loggerError) {
+    // Fallback to console if logger fails
+    console.log(`[${level.toUpperCase()}] ${message}`, meta)
+  }
+}
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -17,12 +26,12 @@ export const register = async (req, res) => {
   try {
     const { fullName, email, role } = req.body
 
-    logger.info('User registration attempt', { email, role })
+    safeLog('info', 'User registration attempt', { email, role })
 
     // Check if user already exists
     const existingUser = await User.findOne({ email })
     if (existingUser) {
-      logger.warn('Registration failed - user already exists', { email })
+      safeLog('warn', 'Registration failed - user already exists', { email })
       return res.status(400).json({ message: "User already exists with this email" })
     }
 
@@ -37,7 +46,7 @@ export const register = async (req, res) => {
     // Generate token
     const token = generateToken(user._id)
 
-    logger.info('User registered successfully', { userId: user._id, email, role })
+    safeLog('info', 'User registered successfully', { userId: user._id, email, role })
 
     res.status(201).json({
       success: true,
@@ -53,7 +62,7 @@ export const register = async (req, res) => {
       },
     })
   } catch (error) {
-    logger.error('Registration error', { error: error.message, email: req.body.email })
+    safeLog('error', 'Registration error', { error: error.message, email: req.body.email })
     res.status(500).json({ message: "Server error during registration" })
   }
 }
@@ -65,26 +74,26 @@ export const login = async (req, res) => {
   try {
     const { email } = req.body
 
-    logger.info('User login attempt', { email })
+    safeLog('info', 'User login attempt', { email })
 
     // Check if user exists and include password for comparison
     const user = await User.findOne({ email }).select("+password")
     if (!user) {
-      logger.warn('Login failed - user not found', { email })
+      safeLog('warn', 'Login failed - user not found', { email })
       return res.status(401).json({ message: "Invalid email or password" })
     }
 
     // Check password
     const isPasswordValid = await user.comparePassword(req.body.password)
     if (!isPasswordValid) {
-      logger.warn('Login failed - invalid password', { email })
+      safeLog('warn', 'Login failed - invalid password', { email })
       return res.status(401).json({ message: "Invalid email or password" })
     }
 
     // Generate token
     const token = generateToken(user._id)
 
-    logger.info('User logged in successfully', { userId: user._id, email, role: user.role })
+    safeLog('info', 'User logged in successfully', { userId: user._id, email, role: user.role })
 
     res.json({
       success: true,
@@ -100,7 +109,7 @@ export const login = async (req, res) => {
       },
     })
   } catch (error) {
-    logger.error('Login error', { error: error.message, email: req.body.email })
+    safeLog('error', 'Login error', { error: error.message, email: req.body.email })
     res.status(500).json({ message: "Server error during login" })
   }
 }
@@ -112,7 +121,7 @@ export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id)
 
-    logger.info('Profile accessed', { userId: req.user.id })
+    safeLog('info', 'Profile accessed', { userId: req.user.id })
 
     res.json({
       success: true,
@@ -127,7 +136,7 @@ export const getProfile = async (req, res) => {
       },
     })
   } catch (error) {
-    logger.error('Get profile error', { error: error.message, userId: req.user.id })
+    safeLog('error', 'Get profile error', { error: error.message, userId: req.user.id })
     res.status(500).json({ message: "Server error" })
   }
 }

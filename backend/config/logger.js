@@ -29,62 +29,76 @@ const consoleFormat = winston.format.combine(
   })
 )
 
+// Create transports array
+const transports = [
+  // Console transport for all environments
+  new winston.transports.Console({
+    format: consoleFormat
+  })
+]
+
+// Add file transports only in development
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    // Create logs directory if it doesn't exist
+    const logsDir = path.join(__dirname, '../logs')
+    if (!fs.existsSync(logsDir)) {
+      fs.mkdirSync(logsDir, { recursive: true })
+    }
+    
+    // File transport for errors
+    transports.push(new winston.transports.File({
+      filename: path.join(__dirname, '../logs/error.log'),
+      level: 'error',
+      maxsize: 5242880, // 5MB
+      maxFiles: 5,
+    }))
+    
+    // File transport for all logs
+    transports.push(new winston.transports.File({
+      filename: path.join(__dirname, '../logs/combined.log'),
+      maxsize: 5242880, // 5MB
+      maxFiles: 5,
+    }))
+  } catch (error) {
+    console.warn('⚠️ Could not create file transports:', error.message)
+  }
+}
+
 // Create logger instance
 const logger = winston.createLogger({
   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   format: logFormat,
   defaultMeta: { service: 'student-assignment-api' },
-  transports: [
-    // Console transport for development
-    new winston.transports.Console({
-      format: consoleFormat
-    }),
-    
-    // File transport for errors
-    new winston.transports.File({
-      filename: path.join(__dirname, '../logs/error.log'),
-      level: 'error',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    }),
-    
-    // File transport for all logs
-    new winston.transports.File({
-      filename: path.join(__dirname, '../logs/combined.log'),
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
-    })
-  ],
-  // Handle uncaught exceptions
-  exceptionHandlers: [
-    new winston.transports.File({
-      filename: path.join(__dirname, '../logs/exceptions.log')
-    })
-  ],
-  // Handle unhandled promise rejections
-  rejectionHandlers: [
-    new winston.transports.File({
-      filename: path.join(__dirname, '../logs/rejections.log')
-    })
-  ]
+  transports: transports,
+  // Handle uncaught exceptions only in development
+  ...(process.env.NODE_ENV !== 'production' && {
+    exceptionHandlers: [
+      new winston.transports.File({
+        filename: path.join(__dirname, '../logs/exceptions.log')
+      })
+    ],
+    // Handle unhandled promise rejections only in development
+    rejectionHandlers: [
+      new winston.transports.File({
+        filename: path.join(__dirname, '../logs/rejections.log')
+      })
+    ]
+  })
 })
 
-// Create logs directory if it doesn't exist
-const logsDir = path.join(__dirname, '../logs')
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true })
+// Log uncaught exceptions only in development
+if (process.env.NODE_ENV !== 'production') {
+  process.on('uncaughtException', (error) => {
+    logger.error('Uncaught Exception:', error)
+    process.exit(1)
+  })
+
+  // Log unhandled promise rejections only in development
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection at:', promise, 'reason:', reason)
+    process.exit(1)
+  })
 }
-
-// Log uncaught exceptions
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught Exception:', error)
-  process.exit(1)
-})
-
-// Log unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Rejection at:', promise, 'reason:', reason)
-  process.exit(1)
-})
 
 export default logger

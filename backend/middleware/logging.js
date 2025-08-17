@@ -1,11 +1,21 @@
 import logger from '../config/logger.js'
 
+// Safe logger function that handles errors gracefully
+const safeLog = (level, message, meta = {}) => {
+  try {
+    logger[level](message, meta)
+  } catch (loggerError) {
+    // Fallback to console if logger fails
+    console.log(`[${level.toUpperCase()}] ${message}`, meta)
+  }
+}
+
 // Request logging middleware
 export const requestLogger = (req, res, next) => {
   const start = Date.now()
   
   // Log request details
-  logger.info('Incoming request', {
+  safeLog('info', 'Incoming request', {
     method: req.method,
     url: req.originalUrl,
     ip: req.ip || req.connection.remoteAddress,
@@ -19,7 +29,7 @@ export const requestLogger = (req, res, next) => {
   res.end = function(chunk, encoding) {
     const duration = Date.now() - start
     
-    logger.info('Request completed', {
+    safeLog('info', 'Request completed', {
       method: req.method,
       url: req.originalUrl,
       statusCode: res.statusCode,
@@ -36,7 +46,7 @@ export const requestLogger = (req, res, next) => {
 
 // Error logging middleware
 export const errorLogger = (err, req, res, next) => {
-  logger.error('Request error', {
+  safeLog('error', 'Request error', {
     method: req.method,
     url: req.originalUrl,
     error: err.message,
@@ -57,7 +67,7 @@ export const performanceLogger = (req, res, next) => {
     const duration = seconds * 1000 + nanoseconds / 1000000
     
     if (duration > 1000) { // Log slow requests (>1s)
-      logger.warn('Slow request detected', {
+      safeLog('warn', 'Slow request detected', {
         method: req.method,
         url: req.originalUrl,
         duration: `${duration.toFixed(2)}ms`,

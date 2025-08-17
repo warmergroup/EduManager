@@ -4,16 +4,27 @@ export const errorHandler = (err, req, res, next) => {
   let error = { ...err }
   error.message = err.message
 
-  // Log error details
-  logger.error('Error occurred', {
-    message: err.message,
-    stack: err.stack,
-    url: req.originalUrl,
-    method: req.method,
-    userId: req.user?.id || 'unauthenticated',
-    userRole: req.user?.role || 'none',
-    ip: req.ip || req.connection.remoteAddress
-  })
+  // Log error details with error handling
+  try {
+    logger.error('Error occurred', {
+      message: err.message,
+      stack: err.stack,
+      url: req.originalUrl,
+      method: req.method,
+      userId: req.user?.id || 'unauthenticated',
+      userRole: req.user?.role || 'none',
+      ip: req.ip || req.connection.remoteAddress
+    })
+  } catch (loggerError) {
+    // Fallback to console if logger fails
+    console.error('❌ Logger error:', loggerError)
+    console.error('❌ Original error:', {
+      message: err.message,
+      stack: err.stack,
+      url: req.originalUrl,
+      method: req.method
+    })
+  }
 
   // Mongoose bad ObjectId
   if (err.name === "CastError") {
