@@ -76,30 +76,13 @@ export const login = async (req, res) => {
 
     safeLog('info', 'User login attempt', { email })
 
-    // Check MongoDB connection first (temporarily disabled for debugging)
-    /*
-    const { isConnected } = await import('../config/database.js')
-    const dbConnected = isConnected()
+    // Connection check removed for both development and production
+    // MongoDB connection is handled at the database level
     
-    safeLog('info', 'Database connection check', { 
-      isConnected: dbConnected,
-      email 
-    })
-    
-    if (!dbConnected) {
-      safeLog('error', 'Database not connected during login attempt', { email })
-      return res.status(503).json({ 
-        message: "Database temporarily unavailable. Please try again." 
-      })
-    }
-    */
-    
-    safeLog('info', 'Skipping connection check for debugging', { email })
-
     // Check if user exists and include password for comparison
     const user = await User.findOne({ email })
       .select("+password")
-      .maxTimeMS(30000) // 30 second timeout
+      .maxTimeMS(60000) // 60 second timeout for Vercel
       .exec()
       
     if (!user) {
@@ -107,8 +90,9 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" })
     }
 
-    // Check password
-    const isPasswordValid = await user.comparePassword(req.body.password)
+    // Check password using bcrypt directly for better performance
+    const bcrypt = await import('bcryptjs')
+    const isPasswordValid = await bcrypt.default.compare(req.body.password, user.password)
     if (!isPasswordValid) {
       safeLog('warn', 'Login failed - invalid password', { email })
       return res.status(401).json({ message: "Invalid email or password" })
@@ -142,6 +126,14 @@ export const login = async (req, res) => {
       })
     }
     
+    // Handle timeout errors
+    if (error.message.includes('timed out') || error.code === 'ECONNABORTED') {
+      return res.status(408).json({ 
+        message: "Request timeout. Please try again." 
+      })
+    }
+    
+    // Handle other errors
     res.status(500).json({ message: "Server error during login" })
   }
 }
