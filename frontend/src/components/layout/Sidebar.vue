@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import {
   HomeIcon,
   VideoCameraIcon,
   ChatBubbleLeftRightIcon,
-  ArrowLeftOnRectangleIcon,
   DocumentTextIcon,
   CpuChipIcon,
   UserIcon,
   UsersIcon
 } from '@heroicons/vue/24/outline'
-import { useAuthStore } from '../../stores/auth'
+import { useAuthStore } from '@/stores/auth'
+import { useSidebarStore } from '@/stores/sidebar'
 
 const authStore = useAuthStore()
+const sidebarStore = useSidebarStore()
 
 const user = computed(() => authStore.user)
 const isTeacher = computed(() => user.value?.role === 'teacher')
@@ -20,7 +21,6 @@ const isTeacher = computed(() => user.value?.role === 'teacher')
 const studentNavigation = [
   { name: 'StudentDashboard', label: 'Dashboard', to: '/student/dashboard', icon: HomeIcon },
   { name: 'StudentTasks', label: 'Vazifalar', to: '/student/tasks', icon: DocumentTextIcon },
-  // { name: 'StudentSubmissions', label: 'Topshiriqlar', to: '/student/submissions', icon: AcademicCapIcon },
   { name: 'StudentVideos', label: 'Video Darslar', to: '/student/videos', icon: VideoCameraIcon },
   { name: 'StudentAI', label: 'AI Yordamchisi', to: '/student/ai', icon: ChatBubbleLeftRightIcon },
   { name: 'StudentProfile', label: 'Profil', to: '/student/profile', icon: UserIcon }
@@ -36,55 +36,145 @@ const teacherNavigation = [
 ]
 
 const navigationItems = computed(() => {
-  // Ensure user role exists
   if (!user.value?.role) {
-    console.warn('User role is undefined, showing empty navigation')
     return []
   }
-
-  const items = isTeacher.value ? teacherNavigation : studentNavigation
-  return items
+  return isTeacher.value ? teacherNavigation : studentNavigation
 })
-
-// const handleNavigation = (to: string) => {
-//   // Validate route before navigation
-//   if (!user.value?.role) {
-//     console.error('Cannot navigate: user role is undefined')
-//     return
-//   }
-
-//   router.push(to)
-// }
 
 const handleLogout = () => {
   authStore.logout()
-  // Router push kerak emas, chunki auth store'da window.location.href ishlatiladi
 }
+
+// Close sidebar on mobile when clicking outside
+const handleClickOutside = (event: Event) => {
+  if (sidebarStore.isMobile && sidebarStore.isOpen) {
+    const target = event.target as HTMLElement
+    if (!target.closest('.sidebar') && !target.closest('.hamburger-btn')) {
+      sidebarStore.close()
+    }
+  }
+}
+
+// Handle window resize
+const handleResize = () => {
+  sidebarStore.checkMobile()
+}
+
+onMounted(() => {
+  sidebarStore.checkMobile()
+  window.addEventListener('resize', handleResize)
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+  document.removeEventListener('click', handleClickOutside)
+})
 </script>
 
 <template>
-  <div class="bg-white min-h-[90vh] shadow-lg border-r border-gray-200 flex flex-col">
-    <nav class="flex-1 p-4 space-y-2">
-      <template v-if="user?.role">
-        <router-link v-for="item in navigationItems" :key="item.name" :to="item.to"
-          class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors" :class="$route.name === item.name
-            ? 'bg-primary-50 text-primary-700 border-r-2 border-primary-600'
-            : 'text-gray-700 hover:bg-gray-50'">
-          <component :is="item.icon" class="w-5 h-5 mr-3" />
-          {{ item.label }}
-        </router-link>
-      </template>
-      <div v-else class="text-center py-4 text-gray-500">
-        <p>Navigation yuklanmoqda...</p>
-      </div>
-    </nav>
+  <!-- Mobile Overlay -->
+  <div v-if="sidebarStore.isMobile && sidebarStore.isOpen"
+    class="fixed inset-0 bg-gray-300/50 bg-opacity-50 z-40 lg:hidden" @click="sidebarStore.close"></div>
 
-    <div class="p-4 border-t border-gray-200">
-      <button @click="handleLogout"
-        class="flex items-center w-full px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-        <ArrowLeftOnRectangleIcon class="w-5 h-5 mr-3" />
-        Logout
+  <!-- Sidebar -->
+  <aside
+    class="sidebar fixed lg:relative top-0 left-0 h-full lg:h-[90vh] z-50 bg-white shadow-lg border-r border-gray-200 flex flex-col transition-all duration-500 ease-in-out"
+    :class="[
+      sidebarStore.isMobile ? 'w-[70vw]' : 'w-60',
+      sidebarStore.sidebarTransform,
+    ]" :style="{ width: sidebarStore.sidebarWidth }" @click.stop>
+
+    <!-- Header with toggle button (mobile only) -->
+    <div v-motion :initial="{ opacity: 0, x: -20 }"
+      :enter="{ opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } }"
+      :leave="{ opacity: 0, x: -20, transition: { duration: 0.3, ease: 'easeIn' } }"
+      v-if="sidebarStore.isMobile && sidebarStore.isOpen"
+      class="flex items-center justify-between p-4 border-b border-gray-200">
+      <p>{{ user?.fullName }}</p>
+      <button @click="sidebarStore.close" class="text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
       </button>
     </div>
-  </div>
+
+
+    <!-- Navigation -->
+    <nav class="flex-1 space-y-2 overflow-y-auto">
+      <template v-if="user?.role">
+        <router-link v-for="item in navigationItems" :key="item.name" :to="item.to"
+          class="flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 group"
+          :class="[
+            $route.name === item.name
+              ? 'bg-blue-100 text-primary-700 lg:border-r-2 border-blue-600'
+              : 'text-gray-700 hover:bg-blue-50',
+            sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'justify-center px-2' : ''
+          ]" @click="sidebarStore.isMobile && sidebarStore.close()">
+
+          <component :is="item.icon" class="w-5 h-5 transition-all duration-300 flex-shrink-0" :class="[
+            sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'mr-0' : 'mr-3',
+            $route.name === item.name ? 'text-primary-700' : 'text-gray-500 group-hover:text-gray-700'
+          ]" />
+
+          <span v-if="sidebarStore.isOpen || sidebarStore.isMobile" v-motion :initial="{ opacity: 0, x: -20 }"
+            :enter="{ opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } }"
+            :leave="{ opacity: 0, x: -20, transition: { duration: 0.3, ease: 'easeIn' } }"
+            class="transition-all duration-300 whitespace-nowrap">
+            {{ item.label }}
+          </span>
+        </router-link>
+      </template>
+    </nav>
+
+    <!-- Logout Section -->
+    <div class="py-4 border-t border-gray-200">
+      <button @click="handleLogout"
+        class="flex items-center justify-start w-full px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 rounded-lg transition-all duration-300 group"
+        :class="sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'justify-center px-2' : ''">
+
+        <svg class="w-5 h-5 transition-all duration-300 flex-shrink-0" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" :class="[
+            sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'mr-0' : 'mr-3',
+            'text-red-500 group-hover:text-red-700'
+          ]">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+        </svg>
+
+        <!-- Show label only when sidebar is fully open or on mobile -->
+        <span v-if="sidebarStore.isOpen || sidebarStore.isMobile" v-motion :initial="{ opacity: 0, x: -20 }"
+          :enter="{ opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } }"
+          :leave="{ opacity: 0, x: -20, transition: { duration: 0.3, ease: 'easeIn' } }"
+          class="transition-all duration-300 whitespace-nowrap">
+          Logout
+        </span>
+      </button>
+    </div>
+  </aside>
 </template>
+
+<style scoped>
+.sidebar {
+  min-height: 90vh;
+}
+
+/* Smooth transitions */
+.transition-transform {
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+}
+
+/* Hide sidebar content when closed on mobile */
+@media (max-width: 1023px) {
+  .sidebar:not(.translate-x-0) {
+    pointer-events: none;
+  }
+
+  .sidebar:not(.translate-x-0) * {
+    opacity: 0;
+  }
+}
+</style>

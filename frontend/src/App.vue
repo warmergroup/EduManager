@@ -18,6 +18,8 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <router-view />
-  <Toast />
+  <div class="container mx-auto bg-red-500">
+    <router-view />
+    <Toast />
+  </div>
 </template>
