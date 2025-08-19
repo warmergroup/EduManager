@@ -8,9 +8,12 @@
                 Go Home
             </router-link>
         </div>
+
+        <!-- Developer Info -->
+        <DeveloperInfo />
     </div>
 </template>
 
 <script setup lang="ts">
-// No additional logic needed
+import DeveloperInfo from '@/components/DeveloperInfo.vue'
 </script>

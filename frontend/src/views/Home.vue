@@ -327,9 +327,13 @@
                 <div class="text-center">
                     <h3 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-4 sm:mb-6">🎓 EduManager</h3>
                     <p class="text-sm sm:text-base lg:text-lg text-gray-400 mb-8">Zamonaviy ta'lim platformasi</p>
+
+                    <!-- Developer Info -->
+                    <DeveloperInfo />
+
                     <div class="mt-8">
-                        <p class="text-xs sm:text-sm lg:text-base text-gray-400">&copy; 2024 EduManager. Barcha
-                            huquqlar himoyalangan.</p>
+                        <p class="text-xs sm:text-sm lg:text-base text-gray-400">&copy; 2024 EduManager. Barcha huquqlar
+                            himoyalangan.</p>
                     </div>
                 </div>
             </div>
@@ -340,6 +344,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import DeveloperInfo from '@/components/DeveloperInfo.vue'
 
 // Stats data
 const stats = ref({

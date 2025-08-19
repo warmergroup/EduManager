@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import {
   HomeIcon,
   VideoCameraIcon,
@@ -11,12 +11,16 @@ import {
 } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '@/stores/auth'
 import { useSidebarStore } from '@/stores/sidebar'
+import DeveloperInfo from '@/components/DeveloperInfo.vue'
 
 const authStore = useAuthStore()
 const sidebarStore = useSidebarStore()
 
 const user = computed(() => authStore.user)
 const isTeacher = computed(() => user.value?.role === 'teacher')
+
+// dev info faqat transition tugagach ko‘rinishi uchun flag
+const showDevInfo = ref(false)
 
 const studentNavigation = [
   { name: 'StudentDashboard', label: 'Dashboard', to: '/student/dashboard', icon: HomeIcon },
@@ -67,6 +71,29 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
   document.removeEventListener('click', handleClickOutside)
 })
+
+
+const handleTransitionEnd = () => {
+  // Sidebar ochilganda ko‘rsatish
+  if (!sidebarStore.isCollapsed) {
+    showDevInfo.value = true
+  } else {
+    showDevInfo.value = false
+  }
+}
+
+watch(() => sidebarStore.isCollapsed, (collapsed) => {
+  if (collapsed) {
+    // Yopilish boshlansa → darrov yo‘qoladi
+    showDevInfo.value = false
+  } else {
+    // Ochilgandan keyin kechikib chiqsin
+    showDevInfo.value = true
+    setTimeout(() => {
+    }, 100) // sidebar transition tugashiga yaqinroq
+  }
+})
+
 </script>
 
 <template>
@@ -81,7 +108,8 @@ onUnmounted(() => {
       sidebarStore.isMobile
         ? (sidebarStore.isOpen ? 'translate-x-0 w-[70vw]' : '-translate-x-full w-[70vw]')
         : (sidebarStore.isCollapsed ? 'w-16' : 'w-60')
-    ]" @click.stop>
+    ]" @transitionend="handleTransitionEnd" @click.stop>
+
     <!-- Header (only mobile) -->
     <div v-if="sidebarStore.isMobile" class="flex items-center justify-between p-4 border-b border-gray-200">
       <p class="font-semibold">{{ user?.fullName }}</p>
@@ -113,8 +141,15 @@ onUnmounted(() => {
       </template>
     </nav>
 
+    <!-- Developer Info -->
+    <Transition name="fade">
+      <div v-if="showDevInfo" class="absolute bottom-20">
+        <DeveloperInfo />
+      </div>
+    </Transition>
+
     <!-- Logout Section -->
-    <div class="py-4 border-t border-gray-200">
+    <div class="absolute bottom-0 left-0 py-4 border-t border-gray-200">
       <button @click="handleLogout"
         class="flex items-center justify-start w-full px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 rounded-lg transition-all duration-300 group"
         :class="sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'justify-center px-2' : ''">
@@ -132,5 +167,22 @@ onUnmounted(() => {
 <style scoped>
 .sidebar {
   min-height: 90vh;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(5px);
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>
