@@ -26,6 +26,13 @@ export interface Task {
   deadline: string
   createdBy: string | User
   isCompleted?: boolean
+  file?: {
+    fileId: string
+    fileName: string
+    fileSize: number
+    mimeType: string
+    fileUrl: string
+  }
   createdAt: string
   updatedAt: string
 }
@@ -34,6 +41,7 @@ export interface TaskCreate {
   title: string
   description: string
   deadline: string
+  file?: File
 }
 
 export interface Video {

@@ -51,9 +51,9 @@ const openTask = (task: Task) => {
     selectedTask.value = task
 }
 
-const handleSubmit = async (taskId: string, file: File) => {
+const handleSubmit = async (taskId: string, file: File, textResponse?: string) => {
     try {
-        await submissionStore.createSubmission(taskId, file)
+        await submissionStore.createSubmission(taskId, file, textResponse)
         selectedTask.value = null
         // Refresh submissions after submitting
         await submissionStore.fetchStudentProgress()

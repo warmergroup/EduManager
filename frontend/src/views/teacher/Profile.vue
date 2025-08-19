@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTeacherStore } from '@/stores/teacher'
+import { userAPI } from '@/services/api'
 
 const authStore = useAuthStore()
 const teacherStore = useTeacherStore()
@@ -25,11 +26,39 @@ const formatDate = (date: string | Date | undefined) => {
 const updateProfile = async () => {
     try {
         loading.value = true
-        // TODO: Implement profile update API call
-        // Show success message
-    } catch (error) {
+
+        // Prepare update data
+        const updateData: any = {
+            fullName: form.value.fullName,
+            email: form.value.email
+        }
+
+        // Add password fields if new password is provided
+        if (form.value.newPassword) {
+            if (!form.value.currentPassword) {
+                alert('Yangi parol kiritish uchun hozirgi parolni kiriting')
+                return
+            }
+            updateData.currentPassword = form.value.currentPassword
+            updateData.newPassword = form.value.newPassword
+        }
+
+        // Call API to update profile
+        const response = await userAPI.updateProfile(updateData)
+
+        if (response.data.success) {
+            // Update local user data
+            authStore.user = { ...authStore.user, ...response.data.data.user }
+
+            // Clear password fields
+            form.value.currentPassword = ''
+            form.value.newPassword = ''
+
+            alert('Profil muvaffaqiyatli yangilandi!')
+        }
+    } catch (error: any) {
         console.error('Profile update error:', error)
-        // Show error message
+        alert(error.response?.data?.message || 'Profilni yangilashda xatolik yuz berdi')
     } finally {
         loading.value = false
     }

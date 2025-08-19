@@ -48,11 +48,141 @@ api.interceptors.response.use(
 
 export default api
 
-// User-related API calls
-export const getUserProfile = () => api.get('/api/users/profile')
-export const updateUserProfile = (data: any) => api.put('/api/users/profile', data)
-export const getAllUsers = () => api.get('/api/users')
+// Task API functions
+export const taskAPI = {
+  // Get all tasks
+  getTasks: (params?: { page?: number; limit?: number; search?: string }) => {
+    return api.get('/api/tasks', { params })
+  },
 
-// Statistics API calls
-export const getTeacherStats = () => api.get('/api/users/stats/teacher')
-export const getStudentStats = () => api.get('/api/users/stats/student')
+  // Get task by ID
+  getTask: (id: string) => {
+    return api.get(`/api/tasks/${id}`)
+  },
+
+  // Create new task
+  createTask: (data: FormData) => {
+    return api.post('/api/tasks', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+
+  // Update task
+  updateTask: (id: string, data: FormData) => {
+    return api.put(`/api/tasks/${id}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+
+  // Delete task
+  deleteTask: (id: string) => {
+    return api.delete(`/api/tasks/${id}`)
+  },
+
+  // Get task statistics
+  getTaskStats: (id: string) => {
+    return api.get(`/api/tasks/${id}/stats`)
+  }
+}
+
+// Submission API functions
+export const submissionAPI = {
+  // Get all submissions (for teachers)
+  getAllSubmissions: (params?: { page?: number; limit?: number; status?: string }) => {
+    return api.get('/api/submissions', { params })
+  },
+
+  // Get submissions for a specific task
+  getSubmissions: (taskId: string) => {
+    return api.get(`/api/submissions/${taskId}`)
+  },
+
+  // Get single submission
+  getSubmission: (id: string) => {
+    return api.get(`/api/submissions/single/${id}`)
+  },
+
+  // Submit assignment
+  submitAssignment: (taskId: string, data: FormData) => {
+    return api.post(`/api/submissions/${taskId}`, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  },
+
+  // Grade submission
+  gradeSubmission: (id: string, data: { score: number; feedback: string }) => {
+    return api.put(`/api/submissions/${id}/grade`, data)
+  },
+
+  // Get student progress
+  getStudentProgress: () => {
+    return api.get('/api/submissions/progress')
+  }
+}
+
+// Video API functions
+export const videoAPI = {
+  // Get all videos
+  getVideos: (params?: { page?: number; limit?: number; search?: string }) => {
+    return api.get('/api/videos', { params })
+  },
+
+  // Get video by ID
+  getVideo: (id: string) => {
+    return api.get(`/api/videos/${id}`)
+  },
+
+  // Create new video
+  createVideo: (data: { title: string; url: string; description?: string }) => {
+    return api.post('/api/videos', data)
+  },
+
+  // Update video
+  updateVideo: (id: string, data: { title?: string; url?: string; description?: string }) => {
+    return api.put(`/api/videos/${id}`, data)
+  },
+
+  // Delete video
+  deleteVideo: (id: string) => {
+    return api.delete(`/api/videos/${id}`)
+  },
+
+  // Get videos by teacher
+  getVideosByTeacher: (teacherId: string) => {
+    return api.get(`/api/videos/teacher/${teacherId}`)
+  }
+}
+
+// User API functions
+export const userAPI = {
+  // Get user profile
+  getProfile: () => {
+    return api.get('/api/users/profile')
+  },
+
+  // Update user profile
+  updateProfile: (data: { fullName?: string; email?: string; currentPassword?: string; newPassword?: string }) => {
+    return api.put('/api/users/profile', data)
+  },
+
+  // Get all users (for teachers)
+  getAllUsers: () => {
+    return api.get('/api/users')
+  },
+
+  // Get teacher statistics
+  getTeacherStats: () => {
+    return api.get('/api/users/stats/teacher')
+  },
+
+  // Get student statistics
+  getStudentStats: () => {
+    return api.get('/api/users/stats/student')
+  }
+}

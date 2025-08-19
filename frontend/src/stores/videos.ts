@@ -66,6 +66,54 @@ export const useVideosStore = defineStore('videos', () => {
     }
   }
 
+  const updateVideo = async (videoId: string, videoData: Partial<VideoCreate>) => {
+    loading.value = true
+    error.value = null
+    
+    try {
+      const response = await api.put(`/api/videos/${videoId}`, videoData)
+      
+      if (response.data.success && response.data.data.video) {
+        const updatedVideo = response.data.data.video
+        const index = videos.value.findIndex(v => v._id === videoId)
+        if (index !== -1) {
+          videos.value[index] = updatedVideo
+        }
+        lastFetch.value = Date.now()
+        return updatedVideo
+      } else {
+        throw new Error('Video yangilashda xatolik yuz berdi')
+      }
+    } catch (err: any) {
+      error.value = err.response?.data?.message || 'Video yangilashda xatolik yuz berdi'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const deleteVideo = async (videoId: string) => {
+    loading.value = true
+    error.value = null
+    
+    try {
+      const response = await api.delete(`/api/videos/${videoId}`)
+      
+      if (response.data.success) {
+        videos.value = videos.value.filter(v => v._id !== videoId)
+        lastFetch.value = Date.now()
+        return true
+      } else {
+        throw new Error('Video o\'chirishda xatolik yuz berdi')
+      }
+    } catch (err: any) {
+      error.value = err.response?.data?.message || 'Video o\'chirishda xatolik yuz berdi'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   const clearCache = () => {
     lastFetch.value = 0
     videos.value = []
@@ -85,6 +133,8 @@ export const useVideosStore = defineStore('videos', () => {
     hasError,
     fetchVideos,
     addVideo,
+    updateVideo,
+    deleteVideo,
     clearCache,
     refreshVideos
   }

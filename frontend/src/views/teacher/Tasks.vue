@@ -55,7 +55,7 @@ const handleTabChange = (tab: string) => {
     filter.value = 'all'
 }
 
-const handleSubmit = async (taskData: Partial<Task> & TaskCreate) => {
+const handleSubmit = async (taskData: TaskCreate) => {
     try {
         if (selectedTask.value) {
             await taskStore.updateTask(selectedTask.value._id, taskData)
@@ -146,9 +146,13 @@ onMounted(async () => {
                 </select>
             </div>
             <button v-if="activeTab === 'tasks'" @click="openCreateModal"
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 mr-2">
                 + Yangi Vazifa
             </button>
+            <router-link v-if="activeTab === 'tasks'" to="/teacher/create-task"
+                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                📝 Vazifa Yaratish
+            </router-link>
         </div>
 
         <!-- Loading State -->

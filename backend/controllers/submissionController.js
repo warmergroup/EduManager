@@ -210,75 +210,78 @@ export const getSubmissionById = async (req, res) => {
   }
 }
 
-// Grade a submission
+// @desc    Grade submission
+// @route   PUT /api/submissions/:id/grade
+// @access  Private (Teacher only)
 export const gradeSubmission = async (req, res) => {
-    try {
-        const { submissionId } = req.params;
-        const { score, feedback } = req.body;
-        const teacherId = req.user.id;
+  try {
+    const { id } = req.params;
+    const { score, feedback } = req.body;
 
-        // Validate input
-        if (!score || score < 0 || score > 100) {
-            return res.status(400).json({
-                success: false,
-                message: 'Score must be between 0 and 100'
-            });
-        }
-
-        if (!feedback || feedback.trim().length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Feedback is required'
-            });
-        }
-
-        // Find submission and check if it exists
-        const submission = await Submission.findById(submissionId);
-        if (!submission) {
-            return res.status(404).json({
-                success: false,
-                message: 'Submission not found'
-            });
-        }
-
-        // Check if teacher is grading their own submission (shouldn't happen)
-        if (submission.studentId.toString() === teacherId) {
-            return res.status(403).json({
-                success: false,
-                message: 'Teachers cannot grade their own submissions'
-            });
-        }
-
-        // Update submission with grade
-        submission.score = score;
-        submission.feedback = feedback;
-        submission.gradedBy = teacherId;
-        submission.gradedAt = new Date();
-        submission.isGraded = true;
-
-        await submission.save();
-
-        res.json({
-            success: true,
-            message: 'Submission graded successfully',
-            data: {
-                submission: {
-                    id: submission._id,
-                    score: submission.score,
-                    feedback: submission.feedback,
-                    gradedAt: submission.gradedAt,
-                    isGraded: submission.isGraded
-                }
-            }
-        });
-
-    } catch (error) {
-        console.error('Grade submission error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error'
-        });
+    // Validate score
+    if (score === undefined || score === null) {
+      return res.status(400).json({
+        success: false,
+        message: "Score is required"
+      });
     }
+
+    if (score < 0 || score > 100) {
+      return res.status(400).json({
+        success: false,
+        message: "Score must be between 0 and 100"
+      });
+    }
+
+    // Find submission and check if it exists
+    const submission = await Submission.findById(id)
+      .populate('taskId', 'title createdBy')
+      .populate('studentId', 'fullName email');
+
+    if (!submission) {
+      return res.status(404).json({
+        success: false,
+        message: "Submission not found"
+      });
+    }
+
+    // Check if the teacher owns the task
+    if (submission.taskId.createdBy.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You can only grade submissions for your own tasks"
+      });
+    }
+
+    // Update submission with grade and feedback
+    const updatedSubmission = await Submission.findByIdAndUpdate(
+      id,
+      {
+        score,
+        feedback: feedback || "",
+        isGraded: true,
+        gradedAt: new Date(),
+        gradedBy: req.user.id
+      },
+      { new: true, runValidators: true }
+    ).populate([
+      { path: 'taskId', select: 'title description deadline' },
+      { path: 'studentId', select: 'fullName email' }
+    ]);
+
+    res.json({
+      success: true,
+      message: "Submission graded successfully",
+      data: { submission: updatedSubmission }
+    });
+
+  } catch (error) {
+    console.error("Grade submission error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while grading submission"
+    });
+  }
 };
 
 // @desc    Get student progress

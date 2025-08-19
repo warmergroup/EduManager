@@ -24,6 +24,30 @@ const taskSchema = new mongoose.Schema(
         message: "Deadline must be in the future",
       },
     },
+    // File support
+    file: {
+      fileId: String,
+      fileName: String,
+      fileSize: Number,
+      mimeType: String,
+      fileUrl: String
+    },
+    // Student submissions tracking
+    submissions: [{
+      studentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      },
+      submittedAt: {
+        type: Date,
+        default: Date.now
+      },
+      status: {
+        type: String,
+        enum: ['submitted', 'graded'],
+        default: 'submitted'
+      }
+    }],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -38,5 +62,6 @@ const taskSchema = new mongoose.Schema(
 // Index for better query performance
 taskSchema.index({ createdBy: 1, createdAt: -1 })
 taskSchema.index({ deadline: 1 })
+taskSchema.index({ "submissions.studentId": 1 })
 
 export const Task = mongoose.model("Task", taskSchema)

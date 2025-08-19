@@ -6,6 +6,7 @@ import {
   updateTask,
   deleteTask,
   getTaskStats,
+  upload
 } from "../controllers/taskController.js"
 import { protect, teacherOnly } from "../middleware/auth.js"
 import { validateTask } from "../middleware/validation.js"
@@ -33,15 +34,16 @@ router.get("/:id/stats", teacherOnly, getTaskStats)
 // @route   POST /api/tasks
 // @desc    Create new task
 // @access  Private (Teacher only)
-router.post("/", teacherOnly, validateTask, createTask)
+router.post("/", teacherOnly, upload.single('file'), validateTask, createTask)
 
 // @route   PUT /api/tasks/:id
 // @desc    Update task
 // @access  Private (Teacher only - own tasks)
-router.put("/:id", teacherOnly, validateTask, updateTask)
+router.put("/:id", teacherOnly, upload.single('file'), validateTask, updateTask)
 
 // @route   DELETE /api/tasks/:id
 // @desc    Delete task
 // @access  Private (Teacher only - own tasks)
 router.delete("/:id", teacherOnly, deleteTask)
+
 export default router

@@ -17,6 +17,7 @@ import TeacherAI from '@/views/teacher/AIGenerator.vue'
 import TeacherProfile from '@/views/teacher/Profile.vue'
 import TeacherStudents from '@/views/teacher/Students.vue'
 import TeacherTasks from '@/views/teacher/Tasks.vue'
+import CreateTask from '@/views/teacher/CreateTask.vue'
 import NotFound from '../views/NotFound.vue'
 
 const routes = [
@@ -117,6 +118,11 @@ const routes = [
         path: 'profile',
         name: 'TeacherProfile',
         component: TeacherProfile
+      },
+      {
+        path: 'create-task',
+        name: 'CreateTask',
+        component: CreateTask
       }
     ]
   },

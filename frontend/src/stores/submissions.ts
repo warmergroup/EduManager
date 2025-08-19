@@ -302,13 +302,17 @@ export const useSubmissionsStore = defineStore('submissions', () => {
     }
   }
 
-  const createSubmission = async (taskId: string, file: File) => {
+  const createSubmission = async (taskId: string, file: File, textResponse?: string) => {
     try {
       loading.value = true
       error.value = null
       
       const formData = new FormData()
       formData.append('file', file)
+      
+      if (textResponse) {
+        formData.append('textResponse', textResponse)
+      }
       
       const response = await api.post(`/api/submissions/${taskId}`, formData, {
         headers: {

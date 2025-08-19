@@ -1,52 +1,48 @@
-import multer from "multer"
-import path from "path"
+import multer from 'multer'
 
 // Configure multer for memory storage
 const storage = multer.memoryStorage()
 
 // File filter function
 const fileFilter = (req, file, cb) => {
-  // Allowed file types
+  // Allow images, PDFs, and common document formats
   const allowedTypes = [
-    "application/pdf", // PDF
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // DOCX
-    "application/msword", // DOC
-    "image/jpeg", // JPG
-    "image/jpg", // JPG
-    "image/png", // PNG
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+    'application/pdf', 'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   ]
 
-  // Check file type
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true)
   } else {
-    cb(new Error("Invalid file type. Only PDF, DOCX, DOC, JPG, and PNG files are allowed."), false)
+    cb(new Error('Invalid file type. Only images, PDFs, and documents are allowed.'), false)
   }
 }
 
-// Configure multer 
+// Create multer instance
 export const upload = multer({
   storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
-  fileFilter: fileFilter,
+  fileFilter: fileFilter
 })
 
-// Error handling middleware for multer
+// Error handling middleware
 export const handleUploadError = (error, req, res, next) => {
   if (error instanceof multer.MulterError) {
-    if (error.code === "LIMIT_FILE_SIZE") {
-      return res.status(400).json({ message: "File too large. Maximum size is 10MB." })
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        success: false,
+        message: 'File size too large. Maximum size is 10MB.'
+      })
     }
-    if (error.code === "LIMIT_UNEXPECTED_FILE") {
-      return res.status(400).json({ message: "Unexpected field name. Use 'file' as field name." })
-    }
+  } else if (error.message.includes('Invalid file type')) {
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    })
   }
-
-  if (error.message.includes("Invalid file type")) {
-    return res.status(400).json({ message: error.message })
-  }
-
+  
   next(error)
 }

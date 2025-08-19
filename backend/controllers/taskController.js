@@ -1,5 +1,29 @@
 import { Task } from "../models/Task.js"
 import { Submission } from "../models/Submission.js"
+import fileService from "../services/fileService.js"
+import multer from "multer"
+
+// Multer configuration for file uploads
+export const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Allow images, PDFs, and common document formats
+    const allowedTypes = [
+      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+      'application/pdf', 'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only images, PDFs, and documents are allowed.'), false);
+    }
+  }
+});
 
 // @desc    Get all tasks
 // @route   GET /api/tasks
@@ -108,31 +132,55 @@ export const getTaskById = async (req, res) => {
 
 // @desc    Create new task
 // @route   POST /api/tasks
-// @access  Private (Teacher only)
+// @access  Private (Teachers only)
 export const createTask = async (req, res) => {
   try {
-    const { title, description, deadline } = req.body
+    const { title, description, deadline } = req.body;
+    const file = req.file; // Multer middleware'dan kelgan fayl
 
-    const task = await Task.create({
+    // Create task data
+    const taskData = {
       title,
       description,
-      deadline: new Date(deadline),
-      createdBy: req.user.id,
-    })
+      deadline,
+      createdBy: req.user.id
+    };
 
-    // Populate creator info
-    await task.populate("createdBy", "fullName email")
+    // If file is uploaded, process it
+    if (file) {
+      const uploadResult = await fileService.uploadFile(file, 'tasks');
+      
+      if (uploadResult.success) {
+        taskData.file = {
+          fileId: uploadResult.fileId,
+          fileName: uploadResult.fileName,
+          fileSize: uploadResult.size,
+          mimeType: uploadResult.mimeType,
+          fileUrl: uploadResult.url
+        };
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: 'File upload failed: ' + uploadResult.error
+        });
+      }
+    }
+
+    const task = await Task.create(taskData);
 
     res.status(201).json({
       success: true,
-      message: "Task created successfully",
-      data: { task },
-    })
+      message: 'Task created successfully',
+      data: { task }
+    });
   } catch (error) {
-    console.error("Create task error:", error)
-    res.status(500).json({ message: "Server error while creating task" })
+    console.error("Create task error:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Server error while creating task" 
+    });
   }
-}
+};
 
 // @desc    Update task
 // @route   PUT /api/tasks/:id

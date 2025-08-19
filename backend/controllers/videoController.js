@@ -120,78 +120,99 @@ export const addVideo = async (req, res) => {
 // @access  Private (Teacher only - own videos)
 export const updateVideo = async (req, res) => {
   try {
-    const { title, url, description } = req.body
+    const { title, url, description } = req.body;
+    const videoId = req.params.id;
 
-    // Find video and check ownership
-    const video = await Video.findById(req.params.id)
+    // Check if video exists and belongs to the teacher
+    const video = await Video.findById(videoId);
     if (!video) {
-      return res.status(404).json({ message: "Video not found" })
+      return res.status(404).json({
+        success: false,
+        message: "Video not found"
+      });
     }
 
-    // Check if the teacher owns this video
     if (video.createdBy.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Not authorized to update this video" })
+      return res.status(403).json({
+        success: false,
+        message: "You can only edit your own videos"
+      });
     }
 
-    // Extract YouTube video ID and create embed URL
-    let embedUrl = url
-    const youtubeRegex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/
-    const match = url.match(youtubeRegex)
+    // Extract YouTube video ID and create embed URL if URL changed
+    let embedUrl = url;
+    if (url && url !== video.url) {
+      const youtubeRegex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
+      const match = url.match(youtubeRegex);
 
-    if (match && match[1]) {
-      embedUrl = `https://www.youtube.com/embed/${match[1]}`
+      if (match && match[1]) {
+        embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+      }
     }
 
     // Update video
     const updatedVideo = await Video.findByIdAndUpdate(
-      req.params.id,
+      videoId,
       {
-        title,
-        url: embedUrl,
-        description: description || "",
+        title: title || video.title,
+        url: embedUrl || video.url,
+        description: description || video.description,
       },
-      { new: true, runValidators: true },
-    ).populate("createdBy", "fullName email")
+      { new: true, runValidators: true }
+    ).populate("createdBy", "fullName email");
 
     res.json({
       success: true,
-      message: "Video lesson updated successfully",
-      data: { video: updatedVideo },
-    })
+      message: "Video updated successfully",
+      data: { video: updatedVideo }
+    });
   } catch (error) {
-    console.error("Update video error:", error)
-    res.status(500).json({ message: "Server error while updating video" })
+    console.error("Update video error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while updating video"
+    });
   }
-}
+};
 
 // @desc    Delete video lesson
 // @route   DELETE /api/videos/:id
 // @access  Private (Teacher only - own videos)
 export const deleteVideo = async (req, res) => {
   try {
-    // Find video and check ownership
-    const video = await Video.findById(req.params.id)
+    const videoId = req.params.id;
+
+    // Check if video exists and belongs to the teacher
+    const video = await Video.findById(videoId);
     if (!video) {
-      return res.status(404).json({ message: "Video not found" })
+      return res.status(404).json({
+        success: false,
+        message: "Video not found"
+      });
     }
 
-    // Check if the teacher owns this video
     if (video.createdBy.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Not authorized to delete this video" })
+      return res.status(403).json({
+        success: false,
+        message: "You can only delete your own videos"
+      });
     }
 
-    // Delete the video
-    await Video.findByIdAndDelete(req.params.id)
+    // Delete video
+    await Video.findByIdAndDelete(videoId);
 
     res.json({
       success: true,
-      message: "Video lesson deleted successfully",
-    })
+      message: "Video deleted successfully"
+    });
   } catch (error) {
-    console.error("Delete video error:", error)
-    res.status(500).json({ message: "Server error while deleting video" })
+    console.error("Delete video error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while deleting video"
+    });
   }
-}
+};
 
 // @desc    Get videos by teacher
 // @route   GET /api/videos/teacher/my-videos

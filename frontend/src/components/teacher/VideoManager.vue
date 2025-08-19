@@ -1,3 +1,124 @@
+<script setup lang="ts">
+import { ref, reactive, onMounted } from 'vue'
+import { VideoCameraIcon } from '@heroicons/vue/24/outline'
+import { useVideosStore } from '../../stores/videos'
+import Loading from '../ui/Loading.vue'
+import Alert from '../ui/Alert.vue'
+import VideoPlayer from '../ui/VideoPlayer.vue'
+
+const videosStore = useVideosStore()
+const { videos, loading, error } = videosStore
+
+const showAddModal = ref(false)
+const showDeleteModal = ref(false)
+const videoLoading = ref(false)
+const deleteLoading = ref(false)
+const success = ref(false)
+const editingVideo = ref<any>(null)
+const videoToDelete = ref<any>(null)
+
+const videoForm = reactive({
+  title: '',
+  description: '',
+  url: '',
+  thumbnail: '',
+  duration: undefined as number | undefined
+})
+
+const formatDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+}
+
+const openAddModal = () => {
+  resetForm()
+  editingVideo.value = null
+  showAddModal.value = true
+}
+
+const openEditModal = (video: any) => {
+  editingVideo.value = video
+  videoForm.title = video.title
+  videoForm.description = video.description
+  videoForm.url = video.url
+  videoForm.thumbnail = video.thumbnail || ''
+  videoForm.duration = video.duration
+  showAddModal.value = true
+}
+
+const closeModal = () => {
+  showAddModal.value = false
+  showDeleteModal.value = false
+  resetForm()
+  editingVideo.value = null
+  videoToDelete.value = null
+}
+
+const confirmDelete = (video: any) => {
+  videoToDelete.value = video
+  showDeleteModal.value = true
+}
+
+const resetForm = () => {
+  videoForm.title = ''
+  videoForm.description = ''
+  videoForm.url = ''
+  videoForm.thumbnail = ''
+  videoForm.duration = undefined
+}
+
+const handleAddVideo = async () => {
+  videoLoading.value = true
+
+  try {
+    await videosStore.addVideo(videoForm)
+    success.value = true
+    closeModal()
+  } catch (err) {
+    // Error handled in store
+  } finally {
+    videoLoading.value = false
+  }
+}
+
+const handleEditVideo = async () => {
+  if (!editingVideo.value) return
+
+  videoLoading.value = true
+
+  try {
+    await videosStore.updateVideo(editingVideo.value._id, videoForm)
+    success.value = true
+    closeModal()
+  } catch (err) {
+    // Error handled in store
+  } finally {
+    videoLoading.value = false
+  }
+}
+
+const handleDeleteVideo = async () => {
+  if (!videoToDelete.value) return
+
+  deleteLoading.value = true
+
+  try {
+    await videosStore.deleteVideo(videoToDelete.value._id)
+    success.value = true
+    closeModal()
+  } catch (err) {
+    // Error handled in store
+  } finally {
+    deleteLoading.value = false
+  }
+}
+
+onMounted(() => {
+  videosStore.fetchVideos()
+})
+</script>
+
 <template>
   <div class="space-y-6">
     <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
@@ -31,8 +152,20 @@
                 ⏱️ {{ formatDuration(video.duration) }}
               </span>
               <div class="space-x-2">
-                <a :href="video.url" target="_blank" rel="noopener noreferrer"
+                <!-- Edit Button -->
+                <button @click="openEditModal(video)"
+                  class="px-3 py-1 bg-blue-500 text-white text-xs rounded-lg hover:bg-blue-600 transition-colors">
+                  ✏️ Tahrirlash
+                </button>
+
+                <!-- Delete Button -->
+                <button @click="confirmDelete(video)"
                   class="px-3 py-1 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition-colors">
+                  🗑️ O'chirish
+                </button>
+
+                <a :href="video.url" target="_blank" rel="noopener noreferrer"
+                  class="px-3 py-1 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 transition-colors">
                   🎬 YouTube'da ochish
                 </a>
               </div>
@@ -45,9 +178,11 @@
     <!-- Add Video Modal -->
     <div v-if="showAddModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-bold text-gray-900 mb-4">➕ Yangi Video Qo'shish</h3>
+        <h3 class="text-xl font-bold text-gray-900 mb-4">
+          {{ editingVideo ? '✏️ Video Tahrirlash' : '➕ Yangi Video Qo\'shish' }}
+        </h3>
 
-        <form @submit.prevent="handleAddVideo">
+        <form @submit.prevent="editingVideo ? handleEditVideo : handleAddVideo">
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-2">📝 Video nomi</label>
@@ -86,16 +221,37 @@
           </div>
 
           <div class="flex gap-3 mt-6">
-            <button type="button" @click="closeAddModal"
+            <button type="button" @click="closeModal"
               class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
               Bekor qilish
             </button>
             <button type="submit" :disabled="videoLoading"
               class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-200">
-              {{ videoLoading ? '⏳ Qo\'shilmoqda...' : 'Video qo\'shish' }}
+              {{ videoLoading ? '⏳ Qo\'shilmoqda...' : (editingVideo ? 'Tahrirlash' : 'Video qo\'shish') }}
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-bold text-gray-900 mb-4">🗑️ Video O'chirish</h3>
+        <p class="text-gray-600 mb-6">
+          "<strong>{{ videoToDelete?.title }}</strong>" videosini o'chirishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi.
+        </p>
+
+        <div class="flex gap-3">
+          <button @click="showDeleteModal = false"
+            class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            Bekor qilish
+          </button>
+          <button @click="handleDeleteVideo" :disabled="deleteLoading"
+            class="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:opacity-50 transition-colors">
+            {{ deleteLoading ? '⏳ O\'chirilmoqda...' : 'O\'chirish' }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -105,69 +261,3 @@
       @close="success = false" />
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { VideoCameraIcon } from '@heroicons/vue/24/outline'
-import { useVideosStore } from '../../stores/videos'
-import Loading from '../ui/Loading.vue'
-import Alert from '../ui/Alert.vue'
-import VideoPlayer from '../ui/VideoPlayer.vue'
-
-const videosStore = useVideosStore()
-const { videos, loading, error } = videosStore
-
-const showAddModal = ref(false)
-const videoLoading = ref(false)
-const success = ref(false)
-
-const videoForm = reactive({
-  title: '',
-  description: '',
-  url: '',
-  thumbnail: '',
-  duration: undefined as number | undefined
-})
-
-const formatDuration = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-}
-
-const openAddModal = () => {
-  resetForm()
-  showAddModal.value = true
-}
-
-const closeAddModal = () => {
-  showAddModal.value = false
-  resetForm()
-}
-
-const resetForm = () => {
-  videoForm.title = ''
-  videoForm.description = ''
-  videoForm.url = ''
-  videoForm.thumbnail = ''
-  videoForm.duration = undefined
-}
-
-const handleAddVideo = async () => {
-  videoLoading.value = true
-
-  try {
-    await videosStore.addVideo(videoForm)
-    success.value = true
-    closeAddModal()
-  } catch (err) {
-    // Error handled in store
-  } finally {
-    videoLoading.value = false
-  }
-}
-
-onMounted(() => {
-  videosStore.fetchVideos()
-})
-</script>
