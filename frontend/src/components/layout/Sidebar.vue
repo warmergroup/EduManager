@@ -30,15 +30,13 @@ const teacherNavigation = [
   { name: 'TeacherDashboard', label: 'Dashboard', to: '/teacher/dashboard', icon: HomeIcon },
   { name: 'TeacherTasks', label: 'Vazifalar', to: '/teacher/tasks', icon: DocumentTextIcon },
   { name: 'TeacherVideos', label: 'Video Menejeri', to: '/teacher/videos', icon: VideoCameraIcon },
-  { name: 'TeacherStudents', label: 'Student\'lar', to: '/teacher/students', icon: UsersIcon },
+  { name: 'TeacherStudents', label: "Student'lar", to: '/teacher/students', icon: UsersIcon },
   { name: 'TeacherAI', label: 'AI Generator', to: '/teacher/ai', icon: CpuChipIcon },
   { name: 'TeacherProfile', label: 'Profil', to: '/teacher/profile', icon: UserIcon }
 ]
 
 const navigationItems = computed(() => {
-  if (!user.value?.role) {
-    return []
-  }
+  if (!user.value?.role) return []
   return isTeacher.value ? teacherNavigation : studentNavigation
 })
 
@@ -46,7 +44,6 @@ const handleLogout = () => {
   authStore.logout()
 }
 
-// Close sidebar on mobile when clicking outside
 const handleClickOutside = (event: Event) => {
   if (sidebarStore.isMobile && sidebarStore.isOpen) {
     const target = event.target as HTMLElement
@@ -56,7 +53,6 @@ const handleClickOutside = (event: Event) => {
   }
 }
 
-// Handle window resize
 const handleResize = () => {
   sidebarStore.checkMobile()
 }
@@ -76,30 +72,23 @@ onUnmounted(() => {
 <template>
   <!-- Mobile Overlay -->
   <div v-if="sidebarStore.isMobile && sidebarStore.isOpen"
-    class="fixed inset-0 bg-gray-300/50 bg-opacity-50 z-40 lg:hidden" @click="sidebarStore.close"></div>
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" @click="sidebarStore.close"></div>
 
   <!-- Sidebar -->
   <aside
-    class="sidebar fixed lg:relative top-0 left-0 h-full lg:h-[90vh] z-50 bg-white shadow-lg border-r border-gray-200 flex flex-col transition-all duration-500 ease-in-out"
+    class="sidebar fixed lg:relative top-0 left-0 h-full lg:h-[90vh] z-50 bg-white shadow-lg border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out"
     :class="[
-      sidebarStore.isMobile ? 'w-[70vw]' : 'w-60',
-      sidebarStore.sidebarTransform,
-    ]" :style="{ width: sidebarStore.sidebarWidth }" @click.stop>
-
-    <!-- Header with toggle button (mobile only) -->
-    <div v-motion :initial="{ opacity: 0, x: -20 }"
-      :enter="{ opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } }"
-      :leave="{ opacity: 0, x: -20, transition: { duration: 0.3, ease: 'easeIn' } }"
-      v-if="sidebarStore.isMobile && sidebarStore.isOpen"
-      class="flex items-center justify-between p-4 border-b border-gray-200">
-      <p>{{ user?.fullName }}</p>
+      sidebarStore.isMobile
+        ? (sidebarStore.isOpen ? 'translate-x-0 w-[70vw]' : '-translate-x-full w-[70vw]')
+        : (sidebarStore.isCollapsed ? 'w-16' : 'w-60')
+    ]" @click.stop>
+    <!-- Header (only mobile) -->
+    <div v-if="sidebarStore.isMobile" class="flex items-center justify-between p-4 border-b border-gray-200">
+      <p class="font-semibold">{{ user?.fullName }}</p>
       <button @click="sidebarStore.close" class="text-gray-500 hover:text-gray-700">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
+        ✕
       </button>
     </div>
-
 
     <!-- Navigation -->
     <nav class="flex-1 space-y-2 overflow-y-auto">
@@ -108,19 +97,15 @@ onUnmounted(() => {
           class="flex items-center justify-start px-4 py-3 text-sm font-medium rounded-lg transition-all duration-300 group"
           :class="[
             $route.name === item.name
-              ? 'bg-blue-100 text-primary-700 lg:border-r-2 border-blue-600'
+              ? 'bg-blue-100 text-blue-700 lg:border-r-2 border-blue-600'
               : 'text-gray-700 hover:bg-blue-50',
             sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'justify-center px-2' : ''
           ]" @click="sidebarStore.isMobile && sidebarStore.close()">
-
-          <component :is="item.icon" class="w-5 h-5 transition-all duration-300 flex-shrink-0" :class="[
+          <component :is="item.icon" class="w-5 h-5 flex-shrink-0" :class="[
             sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'mr-0' : 'mr-3',
-            $route.name === item.name ? 'text-primary-700' : 'text-gray-500 group-hover:text-gray-700'
+            $route.name === item.name ? 'text-blue-700' : 'text-gray-500 group-hover:text-gray-700'
           ]" />
-
-          <span v-if="sidebarStore.isOpen || sidebarStore.isMobile" v-motion :initial="{ opacity: 0, x: -20 }"
-            :enter="{ opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } }"
-            :leave="{ opacity: 0, x: -20, transition: { duration: 0.3, ease: 'easeIn' } }"
+          <span v-if="!sidebarStore.isCollapsed || sidebarStore.isMobile"
             class="transition-all duration-300 whitespace-nowrap">
             {{ item.label }}
           </span>
@@ -133,23 +118,12 @@ onUnmounted(() => {
       <button @click="handleLogout"
         class="flex items-center justify-start w-full px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-50 rounded-lg transition-all duration-300 group"
         :class="sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'justify-center px-2' : ''">
-
-        <svg class="w-5 h-5 transition-all duration-300 flex-shrink-0" fill="none" stroke="currentColor"
-          viewBox="0 0 24 24" :class="[
-            sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'mr-0' : 'mr-3',
-            'text-red-500 group-hover:text-red-700'
-          ]">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          :class="[sidebarStore.isCollapsed && !sidebarStore.isMobile ? 'mr-0' : 'mr-3']">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
-
-        <!-- Show label only when sidebar is fully open or on mobile -->
-        <span v-if="sidebarStore.isOpen || sidebarStore.isMobile" v-motion :initial="{ opacity: 0, x: -20 }"
-          :enter="{ opacity: 1, x: 0, transition: { duration: 0.4, ease: 'easeOut' } }"
-          :leave="{ opacity: 0, x: -20, transition: { duration: 0.3, ease: 'easeIn' } }"
-          class="transition-all duration-300 whitespace-nowrap">
-          Logout
-        </span>
+        <span v-if="!sidebarStore.isCollapsed || sidebarStore.isMobile">Logout</span>
       </button>
     </div>
   </aside>
@@ -158,23 +132,5 @@ onUnmounted(() => {
 <style scoped>
 .sidebar {
   min-height: 90vh;
-}
-
-/* Smooth transitions */
-.transition-transform {
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 500ms;
-}
-
-/* Hide sidebar content when closed on mobile */
-@media (max-width: 1023px) {
-  .sidebar:not(.translate-x-0) {
-    pointer-events: none;
-  }
-
-  .sidebar:not(.translate-x-0) * {
-    opacity: 0;
-  }
 }
 </style>
