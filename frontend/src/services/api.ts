@@ -3,10 +3,21 @@ import axios from 'axios'
 
 // Vercel deployment uchun API URL
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD
-    ? 'https://edumanager-backend-rust.vercel.app'
-    : 'http://localhost:5000'
-  )
+  (() => {
+    // Environment detection
+    const hostname = window.location.hostname;
+    
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:5000';
+    }
+    
+    if (hostname === 'edumanager.sultonovdev.uz') {
+      return 'https://edumanager-backend-rust.vercel.app';
+    }
+    
+    // Default Vercel backend
+    return 'https://edumanager-backend-rust.vercel.app';
+  })()
 
 const api = axios.create({
   baseURL: API_BASE_URL,

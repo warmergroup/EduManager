@@ -16,8 +16,16 @@ import userRoutes from "./routes/users.js";
 
 const app = express();
 
-// CORS Middleware - eng yuqorida bo'lishi kerak
+// CORS middleware
 app.use(cors(corsOptions));
+
+// CORS debug middleware
+app.use((req, res, next) => {
+  console.log(`🌐 Request from: ${req.headers.origin}`);
+  console.log(`🔗 Request URL: ${req.method} ${req.url}`);
+  console.log(`📱 User-Agent: ${req.headers['user-agent']}`);
+  next();
+});
 
 // CORS Error handling
 app.use((err, req, res, next) => {

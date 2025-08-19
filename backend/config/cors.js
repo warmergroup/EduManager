@@ -10,21 +10,30 @@ export const corsOptions = {
       'http://localhost:3000',
       'http://localhost:5173',
       'http://127.0.0.1:3000',
-      'http://127.0.0.1:5173',
+      '127.0.0.1:5173',
       
       // Vercel frontend domains
       'https://edu-manager-three.vercel.app',
       'https://edu-manager-frontend.vercel.app',
+      
+      // Yangi subdomain
       'https://edumanager.sultonovdev.uz',
+      'http://edumanager.sultonovdev.uz', // HTTP ham qo'shildi
       
       // Environment variable orqali qo'shimcha domainlar
-      ...(process.env.CORS_ORIGIN ? [process.env.CORS_ORIGIN] : [])
+      ...(process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [])
     ];
     
+    // Debug uchun log
+    console.log(`🌐 CORS check for origin: ${origin}`);
+    console.log(`✅ Allowed origins:`, allowedOrigins);
+    
     if (allowedOrigins.includes(origin)) {
+      console.log(`✅ CORS allowed for: ${origin}`);
       callback(null, true);
     } else {
       console.warn(`🚫 CORS blocked for: ${origin}`);
+      console.warn(`🔍 Available origins:`, allowedOrigins);
       callback(new Error(`Origin ${origin} not allowed by CORS policy`));
     }
   },
