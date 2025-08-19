@@ -167,12 +167,12 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{
-    'view': [task: Task]
-    'submit': [task: Task]
-    'edit': [task: Task]
-    'delete': [task: Task]
-}>()
+// const emit = defineEmits<{
+//     'view': [task: Task]
+//     'submit': [task: Task]
+//     'edit': [task: Task]
+//     'delete': [task: Task]
+// }>()
 
 const authStore = useAuthStore()
 const userRole = computed(() => authStore.user?.role)

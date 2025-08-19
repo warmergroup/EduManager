@@ -163,8 +163,8 @@ onMounted(async () => {
         <!-- Tasks Tab -->
         <div v-if="activeTab === 'tasks' && !loading">
             <div v-if="tasks.length > 0" class="grid gap-4">
-                <TaskCard v-for="task in tasks" :key="task._id" :task="task" :showActions="true" @edit="editTask"
-                    @delete="confirmDelete" />
+            <TaskCard v-for="task in tasks" :key="task._id" :task="task" :showActions="true" @edit="editTask"
+                @delete="confirmDelete" />
             </div>
             <div v-else class="text-center py-8 text-gray-500">
                 <p class="text-lg font-medium mb-2">Hali vazifalar mavjud emas</p>

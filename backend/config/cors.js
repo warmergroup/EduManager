@@ -15,6 +15,7 @@ export const corsOptions = {
       // Vercel frontend domains
       'https://edu-manager-three.vercel.app',
       'https://edu-manager-frontend.vercel.app',
+      'https://edumanager.sultonovdev.uz',
       
       // Environment variable orqali qo'shimcha domainlar
       ...(process.env.CORS_ORIGIN ? [process.env.CORS_ORIGIN] : [])
