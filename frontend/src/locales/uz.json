@@ -217,7 +217,8 @@
     "refresh": "Yangilash",
     "all": "Hammasi",
     "graded": "Baholangan",
-    "pending": "Kutilmoqda"
+    "pending": "Kutilmoqda",
+    "fileUploaded": "Fayl yuklangan"
   },
   "profile": {
     "title": "Profil",

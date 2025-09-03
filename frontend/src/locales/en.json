@@ -218,7 +218,8 @@
     "refresh": "Refresh",
     "completed": "Completed",
     "all": "All",
-    "pending": "Pending"
+    "pending": "Pending",
+    "fileUploaded": "File uploaded"
   },
   "profile": {
     "title": "Profile",

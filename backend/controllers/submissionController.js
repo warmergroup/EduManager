@@ -57,6 +57,7 @@ export const submitAssignment = async (req, res) => {
       fileId: uploadResult.fileId,
       fileSize: uploadResult.fileSize,
       mimeType: uploadResult.mimeType,
+      submittedAt: new Date(),
     })
 
     // Populate task and student info
@@ -333,7 +334,12 @@ export const getStudentProgress = async (req, res) => {
   }
 }
 
-export const getMySubmissions = async (req, res) => { 
+
+
+// @desc    Get student's own submissions
+// @route   GET /api/submissions/student/my-submissions
+// @access  Private (Student only)
+export const getMySubmissions = async (req, res) => {
   try {
     const submissions = await Submission.find({ studentId: req.user.id })
       .populate('taskId', 'title description deadline')
@@ -362,10 +368,10 @@ export const getMySubmissions = async (req, res) => {
       }
     })
   } catch (error) {
-    console.error('Get student submissions error:', error)
+    console.error('Get my submissions error:', error)
     res.status(500).json({
       success: false,
-      message: 'Failed to fetch student submissions',
+      message: 'Failed to fetch my submissions',
       error: error.message
     })
   }

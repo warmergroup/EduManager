@@ -1,11 +1,24 @@
-export const formatDate = (date: string): string => {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+export const formatDate = (date: string | Date): string => {
+  if (!date) return 'Invalid Date'
+  
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date
+    
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid Date'
+    }
+    
+    return dateObj.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch (error) {
+    console.error('Date formatting error:', error)
+    return 'Invalid Date'
+  }
 }
 
 export const formatFileSize = (bytes: number): string => {
