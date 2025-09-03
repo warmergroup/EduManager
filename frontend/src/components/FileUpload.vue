@@ -1,58 +1,7 @@
-<template>
-    <div class="file-upload">
-        <!-- File Preview -->
-        <div v-if="filePreview" class="file-preview mb-4">
-            <div class="flex items-center p-3 bg-gray-50 rounded-lg border">
-                <div class="flex-shrink-0 mr-3">
-                    <FileIcon :file="filePreview" class="w-8 h-8 text-blue-500" />
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900 truncate">
-                        {{ filePreview.name }}
-                    </p>
-                    <p class="text-sm text-gray-500">
-                        {{ formatFileSize(filePreview.size) }}
-                    </p>
-                </div>
-                <button @click="removeFile" type="button"
-                    class="ml-2 p-1 text-gray-400 hover:text-red-500 transition-colors">
-                    <XMarkIcon class="w-5 h-5" />
-                </button>
-            </div>
-        </div>
-
-        <!-- Upload Area -->
-        <div v-if="!filePreview" @drop="handleDrop" @dragover.prevent @dragenter.prevent class="upload-area"
-            :class="{ 'border-blue-500 bg-blue-50': isDragOver }">
-            <div class="text-center">
-                <CloudArrowUpIcon class="mx-auto h-12 w-12 text-gray-400" />
-                <div class="mt-4">
-                    <label for="file-upload"
-                        class="cursor-pointer rounded-md bg-white font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
-                        <span>Fayl yuklash</span>
-                        <input id="file-upload" ref="fileInput" type="file" :accept="accept" :multiple="multiple"
-                            class="sr-only" @change="handleFileSelect" />
-                    </label>
-                    <p class="text-xs text-gray-500 mt-1">
-                        yoki faylni bu yerga tashlang
-                    </p>
-                </div>
-                <p class="text-xs text-gray-500 mt-2">
-                    {{ fileTypesText }} • Maksimal hajm: {{ maxSizeText }}
-                </p>
-            </div>
-        </div>
-
-        <!-- Error Message -->
-        <div v-if="error" class="mt-2 text-sm text-red-600">
-            {{ error }}
-        </div>
-    </div>
-</template>
-
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { CloudArrowUpIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import FileIcon from './FileIcon.vue'
 
 interface FilePreview {
     name: string
@@ -169,28 +118,60 @@ const formatFileSize = (bytes: number): string => {
 }
 </script>
 
-<script lang="ts">
-// File Icon Component
-const FileIcon = {
-    props: ['file'],
-    template: `
-    <svg v-if="file.type.startsWith('image/')" class="w-8 h-8 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-    </svg>
-    <svg v-else-if="file.type.includes('pdf')" class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-      <path d="M4 18h12V6l-4-4H4v16zm2-14h5v4h4v8H6V4z" />
-    </svg>
-    <svg v-else-if="file.type.includes('word') || file.type.includes('docx')" class="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-      <path d="M4 18h12V6l-4-4H4v16zm2-14h5v4h4v8H6V4z" />
-    </svg>
-    <svg v-else class="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-      <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-    </svg>
-  `
-}
-</script>
+<template>
+    <div class="file-upload">
+        <!-- File Preview -->
+        <div v-if="filePreview" class="file-preview mb-4">
+            <div class="flex items-center p-3 bg-gray-50 rounded-lg border">
+                <div class="flex-shrink-0 mr-3">
+                    <FileIcon :file="filePreview" />
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                        {{ filePreview.name }}
+                    </p>
+                    <p class="text-sm text-gray-500">
+                        {{ formatFileSize(filePreview.size) }}
+                    </p>
+                </div>
+                <button @click="removeFile" type="button"
+                    class="ml-2 p-1 text-gray-400 hover:text-red-500 transition-colors">
+                    <XMarkIcon class="w-5 h-5" />
+                </button>
+            </div>
+        </div>
+
+        <!-- Upload Area -->
+        <div v-if="!filePreview" @drop="handleDrop" @dragover.prevent @dragenter.prevent class="upload-area"
+            :class="{ 'border-blue-500 bg-blue-50': isDragOver }">
+            <div class="text-center">
+                <CloudArrowUpIcon class="mx-auto h-12 w-12 text-gray-400" />
+                <div class="mt-4">
+                    <label for="file-upload"
+                        class="cursor-pointer rounded-md bg-white font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
+                        <span>Fayl yuklash</span>
+                        <input id="file-upload" ref="fileInput" type="file" :accept="accept" :multiple="multiple"
+                            class="sr-only" @change="handleFileSelect" />
+                    </label>
+                    <p class="text-xs text-gray-500 mt-1">
+                        yoki faylni bu yerga tashlang
+                    </p>
+                </div>
+                <p class="text-xs text-gray-500 mt-2">
+                    {{ fileTypesText }} • Maksimal hajm: {{ maxSizeText }}
+                </p>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div v-if="error" class="mt-2 text-sm text-red-600">
+            {{ error }}
+        </div>
+    </div>
+</template>
 
 <style scoped>
+/* don't use @apply because it's not working*/
 /* .upload-area {
     @apply border-2 border-dashed border-gray-300 rounded-lg p-6 transition-colors duration-200;
 }

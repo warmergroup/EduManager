@@ -23,20 +23,20 @@ const isTeacher = computed(() => user.value?.role === 'teacher')
 const showDevInfo = ref(false)
 
 const studentNavigation = [
-  { name: 'StudentDashboard', label: 'Dashboard', to: '/student/dashboard', icon: HomeIcon },
-  { name: 'StudentTasks', label: 'Vazifalar', to: '/student/tasks', icon: DocumentTextIcon },
-  { name: 'StudentVideos', label: 'Video Darslar', to: '/student/videos', icon: VideoCameraIcon },
-  { name: 'StudentAI', label: 'AI Yordamchisi', to: '/student/ai', icon: ChatBubbleLeftRightIcon },
-  { name: 'StudentProfile', label: 'Profil', to: '/student/profile', icon: UserIcon }
+  { name: 'StudentDashboard', labelKey: 'navigation.studentDashboard', to: '/student/dashboard', icon: HomeIcon },
+  { name: 'StudentTasks', labelKey: 'navigation.studentTasks', to: '/student/tasks', icon: DocumentTextIcon },
+  { name: 'StudentVideos', labelKey: 'navigation.studentVideos', to: '/student/videos', icon: VideoCameraIcon },
+  { name: 'StudentAI', labelKey: 'navigation.studentAI', to: '/student/ai', icon: ChatBubbleLeftRightIcon },
+  { name: 'StudentProfile', labelKey: 'navigation.studentProfile', to: '/student/profile', icon: UserIcon }
 ]
 
 const teacherNavigation = [
-  { name: 'TeacherDashboard', label: 'Dashboard', to: '/teacher/dashboard', icon: HomeIcon },
-  { name: 'TeacherTasks', label: 'Vazifalar', to: '/teacher/tasks', icon: DocumentTextIcon },
-  { name: 'TeacherVideos', label: 'Video Menejeri', to: '/teacher/videos', icon: VideoCameraIcon },
-  { name: 'TeacherStudents', label: "Student'lar", to: '/teacher/students', icon: UsersIcon },
-  { name: 'TeacherAI', label: 'AI Generator', to: '/teacher/ai', icon: CpuChipIcon },
-  { name: 'TeacherProfile', label: 'Profil', to: '/teacher/profile', icon: UserIcon }
+  { name: 'TeacherDashboard', labelKey: 'navigation.teacherDashboard', to: '/teacher/dashboard', icon: HomeIcon },
+  { name: 'TeacherTasks', labelKey: 'navigation.teacherTasks', to: '/teacher/tasks', icon: DocumentTextIcon },
+  { name: 'TeacherVideos', labelKey: 'navigation.teacherVideos', to: '/teacher/videos', icon: VideoCameraIcon },
+  { name: 'TeacherStudents', labelKey: 'navigation.teacherStudents', to: '/teacher/students', icon: UsersIcon },
+  { name: 'TeacherAI', labelKey: 'navigation.teacherAI', to: '/teacher/ai', icon: CpuChipIcon },
+  { name: 'TeacherProfile', labelKey: 'navigation.teacherProfile', to: '/teacher/profile', icon: UserIcon }
 ]
 
 const navigationItems = computed(() => {
@@ -135,7 +135,7 @@ watch(() => sidebarStore.isCollapsed, (collapsed) => {
           ]" />
           <span v-if="!sidebarStore.isCollapsed || sidebarStore.isMobile"
             class="transition-all duration-300 whitespace-nowrap">
-            {{ item.label }}
+            {{ $t(item.labelKey) }}
           </span>
         </router-link>
       </template>
@@ -158,7 +158,7 @@ watch(() => sidebarStore.isCollapsed, (collapsed) => {
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
-        <span v-if="!sidebarStore.isCollapsed || sidebarStore.isMobile">Logout</span>
+        <span v-if="!sidebarStore.isCollapsed || sidebarStore.isMobile">{{ $t('navigation.logout') }}</span>
       </button>
     </div>
   </aside>

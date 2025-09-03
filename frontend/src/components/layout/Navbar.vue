@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useSidebarStore } from '@/stores/sidebar'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -11,25 +12,26 @@ const { user } = authStore
 
 const pageTitle = computed(() => {
   const routeName = route.name as string
-  const titles: { [key: string]: string } = {
+  const titleKeys: { [key: string]: string } = {
     // Student pages
-    'StudentDashboard': 'Dashboard',
-    'StudentTasks': 'Vazifalar',
-    'StudentSubmissions': 'Topshiriqlar',
-    'StudentVideos': 'Video Darslar',
-    'StudentAI': 'AI Yordamchisi',
-    'StudentProfile': 'Profil',
+    'StudentDashboard': 'navigation.studentDashboard',
+    'StudentTasks': 'navigation.studentTasks',
+    'StudentSubmissions': 'navigation.submissions',
+    'StudentVideos': 'navigation.studentVideos',
+    'StudentAI': 'navigation.studentAI',
+    'StudentProfile': 'navigation.studentProfile',
 
     // Teacher pages
-    'TeacherDashboard': 'Dashboard',
-    'TeacherTasks': 'Vazifalar',
-    'TeacherSubmissions': 'Topshiriqlar',
-    'TeacherVideos': 'Video Menejeri',
-    'TeacherStudents': 'Student\'lar',
-    'TeacherAI': 'AI Generator',
-    'TeacherProfile': 'Profil'
+    'TeacherDashboard': 'navigation.teacherDashboard',
+    'TeacherTasks': 'navigation.teacherTasks',
+    'TeacherSubmissions': 'navigation.submissions',
+    'TeacherVideos': 'navigation.teacherVideos',
+    'TeacherStudents': 'navigation.teacherStudents',
+    'TeacherAI': 'navigation.teacherAI',
+    'TeacherProfile': 'navigation.teacherProfile'
   }
-  return titles[routeName] || 'Dashboard'
+  const titleKey = titleKeys[routeName] || 'navigation.dashboard'
+  return titleKey
 })
 
 const toggleSidebar = () => {
@@ -71,12 +73,15 @@ const toggleDesktopSidebar = () => {
 
         <!-- Page Title -->
         <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">
-          {{ pageTitle }}
+          {{ $t(pageTitle) }}
         </h1>
       </div>
 
-      <!-- Right side: User Info + Logout -->
+      <!-- Right side: Language Switcher + User Info + Logout -->
       <div class="flex items-center space-x-4">
+        <!-- Language Switcher -->
+        <LanguageSwitcher />
+
         <div class="flex items-center space-x-2">
           <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
             <span class="text-white text-sm font-medium">

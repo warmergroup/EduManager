@@ -11,6 +11,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ||
       return 'http://localhost:5000';
     }
     
+    // Mobile qurilmalar uchun WiFi network IP
+    if (hostname === '192.168.1.3') {
+      return 'http://192.168.1.3:5000';
+    }
+    
     if (hostname === 'edumanager.sultonovdev.uz') {
       return 'https://edumanager-backend-rust.vercel.app';
     }

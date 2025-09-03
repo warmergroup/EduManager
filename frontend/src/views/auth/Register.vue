@@ -39,9 +39,9 @@ const handleRegister = async () => {
     class="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full">
       <!-- Card Container -->
-      <div class="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+      <div class="bg-white flex flex-col gap-4 rounded-2xl shadow-2xl p-8 border border-gray-100">
         <!-- Header -->
-        <div class="text-center mb-8">
+        <div class="text-center">
           <div
             class="mx-auto h-16 w-16 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center mb-4">
             <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -50,10 +50,10 @@ const handleRegister = async () => {
             </svg>
           </div>
           <h2 class="text-3xl font-bold text-gray-900 mb-2">
-            Hisob yarating
+            {{ $t('auth.register.title') }}
           </h2>
           <p class="text-gray-600">
-            Platformada ishlash uchun yangi hisob yarating
+            {{ $t('auth.register.subtitle') }}
           </p>
         </div>
 
@@ -62,7 +62,7 @@ const handleRegister = async () => {
           <!-- Full Name Field -->
           <div>
             <label for="fullName" class="block text-sm font-medium text-gray-700 mb-2">
-              To'liq ism
+              {{ $t('auth.register.fullName') }}
             </label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -73,14 +73,14 @@ const handleRegister = async () => {
               </div>
               <input id="fullName" v-model="form.fullName" name="fullName" type="text" required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
-                placeholder="To'liq ismingizni kiriting" />
+                :placeholder="$t('auth.register.fullName')" />
             </div>
           </div>
 
           <!-- Email Field -->
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-              Email manzil
+              {{ $t('auth.register.email') }}
             </label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -92,14 +92,14 @@ const handleRegister = async () => {
               </div>
               <input id="email" v-model="form.email" name="email" type="email" required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
-                placeholder="example@email.com" />
+                :placeholder="$t('auth.register.email')" />
             </div>
           </div>
 
           <!-- Password Field -->
           <div>
             <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-              Parol
+              {{ $t('auth.register.password') }}
             </label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -111,15 +111,15 @@ const handleRegister = async () => {
               </div>
               <input id="password" v-model="form.password" name="password" type="password" required minlength="6"
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200"
-                placeholder="••••••••" />
+                :placeholder="$t('auth.register.password')" />
             </div>
-            <p class="mt-1 text-xs text-gray-500">Parol kamida 6 belgidan iborat bo'lishi kerak</p>
+            <p class="mt-1 text-xs text-gray-500">{{ $t('auth.register.passwordHint') }}</p>
           </div>
 
           <!-- Role Field -->
           <div>
             <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
-              Men kimman?
+              {{ $t('auth.register.role') }}
             </label>
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -131,7 +131,7 @@ const handleRegister = async () => {
               </div>
               <select id="role" v-model="form.role" name="role" required
                 class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors duration-200 appearance-none bg-white">
-                <option value="">Rolingizni tanlang</option>
+                <option value="">{{ $t('auth.register.role') }}</option>
                 <option value="student">🎓 Talaba</option>
                 <option value="teacher">👨‍🏫 O'qituvchi</option>
               </select>
@@ -152,9 +152,9 @@ const handleRegister = async () => {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
                   </path>
                 </svg>
-                Hisob yaratish
+                  {{ $t('auth.register.registerButton') }}
               </span>
-              <Loading v-else text="Hisob yaratilmoqda..." />
+              <Loading v-else text="{{ $t('auth.register.registerButton') }}..." />
             </button>
           </div>
 
@@ -164,7 +164,7 @@ const handleRegister = async () => {
               <div class="w-full border-t border-gray-300"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="px-2 bg-white text-gray-500">Yoki</span>
+              <span class="px-2 bg-white text-gray-500">{{ $t('auth.register.or') }}</span>
             </div>
           </div>
 
@@ -172,7 +172,7 @@ const handleRegister = async () => {
           <div class="text-center">
             <router-link to="/login"
               class="text-green-600 hover:text-green-700 font-medium transition-colors duration-200">
-              Mavjud hisobga kirish
+              {{ $t('auth.register.signIn') }}
             </router-link>
           </div>
         </form>
@@ -189,7 +189,7 @@ const handleRegister = async () => {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
             </path>
           </svg>
-          Asosiy sahifaga qaytish
+          {{ $t('auth.register.backToHome') }}
         </router-link>
       </div>
     </div>
