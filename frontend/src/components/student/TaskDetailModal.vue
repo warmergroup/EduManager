@@ -4,12 +4,12 @@ import type { Task, SubmissionData } from '@/types'
 import FileUpload from '@/components/FileUpload.vue'
 
 const props = defineProps<{
-    task: Task
+  task: Task
   submission?: SubmissionData
 }>()
 
 const emit = defineEmits<{
-    (e: 'close'): void
+  (e: 'close'): void
   (e: 'submit', taskId: string, file: File, textResponse?: string): void
 }>()
 
@@ -116,7 +116,7 @@ const formatFileSize = (bytes: number): string => {
               Rasm, PDF yoki Word hujjat yuklashingiz mumkin. Maksimal hajm: 10MB
             </p>
           </div>
-            </div>
+        </div>
 
         <!-- Existing Submission -->
         <div v-else class="mb-6">
@@ -141,7 +141,7 @@ const formatFileSize = (bytes: number): string => {
             </div>
           </div>
         </div>
-            </div>
+      </div>
 
       <!-- Footer -->
       <div class="p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
@@ -164,9 +164,9 @@ const formatFileSize = (bytes: number): string => {
               Topshirilmoqda...
             </span>
             <span v-else>Topshirish</span>
-                </button>
+          </button>
         </div>
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 </template>

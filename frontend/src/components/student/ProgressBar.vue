@@ -30,23 +30,23 @@ onMounted(() => {
 </script>
 <template>
   <div class="card">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4">Progress Overview</h3>
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">📊 {{ $t('dashboard.student.progressIndicator') }}</h3>
 
     <Loading v-if="loading" text="Loading progress..." />
 
     <div v-else class="space-y-4">
       <div class="flex items-center justify-between text-sm">
-        <span class="text-gray-600">Tasks Submitted</span>
+        <span class="text-gray-600">{{ $t('dashboard.student.submittedTasks') }}</span>
         <span class="font-medium">{{ progress?.submittedTasks || 0 }} / {{ progress?.totalTasks || 0 }}</span>
       </div>
 
       <div class="flex items-center justify-between text-sm">
-        <span class="text-gray-600">Tasks Graded</span>
+        <span class="text-gray-600">{{ $t('dashboard.student.gradedTasks') }}</span>
         <span class="font-medium">{{ progress?.gradedTasks || 0 }} / {{ progress?.submittedTasks || 0 }}</span>
       </div>
 
       <div class="flex items-center justify-between text-sm">
-        <span class="text-gray-600">Average Score</span>
+        <span class="text-gray-600">{{ $t('dashboard.student.averageScore') }}</span>
         <span class="font-medium">{{ progress?.averageScore || 0 }}%</span>
       </div>
 
@@ -57,13 +57,13 @@ onMounted(() => {
 
       <div class="text-center mt-2">
         <span class="text-2xl font-bold text-primary-600">{{ progress?.completionPercentage || 0 }}%</span>
-        <p class="text-sm text-gray-600">Complete</p>
+        <p class="text-sm text-gray-600">{{ $t('dashboard.student.completion') }}</p>
       </div>
 
       <div v-if="progress?.completionPercentage === 100" class="text-center mt-4">
         <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
           <CheckCircleIcon class="w-4 h-4 mr-1" />
-          All tasks completed!
+          {{ $t('dashboard.student.allTasksCompleted') }}
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
 <template>
   <div class="card">
     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-lg font-semibold text-gray-900">My Tasks</h3>
+      <h3 class="text-lg font-semibold text-gray-900">📚 {{ $t('dashboard.student.myTasks') }}</h3>
       <button @click="fetchTasks" :disabled="loading" class="btn-secondary text-sm">
-        Refresh
+        {{ $t('tasks.refresh') }}
       </button>
     </div>
 
@@ -11,8 +11,8 @@
 
     <div v-else-if="tasks.length === 0" class="text-center py-8">
       <DocumentTextIcon class="mx-auto h-12 w-12 text-gray-400" />
-      <h3 class="mt-2 text-sm font-medium text-gray-900">No tasks</h3>
-      <p class="mt-1 text-sm text-gray-500">You don't have any tasks yet.</p>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">{{ $t('tasks.noTasks') }}</h3>
+      <p class="mt-1 text-sm text-gray-500">{{ $t('tasks.noTasksDesc') }}</p>
     </div>
 
     <div v-else class="space-y-4">
@@ -25,17 +25,17 @@
             </h4>
             <p class="text-sm text-gray-600 mt-1">{{ task.description }}</p>
             <p class="text-xs text-gray-500 mt-2">
-              Due: {{ formatDate(task.deadline) }}
+              {{ $t('tasks.due') }}: {{ formatDate(task.deadline) }}
             </p>
           </div>
           <div class="flex items-center space-x-2">
             <span v-if="task.isCompleted"
               class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
               <CheckIcon class="w-3 h-3 mr-1" />
-              Completed
+              {{ $t('tasks.completed') }}
             </span>
             <button v-else @click="$emit('uploadFile', task)" class="btn-primary text-sm">
-              Submit
+              {{ $t('tasks.submitTask') }}
             </button>
           </div>
         </div>

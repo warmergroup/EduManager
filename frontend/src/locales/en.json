@@ -145,7 +145,18 @@
         "totalTasks": "Total Tasks",
         "completedTasks": "Completed Tasks",
         "pendingTasks": "Pending Tasks"
-      }
+      },
+      "description": "Your learning progress and tasks",
+      "totalTasks": "Total Tasks",
+      "submittedTasks": "Submitted Tasks",
+      "pendingGrades": "Pending Grades",
+      "averageScore": "Average Score",
+      "totalProgress": "Total Progress",
+      "completion": "Completion",
+      "myTasks": "My Tasks",
+      "progressIndicator": "Progress Indicator",
+      "allTasksCompleted": "All tasks completed",
+      "gradedTasks": "Graded Tasks"
     }
   },
   "videos": {
@@ -168,7 +179,9 @@
     "updateSuccess": "Video updated successfully"
   },
   "tasks": {
-    "title": "Tasks",
+    "title": "Tasks and Assignments",
+    "description": "View all tasks and their status",
+    "tasks": "Tasks",
     "createTask": "Create Task",
     "editTask": "Edit Task",
     "deleteTask": "Delete Task",
@@ -193,7 +206,15 @@
     "grade": "Grade",
     "feedback": "Feedback",
     "score": "Score",
-    "gradeSuccess": "Task graded successfully"
+    "gradeSuccess": "Task graded successfully",
+    "due": "Deadline",
+    "preview": "Preview",
+    "download": "Download",
+    "createdBy": "Created By",
+    "submitted": "Submitted",
+    "graded": "Graded",
+    "refresh": "Refresh",
+    "completed": "Completed"
   },
   "profile": {
     "title": "Profile",

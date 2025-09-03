@@ -39,7 +39,7 @@ const handleUploadSuccess = () => {
     <!-- Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-      <p class="mt-2 text-gray-600">O'qish jarayonidagi natijalaringiz va vazifalar</p>
+      <p class="mt-2 text-gray-600">{{ $t('dashboard.student.description') }}</p>
     </div>
 
     <!-- Progress Overview Cards -->
@@ -55,7 +55,7 @@ const handleUploadSuccess = () => {
             </svg>
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Jami Vazifalar</p>
+            <p class="text-sm font-medium text-gray-600">{{ $t('dashboard.student.totalTasks') }}</p>
             <p class="text-2xl font-semibold text-gray-900">{{ progress.totalTasks || 0 }}</p>
           </div>
         </div>
@@ -70,7 +70,7 @@ const handleUploadSuccess = () => {
             </svg>
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Topshirilgan</p>
+            <p class="text-sm font-medium text-gray-600">{{ $t('dashboard.student.submittedTasks') }}</p>
             <p class="text-2xl font-semibold text-gray-900">{{ progress.submittedTasks || 0 }}</p>
           </div>
         </div>
@@ -85,7 +85,7 @@ const handleUploadSuccess = () => {
             </svg>
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Kutilmoqda</p>
+            <p class="text-sm font-medium text-gray-600">{{ $t('dashboard.student.pendingGrades') }}</p>
             <p class="text-2xl font-semibold text-gray-900">{{ progress.pendingGrades || 0 }}</p>
           </div>
         </div>
@@ -101,7 +101,7 @@ const handleUploadSuccess = () => {
             </svg>
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">O'rtacha Ball</p>
+            <p class="text-sm font-medium text-gray-600">{{ $t('dashboard.student.averageScore') }}</p>
             <p class="text-2xl font-semibold text-gray-900">{{ progress.averageScore || 0 }}/100</p>
           </div>
         </div>
@@ -111,12 +111,12 @@ const handleUploadSuccess = () => {
 
     <!-- Progress Chart -->
     <div class="bg-white rounded-lg shadow p-6 mb-8">
-      <h3 class="font-medium text-gray-900 mb-4">Umumiy Progress</h3>
+      <h3 class="font-medium text-gray-900 mb-4">{{ $t('dashboard.student.totalProgress') }}</h3>
       <div class="relative pt-1">
         <div class="flex mb-2 items-center justify-between">
           <div>
             <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
-              Tamamlanish
+              {{ $t('dashboard.student.completion') }}
             </span>
           </div>
           <div class="text-right">
@@ -137,17 +137,11 @@ const handleUploadSuccess = () => {
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
       <div class="lg:col-span-2">
         <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
-          <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-            📚 Mening Vazifalarim
-          </h3>
           <TaskList @uploadFile="openUploadModal" />
         </div>
       </div>
       <div>
         <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
-          <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-            📊 Progress Ko'rsatkichi
-          </h3>
           <ProgressBar />
         </div>
       </div>

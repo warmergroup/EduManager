@@ -145,7 +145,18 @@
         "totalTasks": "Jami vazifalar",
         "completedTasks": "Bajarilgan vazifalar",
         "pendingTasks": "Kutilayotgan vazifalar"
-      }
+      },
+      "description": "O'qish jarayonidagi natijalaringiz va vazifalar",
+      "totalTasks": "Jami vazifalar",
+      "submittedTasks": "Bajarilgan vazifalar",
+      "pendingGrades": "Kutilayotgan baholash",
+      "averageScore": "O'rtacha ball",
+      "totalProgress": "Umumiy Progress",
+      "completion": "Tugallangan",
+      "myTasks": "Mening Vazifalarim",
+      "progressIndicator": "Progress Ko'rsatkichi",
+      "allTasksCompleted": "Barcha vazifalar tugallandi",
+      "gradedTasks": "Baholangan vazifalar"
     }
   },
   "videos": {
@@ -168,7 +179,9 @@
     "updateSuccess": "Video muvaffaqiyatli yangilandi"
   },
   "tasks": {
-    "title": "Vazifalar",
+    "title": "Vazifalar va Topshiriqlar",
+    "description": "Barcha vazifalar va ularning holatini ko'rish",
+    "tasks": "Vazifalar",
     "createTask": "Vazifa yaratish",
     "editTask": "Vazifani tahrirlash",
     "deleteTask": "Vazifani o'chirish",
@@ -180,6 +193,7 @@
     "noTasks": "Vazifalar mavjud emas",
     "noTasksDesc": "Hali hech qanday vazifa yaratilmagan",
     "totalTasks": "Jami vazifalar",
+    "submittedTasks": "Topshirilgan vazifalar",
     "confirmDelete": "Bu vazifani o'chirishni xohlaysizmi?",
     "deleteSuccess": "Vazifa muvaffaqiyatli o'chirildi",
     "createSuccess": "Vazifa muvaffaqiyatli yaratildi",
@@ -193,7 +207,14 @@
     "grade": "Baholash",
     "feedback": "Izoh",
     "score": "Ball",
-    "gradeSuccess": "Vazifa muvaffaqiyatli baholandi"
+    "gradeSuccess": "Vazifa muvaffaqiyatli baholandi",
+    "due": "Muddat",
+    "preview": "Ko'rish",
+    "download": "Yuklab olish",
+    "createdBy": "Yaratuvchi",
+    "submitted": "Topshirilgan",
+    "graded": "Baholangan",
+    "refresh": "Yangilash"
   },
   "profile": {
     "title": "Profil",

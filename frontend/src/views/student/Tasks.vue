@@ -73,8 +73,8 @@ onMounted(async () => {
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">📚 Vazifalar va Topshiriqlar</h1>
-            <p class="mt-2 text-gray-600">Barcha vazifalar va ularning holatini ko'rish</p>
+            <h1 class="text-3xl font-bold text-gray-900">{{ $t('tasks.title') }}</h1>
+            <p class="mt-2 text-gray-600">{{ $t('tasks.description') }}</p>
         </div>
 
         <!-- Tabs -->
@@ -87,7 +87,7 @@ onMounted(async () => {
                             ? 'border-blue-500 text-blue-600'
                             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     ]">
-                        📝 Vazifalar
+                        📝 {{ $t('tasks.tasks') }}
                     </button>
                     <button @click="activeTab = 'submissions'" :class="[
                         'py-2 px-1 border-b-2 font-medium text-sm',
@@ -95,7 +95,7 @@ onMounted(async () => {
                             ? 'border-blue-500 text-blue-600'
                             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     ]">
-                        📤 Topshirilgan Vazifalar
+                        📤 {{ $t('tasks.submittedTasks') }}
                     </button>
                 </nav>
             </div>
