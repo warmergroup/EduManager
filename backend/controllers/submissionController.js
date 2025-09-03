@@ -1,6 +1,4 @@
 
-import { storage } from '../config/appwrite.js'
-import { ID } from "node-appwrite"
 import { Submission } from '../models/Submission.js'
 import { Task } from '../models/Task.js'
 import mongoose from 'mongoose'
@@ -38,28 +36,27 @@ export const submitAssignment = async (req, res) => {
       return res.status(400).json({ message: "You have already submitted for this task" })
     }
 
-    // Generate unique file name
-    const fileExtension = req.file.originalname.split(".").pop()
-    const fileName = `${req.user.id}_${taskId}_${Date.now()}.${fileExtension}`
+    // FileService orqali faylni yuklash
+    const fileService = (await import('../services/fileService.js')).default
+    const uploadResult = await fileService.uploadFile(req.file, 'submissions')
 
-    // Upload file to Appwrite Storage
-    const fileUpload = await storage.createFile(process.env.APPWRITE_BUCKET_ID, ID.unique(), req.file.buffer, [
-      // Set file permissions - only the uploader can read
-      `read("user:${req.user.id}")`,
-      // Teachers can also read the file
-      'read("role:teacher")',
-    ])
-
-    // Get file URL
-    const fileUrl = `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${process.env.APPWRITE_BUCKET_ID}/files/${fileUpload.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`
+    if (!uploadResult.success) {
+      return res.status(500).json({ 
+        message: "File upload failed", 
+        error: uploadResult.error 
+      })
+    }
 
     // Create submission record
     const submission = await Submission.create({
       taskId,
       studentId: req.user.id,
-      fileUrl,
-      fileName: req.file.originalname,
-      fileSize: req.file.size,
+      fileUrl: uploadResult.fileUrl,
+      fileName: uploadResult.fileName,
+      originalName: uploadResult.originalName,
+      fileId: uploadResult.fileId,
+      fileSize: uploadResult.fileSize,
+      mimeType: uploadResult.mimeType,
     })
 
     // Populate task and student info

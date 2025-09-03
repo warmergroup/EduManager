@@ -21,8 +21,20 @@ const submissionSchema = new mongoose.Schema(
       type: String,
       required: [true, "File name is required"],
     },
+    originalName: {
+      type: String,
+      required: true,
+    },
+    fileId: {
+      type: String,
+      required: true,
+    },
     fileSize: {
       type: Number,
+      required: true,
+    },
+    mimeType: {
+      type: String,
       required: true,
     },
     score: {
