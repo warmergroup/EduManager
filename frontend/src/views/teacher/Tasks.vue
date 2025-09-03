@@ -33,11 +33,11 @@ const filteredSubmissions = computed(() => {
     )
 })
 
-// Methods
-const openCreateModal = () => {
-    selectedTask.value = undefined
-    showModal.value = true
-}
+// // Methods
+// const openCreateModal = () => {
+//     selectedTask.value = undefined
+//     showModal.value = true
+// }
 
 const editTask = (task: Task) => {
     selectedTask.value = task
