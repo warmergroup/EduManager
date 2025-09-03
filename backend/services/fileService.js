@@ -1,65 +1,61 @@
-import { Client, Storage, ID } from 'node-appwrite';
-import fs from 'fs';
-import path from 'path';
-import FormData from 'form-data';
-import axios from 'axios';
+import { Client, Storage, ID } from 'node-appwrite'
+import fs from 'fs'
+import path from 'path'
+import FormData from 'form-data'
+import axios from 'axios'
 
 class FileService {
   constructor() {
-    // Validate required environment variables
     if (!process.env.APPWRITE_ENDPOINT) {
-      throw new Error('APPWRITE_ENDPOINT environment variable is required');
+      throw new Error('APPWRITE_ENDPOINT environment variable is required')
     }
     if (!process.env.APPWRITE_PROJECT_ID) {
-      throw new Error('APPWRITE_PROJECT_ID environment variable is required');
+      throw new Error('APPWRITE_PROJECT_ID environment variable is required')
     }
     if (!process.env.APPWRITE_API_KEY) {
-      throw new Error('APPWRITE_API_KEY environment variable is required');
+      throw new Error('APPWRITE_API_KEY environment variable is required')
     }
     if (!process.env.APPWRITE_BUCKET_ID) {
-      throw new Error('APPWRITE_BUCKET_ID environment variable is required');
+      throw new Error('APPWRITE_BUCKET_ID environment variable is required')
     }
 
     this.client = new Client()
       .setEndpoint(process.env.APPWRITE_ENDPOINT)
-      .setProject(process.env.APPWRITE_PROJECT_ID);
+      .setProject(process.env.APPWRITE_PROJECT_ID)
 
-    this.storage = new Storage(this.client);
-    this.bucketId = process.env.APPWRITE_BUCKET_ID;
-    
+    this.storage = new Storage(this.client)
+    this.bucketId = process.env.APPWRITE_BUCKET_ID
+
     console.log('✅ FileService initialized with:', {
       endpoint: process.env.APPWRITE_ENDPOINT,
       projectId: process.env.APPWRITE_PROJECT_ID,
       bucketId: this.bucketId
-    });
+    })
   }
 
-  // Fayl yuklash - MEVN app'dagi usul bilan
+  // Fayl yuklash
   async uploadFile(file, folder = 'general') {
     try {
       if (!file || !file.buffer) {
-        throw new Error('Fayl tanlanmadi yoki noto\'g\'ri formatda');
+        throw new Error("Fayl tanlanmadi yoki noto'g'ri formatda")
       }
 
-      const filename = `${Date.now()}_${file.originalname}`;
-      const uploadsDir = path.join(process.cwd(), 'uploads');
-
-      // Uploads papkasini yaratish
+      const uploadsDir = path.join(process.cwd(), 'uploads')
       if (!fs.existsSync(uploadsDir)) {
-        await fs.promises.mkdir(uploadsDir, { recursive: true });
+        await fs.promises.mkdir(uploadsDir, { recursive: true })
       }
 
-      const filePath = path.join(uploadsDir, filename);
-      
-      // Faylni vaqtincha saqlash
-      await fs.promises.writeFile(filePath, file.buffer);
+      const uniqueId = ID.unique()
+      const filename = `${Date.now()}_${file.originalname}`
+      const filePath = path.join(uploadsDir, filename)
 
-      // FormData yaratish
-      const form = new FormData();
-      form.append('fileId', ID.unique());
-      form.append('file', fs.createReadStream(filePath));
+      // Vaqtinchalik saqlash
+      await fs.promises.writeFile(filePath, file.buffer)
 
-      // Appwrite'ga yuklash
+      const form = new FormData()
+      form.append('fileId', uniqueId)
+      form.append('file', fs.createReadStream(filePath))
+
       const { data } = await axios.post(
         `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files`,
         form,
@@ -67,48 +63,29 @@ class FileService {
           headers: {
             ...form.getHeaders(),
             'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
-            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
-          },
+            'X-Appwrite-Key': process.env.APPWRITE_API_KEY
+          }
         }
-      );
+      )
 
-      if (!data.$id) {
-        throw new Error(`Fayl yuklash muvaffaqiyatsiz: ${data.message}`);
-      }
-
-      // Vaqtincha faylni o'chirish
-      await fs.promises.unlink(filePath);
-
-      console.log('✅ File uploaded successfully:', {
-        fileId: data.$id,
-        fileName: file.originalname,
-        size: file.size
-      });
+      await fs.promises.unlink(filePath)
 
       return {
         success: true,
         fileId: data.$id,
-        fileName: file.originalname,
+        fileName: filename,
+        originalName: file.originalname, // ✅ Asl nom
         fileSize: file.size,
-        mimeType: file.mimetype,
+        mimeType: file.mimetype,        // ✅ mimeType saqlanadi
         fileUrl: `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${data.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`
-      };
+      }
     } catch (error) {
-      console.error('❌ File upload error:', error);
-      console.error('File object:', {
-        originalname: file?.originalname,
-        mimetype: file?.mimetype,
-        size: file?.size,
-        hasBuffer: !!file?.buffer
-      });
-      return {
-        success: false,
-        error: error.message
-      };
+      console.error('❌ File upload error:', error)
+      return { success: false, error: error.message }
     }
   }
 
-  // Fayl o'chirish
+  // Faylni o'chirish
   async deleteFile(fileId) {
     try {
       const { data } = await axios.delete(
@@ -116,23 +93,18 @@ class FileService {
         {
           headers: {
             'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
-            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
-          },
+            'X-Appwrite-Key': process.env.APPWRITE_API_KEY
+          }
         }
-      );
-
-      console.log('✅ File deleted successfully:', fileId);
-      return { success: true, data };
+      )
+      return { success: true, data }
     } catch (error) {
-      console.error('❌ File deletion error:', error);
-      return {
-        success: false,
-        error: error.message
-      };
+      console.error('❌ File deletion error:', error)
+      return { success: false, error: error.message }
     }
   }
 
-  // Fayl ma'lumotlarini olish
+  // Fayl ma'lumotlari
   async getFileInfo(fileId) {
     try {
       const { data } = await axios.get(
@@ -140,34 +112,113 @@ class FileService {
         {
           headers: {
             'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
-            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
-          },
+            'X-Appwrite-Key': process.env.APPWRITE_API_KEY
+          }
         }
-      );
+      )
 
       return {
         success: true,
         file: {
           id: data.$id,
           name: data.name,
-          size: data.size,
-          mimeType: data.mimeType,
+          size: data.sizeOriginal || data.size,
+          mimeType: data.mimeType || 'application/octet-stream',
+          originalName: data.name, // ✅ frontendga ko'rsatish uchun
           url: `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${data.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`
         }
-      };
+      }
     } catch (error) {
-      console.error('❌ Get file info error:', error);
-      return {
-        success: false,
-        error: error.message
-      };
+      console.error('❌ Get file info error:', error)
+      return { success: false, error: error.message }
     }
   }
 
-  // Fayl URL'ini olish
-  getFileUrl(fileId) {
-    return `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${fileId}/view?project=${process.env.APPWRITE_PROJECT_ID}`;
+  // Fayl token yaratish
+  async createFileToken(fileId) {
+    try {
+      const response = await axios.post(
+        `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${fileId}/tokens`,
+        {
+          expire: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 kun
+          read: true,
+          write: false,
+          delete: false
+        },
+        {
+          headers: {
+            'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+            'X-Appwrite-Key': process.env.APPWRITE_API_KEY,
+            'Content-Type': 'application/json'
+          }
+        }
+      )
+
+      console.log('✅ File token created successfully:', {
+        fileId,
+        tokenId: response.data.$id,
+        expire: response.data.expire
+      })
+
+      return {
+        success: true,
+        token: response.data.$id
+      }
+    } catch (error) {
+      console.error('❌ Create file token error:', error)
+      return {
+        success: false,
+        error: error.message
+      }
+    }
+  }
+
+  // Faylni yuklab olish (token bilan)
+  async downloadFile(fileId) {
+    try {
+      console.log('🔄 Starting file download for fileId:', fileId)
+      
+      // Avval file token yaratish
+      const tokenResult = await this.createFileToken(fileId)
+      
+      if (!tokenResult.success) {
+        console.log('⚠️ Token creation failed, trying direct download')
+        // Token yaratishda xatolik bo'lsa, oddiy usulni sinab ko'rish
+        const response = await axios.get(
+          `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${fileId}/download`,
+          {
+            headers: {
+              'X-Appwrite-Project': process.env.APPWRITE_PROJECT_ID,
+              'X-Appwrite-Key': process.env.APPWRITE_API_KEY
+            },
+            responseType: 'arraybuffer'
+          }
+        )
+        console.log('✅ Direct download successful')
+        return { success: true, data: response.data, headers: response.headers }
+      }
+
+      console.log('🔑 Using token for download:', tokenResult.token)
+      // Token bilan faylni yuklab olish
+      const response = await axios.get(
+        `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${fileId}/download?token=${tokenResult.token}`,
+        {
+          responseType: 'arraybuffer'
+        }
+      )
+
+      console.log('✅ Token-based download successful')
+      return { success: true, data: response.data, headers: response.headers }
+    } catch (error) {
+      console.error('❌ Download file error:', error)
+      console.error('Error details:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText
+      })
+      return { success: false, error: error.message }
+    }
   }
 }
 
-export default new FileService();
+export default new FileService()

@@ -1,3 +1,32 @@
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import { DocumentTextIcon, CheckIcon } from '@heroicons/vue/24/outline'
+import { format } from 'date-fns'
+import { useTasksStore } from '../../stores/tasks'
+import Loading from '../ui/Loading.vue'
+import Alert from '../ui/Alert.vue'
+import type { Task } from '../../types'
+
+defineEmits<{
+  uploadFile: [task: Task]
+}>()
+
+const tasksStore = useTasksStore()
+const { tasks, loading, error } = tasksStore
+
+const formatDate = (dateString: string) => {
+  return format(new Date(dateString), 'dd/MM/yyyy')
+}
+
+const fetchTasks = async () => {
+  await tasksStore.fetchTasks()
+}
+
+onMounted(() => {
+  fetchTasks()
+})
+</script>
+
 <template>
   <div class="card">
     <div class="flex items-center justify-between mb-6">
@@ -45,32 +74,3 @@
     <Alert :show="!!error" type="error" title="Error" :message="error || ''" @close="error = null" />
   </div>
 </template>
-
-<script setup lang="ts">
-import { onMounted } from 'vue'
-import { DocumentTextIcon, CheckIcon } from '@heroicons/vue/24/outline'
-import { format } from 'date-fns'
-import { useTasksStore } from '../../stores/tasks'
-import Loading from '../ui/Loading.vue'
-import Alert from '../ui/Alert.vue'
-import type { Task } from '../../types'
-
-defineEmits<{
-  uploadFile: [task: Task]
-}>()
-
-const tasksStore = useTasksStore()
-const { tasks, loading, error } = tasksStore
-
-const formatDate = (dateString: string) => {
-  return format(new Date(dateString), 'dd/MM/yyyy')
-}
-
-const fetchTasks = async () => {
-  await tasksStore.fetchTasks()
-}
-
-onMounted(() => {
-  fetchTasks()
-})
-</script>

@@ -3,6 +3,7 @@
 import type { Task } from '@/types'
 import { formatDate } from '@/utils/date'
 import FileIcon from '../FileIcon.vue'
+import api from '@/services/api'
 
 const props = defineProps<{
     task: Task
@@ -23,28 +24,70 @@ const formatFileSize = (bytes: number): string => {
 }
 
 // File preview
-const previewFile = () => {
-    if (props.task.file?.fileUrl) {
-        // PDF va rasm fayllarini browser'da ochish
-        if (props.task.file.mimeType?.includes('pdf') || props.task.file.mimeType?.startsWith('image/')) {
-            window.open(props.task.file.fileUrl, '_blank')
-        } else {
-            // Boshqa fayl turlarini yuklab olish
-            downloadFile()
+const previewFile = async (event: Event) => {
+    event.stopPropagation() // Event bubbling ni to'xtatish
+    console.log('Preview clicked:', props.task.file)
+
+    if (props.task.file?.fileId) {
+        console.log('File ID:', props.task.file.fileId)
+        console.log('MIME Type:', props.task.file.mimeType)
+
+        try {
+            // Backend API dan faylni olish
+            const response = await api.get(`/api/tasks/${props.task._id}/file/${props.task.file.fileId}`, {
+                responseType: 'blob'
+            })
+            console.log('File received from Backend:', response.data)
+
+            // PDF va rasm fayllarini browser'da ochish
+            if (props.task.file.mimeType?.includes('pdf') || props.task.file.mimeType?.startsWith('image/')) {
+                const blob = new Blob([response.data], { type: props.task.file.mimeType })
+                const url = window.URL.createObjectURL(blob)
+                window.open(url, '_blank')
+                // Cleanup
+                setTimeout(() => window.URL.revokeObjectURL(url), 1000)
+            } else {
+                // Boshqa fayl turlarini yuklab olish
+                downloadFile(event)
+            }
+        } catch (error) {
+            console.error('Error getting file URL:', error)
         }
+    } else {
+        console.log('No file ID found')
     }
 }
 
 // File download
-const downloadFile = () => {
-    if (props.task.file?.fileUrl) {
-        const link = document.createElement('a')
-        link.href = props.task.file.fileUrl
-        link.download = props.task.file.fileName
-        link.target = '_blank'
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
+const downloadFile = async (event: Event) => {
+    event.stopPropagation() // Event bubbling ni to'xtatish
+    console.log('Download clicked:', props.task.file)
+
+    if (props.task.file?.fileId) {
+        console.log('Downloading file with ID:', props.task.file.fileId)
+
+        try {
+            // Backend API dan faylni olish
+            const response = await api.get(`/api/tasks/${props.task._id}/file/${props.task.file.fileId}`, {
+                responseType: 'blob'
+            })
+            console.log('File received for download:', response.data)
+
+            // Direct download using Blob
+            const blob = new Blob([response.data], { type: props.task.file.mimeType })
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = props.task.file?.fileName || 'download'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+            window.URL.revokeObjectURL(url)
+        } catch (error) {
+            console.error('Download error:', error)
+        }
+    } else {
+        console.log('No file ID found for download')
     }
 }
 </script>
@@ -83,12 +126,12 @@ const downloadFile = () => {
                 </div>
                 <div class="flex items-center gap-2">
                     <!-- Preview Button -->
-                    <button @click="previewFile"
+                    <button @click.stop="previewFile"
                         class="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors">
                         {{ $t('tasks.preview') }}
                     </button>
                     <!-- Download Button -->
-                    <button @click="downloadFile"
+                    <button @click.stop="downloadFile"
                         class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition-colors">
                         {{ $t('tasks.download') }}
                     </button>
@@ -97,7 +140,7 @@ const downloadFile = () => {
         </div>
 
         <div class="flex justify-between items-center text-sm text-gray-500">
-            <span>{{ $t('tasks.createdBy') }}: {{ formatDate(task.createdAt) }}</span>
+            <span>{{ $t('tasks.createdAt') }}: {{ formatDate(task.createdAt) }}</span>
             <span v-if="submissionStatus" class="px-2 py-1 rounded-full text-xs"
                 :class="submissionStatus === 'submitted' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'">
                 {{ submissionStatus === 'submitted' ? $t('tasks.submitted') : $t('tasks.graded') }}
