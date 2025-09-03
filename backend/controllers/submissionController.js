@@ -333,3 +333,40 @@ export const getStudentProgress = async (req, res) => {
   }
 }
 
+export const getMySubmissions = async (req, res) => { 
+  try {
+    const submissions = await Submission.find({ studentId: req.user.id })
+      .populate('taskId', 'title description deadline')
+      .populate('studentId', 'fullName email')
+      .sort({ submittedAt: -1 })
+
+    res.json({
+      success: true,
+      data: {
+        submissions: submissions.map(submission => ({
+          _id: submission._id,
+          taskId: submission.taskId,
+          studentId: submission.studentId,
+          fileUrl: submission.fileUrl,
+          fileName: submission.fileName,
+          originalName: submission.originalName,
+          fileId: submission.fileId,
+          fileSize: submission.fileSize,
+          mimeType: submission.mimeType,
+          score: submission.score,
+          feedback: submission.feedback,
+          submittedAt: submission.submittedAt,
+          gradedAt: submission.gradedAt,
+          isGraded: submission.score !== null && submission.score !== undefined
+        }))
+      }
+    })
+  } catch (error) {
+    console.error('Get student submissions error:', error)
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch student submissions',
+      error: error.message
+    })
+  }
+}

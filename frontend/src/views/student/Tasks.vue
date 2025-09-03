@@ -63,6 +63,12 @@ const handleSubmit = async (taskId: string, file: File, textResponse?: string) =
     }
 }
 
+const switchToSubmissions = async () => {
+    activeTab.value = 'submissions'
+    // Refresh submissions when switching to submissions tab
+    await submissionStore.fetchStudentProgress()
+}
+
 // Filter dropdown functions
 const toggleFilterDropdown = () => {
     isFilterDropdownOpen.value = !isFilterDropdownOpen.value
@@ -131,7 +137,7 @@ onUnmounted(() => {
                     ]">
                         📝 {{ $t('tasks.tasks') }}
                     </button>
-                    <button @click="activeTab = 'submissions'" :class="[
+                    <button @click="switchToSubmissions" :class="[
                         'py-2 px-1 border-b-2 font-medium text-sm',
                         activeTab === 'submissions'
                             ? 'border-blue-500 text-blue-600'

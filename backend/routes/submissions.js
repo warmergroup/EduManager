@@ -6,6 +6,7 @@ import {
   getSubmissionById,
   getStudentProgress,
   gradeSubmission,
+  getMySubmissions,
 } from "../controllers/submissionController.js"
 import { protect, isStudent, teacherOnly } from "../middleware/auth.js"
 import { upload, handleUploadError } from "../middleware/upload.js"
@@ -47,6 +48,11 @@ router.get("/", teacherOnly, async (req, res) => {
 // @desc    Get student progress
 // @access  Private (Student only)
 router.get("/progress", isStudent, getStudentProgress)
+
+// @route   GET /api/submissions/student/my-submissions
+// @desc    Get student's own submissions
+// @access  Private (Student only)
+router.get("/student/my-submissions", isStudent, getMySubmissions)
 
 // @route   POST /api/submissions/:taskId
 // @desc    Submit assignment file

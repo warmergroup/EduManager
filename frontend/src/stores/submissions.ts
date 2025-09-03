@@ -115,25 +115,42 @@ export const useSubmissionsStore = defineStore('submissions', () => {
       loading.value = true
       error.value = null
       
-      const response = await api.get('/api/submissions/progress')
+      // Fetch student's own submissions
+      const response = await api.get('/api/submissions/student/my-submissions')
       
-      if (response.data.success && response.data.data.progress) {
-        // For progress endpoint, we get progress object, not submissions array
-        // This should be handled by the progress store, not submissions store
-        // So we'll use mock data for submissions
-        submissions.value = getMockSubmissions()
+      if (response.data.success && response.data.data.submissions) {
+        // Transform backend data to frontend format
+        submissions.value = response.data.data.submissions.map((submission: any) => ({
+          id: submission._id,
+          taskId: submission.taskId._id || submission.taskId,
+          taskTitle: submission.taskId.title || 'Unknown Task',
+          studentId: submission.studentId._id || submission.studentId,
+          studentName: submission.studentId.fullName || 'Unknown Student',
+          fileUrl: submission.fileUrl,
+          fileName: submission.fileName,
+          originalName: submission.originalName,
+          fileId: submission.fileId,
+          fileSize: submission.fileSize,
+          mimeType: submission.mimeType,
+          score: submission.score,
+          feedback: submission.feedback,
+          submittedAt: submission.submittedAt,
+          gradedAt: submission.gradedAt,
+          isGraded: submission.isGraded
+        }))
       } else {
-        submissions.value = getMockSubmissions()
+        submissions.value = []
       }
     } catch (err: any) {
-      console.error('Student progress fetch error:', err)
+      console.error('Student submissions fetch error:', err)
       
       if (err.response?.status === 401 || err.response?.status === 403) {
-        console.error('Authentication/Authorization error - using mock data')
-        submissions.value = getMockSubmissions()
+        console.error('Authentication/Authorization error')
+        error.value = 'Authentication required'
+        submissions.value = []
       } else {
-        error.value = err.response?.data?.message || 'Progress ma\'lumotlarini yuklashda xatolik yuz berdi'
-        submissions.value = getMockSubmissions()
+        error.value = err.response?.data?.message || 'Submissions ma\'lumotlarini yuklashda xatolik yuz berdi'
+        submissions.value = []
       }
     } finally {
       loading.value = false
