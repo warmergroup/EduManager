@@ -57,7 +57,6 @@ export const submitAssignment = async (req, res) => {
       fileId: uploadResult.fileId,
       fileSize: uploadResult.fileSize,
       mimeType: uploadResult.mimeType,
-      submittedAt: new Date(),
     })
 
     // Populate task and student info
@@ -344,7 +343,7 @@ export const getMySubmissions = async (req, res) => {
     const submissions = await Submission.find({ studentId: req.user.id })
       .populate('taskId', 'title description deadline')
       .populate('studentId', 'fullName email')
-      .sort({ submittedAt: -1 })
+      .sort({ createdAt: -1 })
 
     res.json({
       success: true,
@@ -361,7 +360,7 @@ export const getMySubmissions = async (req, res) => {
           mimeType: submission.mimeType,
           score: submission.score,
           feedback: submission.feedback,
-          submittedAt: submission.submittedAt,
+          submittedAt: submission.createdAt,
           gradedAt: submission.gradedAt,
           isGraded: submission.score !== null && submission.score !== undefined
         }))

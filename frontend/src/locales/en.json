@@ -160,7 +160,8 @@
     }
   },
   "videos": {
-    "title": "Videos",
+    "title": "Video lessons",
+    "description": "Useful video materials and lessons for learning",
     "addVideo": "Add Video",
     "editVideo": "Edit Video",
     "deleteVideo": "Delete Video",
@@ -176,7 +177,8 @@
     "totalVideos": "Total Videos",
     "confirmDelete": "Are you sure you want to delete this video?",
     "deleteSuccess": "Video deleted successfully",
-    "updateSuccess": "Video updated successfully"
+    "updateSuccess": "Video updated successfully",
+    "openYouTube": "Open YouTube"
   },
   "tasks": {
     "title": "Tasks and Assignments",

@@ -29,17 +29,18 @@ const formatDuration = (seconds: number): string => {
   overflow: hidden;
 }
 </style>
+
 <template>
   <div class="space-y-6">
     <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
       <div class="flex items-center justify-between mb-6">
-        <h3 class="text-xl font-semibold text-gray-900">🎥 Video Darslar</h3>
+        <h3 class="text-xl font-semibold text-gray-900">🎥 {{ $t('videos.title') }}</h3>
         <div class="text-sm text-gray-500">
-          Jami: {{ videos.length }} ta video
+          {{ $t('videos.totalVideos') }}: {{ videos.length }}
         </div>
       </div>
 
-      <Loading v-if="loading" text="Video darslar yuklanmoqda..." />
+      <Loading v-if="loading" :text="$t('videos.loading')" />
 
       <div v-else-if="videos.length === 0" class="text-center py-12">
         <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,8 +48,8 @@ const formatDuration = (seconds: number): string => {
             d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
           </path>
         </svg>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Hali video darslar mavjud emas</h3>
-        <p class="text-gray-500">O'qituvchi video darslarni qo'shgandan so'ng bu yerda ko'rinadi</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">{{ $t('videos.noVideos') }}</h3>
+        <p class="text-gray-500">{{ $t('videos.noVideosDesc') }}</p>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -67,7 +68,7 @@ const formatDuration = (seconds: number): string => {
               <div class="space-x-2">
                 <a :href="video.url" target="_blank" rel="noopener noreferrer"
                   class="px-3 py-1 bg-red-500 text-white text-xs rounded-lg hover:bg-red-600 transition-colors">
-                  🎬 YouTube'da ochish
+                  🎬 {{ $t('videos.openYouTube') }}
                 </a>
               </div>
             </div>

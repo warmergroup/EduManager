@@ -160,7 +160,8 @@
     }
   },
   "videos": {
-    "title": "Videolar",
+    "title": "Video darslar",
+    "description": "O'qish uchun foydali video materiallar va darslar",
     "addVideo": "Video qo'shish",
     "editVideo": "Videoni tahrirlash",
     "deleteVideo": "Videoni o'chirish",
@@ -175,7 +176,8 @@
     "totalVideos": "Jami videolar",
     "confirmDelete": "Bu videoni o'chirishni xohlaysizmi?",
     "deleteSuccess": "Video muvaffaqiyatli o'chirildi",
-    "updateSuccess": "Video muvaffaqiyatli yangilandi"
+    "updateSuccess": "Video muvaffaqiyatli yangilandi",
+    "openYouTube": "YouTube'da ochish"
   },
   "tasks": {
     "title": "Vazifalar va Topshiriqlar",
