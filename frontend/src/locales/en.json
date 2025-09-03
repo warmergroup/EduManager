@@ -200,6 +200,8 @@
     "submitTask": "Submit Task",
     "textResponse": "Text Response",
     "fileResponse": "File Response",
+    "submittedTasks": "Submitted Tasks",
+    "noSubmittedTasks": "No submitted tasks available",
     "submitSuccess": "Task submitted successfully",
     "submittedBy": "Submitted By",
     "submittedAt": "Submitted At",
@@ -214,7 +216,9 @@
     "submitted": "Submitted",
     "graded": "Graded",
     "refresh": "Refresh",
-    "completed": "Completed"
+    "completed": "Completed",
+    "all": "All",
+    "pending": "Pending"
   },
   "profile": {
     "title": "Profile",

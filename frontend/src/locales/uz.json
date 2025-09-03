@@ -194,6 +194,7 @@
     "noTasksDesc": "Hali hech qanday vazifa yaratilmagan",
     "totalTasks": "Jami vazifalar",
     "submittedTasks": "Topshirilgan vazifalar",
+    "noSubmittedTasks": "Topshirilgan vazifalar mavjud emas",
     "confirmDelete": "Bu vazifani o'chirishni xohlaysizmi?",
     "deleteSuccess": "Vazifa muvaffaqiyatli o'chirildi",
     "createSuccess": "Vazifa muvaffaqiyatli yaratildi",
@@ -213,8 +214,10 @@
     "download": "Yuklab olish",
     "createdBy": "Yaratuvchi",
     "submitted": "Topshirilgan",
+    "refresh": "Yangilash",
+    "all": "Hammasi",
     "graded": "Baholangan",
-    "refresh": "Yangilash"
+    "pending": "Kutilmoqda"
   },
   "profile": {
     "title": "Profil",
