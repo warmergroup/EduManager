@@ -77,11 +77,8 @@ const toggleDesktopSidebar = () => {
         </h1>
       </div>
 
-      <!-- Right side: Language Switcher + User Info + Logout -->
-      <div class="flex items-center space-x-4">
-        <!-- Language Switcher -->
-        <LanguageSwitcher />
-
+      <!-- Right side: User Info + Language Switcher -->
+      <div class="flex items-center space-x-2 md:space-x-4">
         <div class="flex items-center space-x-2">
           <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center">
             <span class="text-white text-sm font-medium">
@@ -90,6 +87,9 @@ const toggleDesktopSidebar = () => {
           </div>
           <span class="hidden sm:block text-sm font-medium text-gray-700">{{ user?.fullName }}</span>
         </div>
+
+        <!-- Language Switcher -->
+        <LanguageSwitcher />
 
         <!-- Logout Button
         <button @click="authStore.logout"

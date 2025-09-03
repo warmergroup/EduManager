@@ -118,10 +118,12 @@ const startServer = async () => {
     
     if (process.env.NODE_ENV !== "production") {
       const PORT = process.env.PORT || 5000;
-      app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT}`);
+      const HOST = '0.0.0.0'; // Mobile qurilmalardan kirish uchun
+      app.listen(PORT, HOST, () => {
+        console.log(`🚀 Server running on ${HOST}:${PORT}`);
         console.log(`📊 Environment: ${process.env.NODE_ENV}`);
         console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
+        console.log(`📱 Mobile access: http://192.168.1.3:${PORT}/api/health`);
       });
     } else {
       console.log(`🚀 Production server ready`);

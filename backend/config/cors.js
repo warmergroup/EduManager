@@ -11,7 +11,9 @@ export const corsOptions = {
       'http://localhost:5173',
       'http://127.0.0.1:3000',
       '127.0.0.1:5173',
-      
+      'http://192.168.1.3:3000',
+      'http://192.168.1.3:5173',
+
       // Vercel frontend domains
       'https://edu-manager-three.vercel.app',
       'https://edu-manager-frontend.vercel.app',

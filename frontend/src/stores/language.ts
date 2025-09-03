@@ -5,8 +5,8 @@ import { useI18n } from 'vue-i18n'
 export const useLanguageStore = defineStore('language', () => {
   // Mavjud tillar
   const availableLanguages = [
-    { code: 'uz', name: 'O\'zbek', flag: '🇺🇿' },
-    { code: 'en', name: 'English', flag: '🇺🇸' }
+    { code: 'uz', name: 'O\'zbek', flag: '🇺🇿', icon: 'UZ' },
+    { code: 'en', name: 'English', flag: '🇺🇸', icon: 'EN' }
   ]
 
   // Joriy til
