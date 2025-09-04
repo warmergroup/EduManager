@@ -7,8 +7,7 @@ import type { Task, SubmissionData } from '@/types'
 import TaskCard from '@/components/student/TaskCard.vue'
 import TaskDetailModal from '@/components/student/TaskDetailModal.vue'
 import SubmissionCard from '@/components/student/SubmissionCard.vue'
-import Loading from '@/components/ui/Loading.vue'
-import Alert from '@/components/ui/Alert.vue'
+import TaskPageLayout from '@/components/common/TaskPageLayout.vue'
 
 // Stores
 const taskStore = useTasksStore()
@@ -20,7 +19,13 @@ const { submissions } = storeToRefs(submissionStore)
 const selectedTask = ref<Task | null>(null)
 const activeTab = ref('tasks') // 'tasks' or 'submissions'
 const filter = ref('all')
-const isFilterDropdownOpen = ref(false)
+
+// Filter options for submissions tab
+const submissionFilterOptions = [
+    { value: 'all', label: 'All', icon: '🔍', translationKey: 'tasks.all' },
+    { value: 'graded', label: 'Graded', icon: '✅', translationKey: 'tasks.graded' },
+    { value: 'pending', label: 'Pending', icon: '⏳', translationKey: 'tasks.pending' }
+]
 
 // Computed
 const filteredTasks = computed(() => {
@@ -69,141 +74,26 @@ const switchToSubmissions = async () => {
     await submissionStore.fetchStudentProgress()
 }
 
-// Filter dropdown functions
-const toggleFilterDropdown = () => {
-    isFilterDropdownOpen.value = !isFilterDropdownOpen.value
-}
-
-const setFilter = (filterValue: string) => {
-    filter.value = filterValue
-    isFilterDropdownOpen.value = false
-}
-
-const getFilterLabel = (filterValue: string) => {
-    const labels = {
-        all: '🔍',
-        graded: '✅',
-        pending: '⏳'
-    }
-    return labels[filterValue as keyof typeof labels] || labels.all
-}
-
-const getFilterText = (filterValue: string) => {
-    const texts = {
-        all: 'tasks.all',
-        graded: 'tasks.graded',
-        pending: 'tasks.pending'
-    }
-    return texts[filterValue as keyof typeof texts] || texts.all
-}
-
-// Click outside to close dropdown
-const handleClickOutside = (event: Event) => {
-    const target = event.target as HTMLElement
-    if (!target.closest('.relative')) {
-        isFilterDropdownOpen.value = false
-    }
+// Tab change handler
+const handleTabChange = (tab: string) => {
+    activeTab.value = tab
+    // Reset filter when switching tabs
+    filter.value = 'all'
 }
 
 // Lifecycle
 onMounted(async () => {
     await taskStore.fetchTasks()
     await submissionStore.fetchStudentProgress()
-    document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-    document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
 <template>
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">{{ $t('tasks.title') }}</h1>
-            <p class="mt-2 text-gray-600">{{ $t('tasks.description') }}</p>
-        </div>
-
-        <!-- Tabs -->
-        <div class="mb-6">
-            <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8">
-                    <button @click="activeTab = 'tasks'" :class="[
-                        'py-2 px-1 border-b-2 font-medium text-sm',
-                        activeTab === 'tasks'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    ]">
-                        📝 {{ $t('tasks.tasks') }}
-                    </button>
-                    <button @click="switchToSubmissions" :class="[
-                        'py-2 px-1 border-b-2 font-medium text-sm',
-                        activeTab === 'submissions'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    ]">
-                        📤 {{ $t('tasks.submittedTasks') }}
-                    </button>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Filter -->
-        <div v-if="activeTab === 'submissions'" class="flex justify-between items-center mb-6">
-            <div class="flex gap-4">
-                <!-- Custom Dropdown Filter -->
-                <div class="relative">
-                    <button @click="toggleFilterDropdown"
-                        class="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                        <span class="text-sm font-medium text-gray-700">
-                            {{ getFilterLabel(filter) }} {{ $t(getFilterText(filter)) }}
-                        </span>
-                        <svg class="w-4 h-4 text-gray-500 transition-transform duration-200"
-                            :class="{ 'rotate-180': isFilterDropdownOpen }" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
-                    <!-- Dropdown menu -->
-                    <div v-if="isFilterDropdownOpen"
-                        class="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                        <div class="py-1">
-                            <button @click="setFilter('all')"
-                                class="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-200"
-                                :class="{ 'bg-blue-50 text-blue-600': filter === 'all' }">
-                                <span class="text-sm">🔍</span>
-                                <span class="text-sm font-medium">{{ $t('tasks.all') }}</span>
-                            </button>
-                            <button @click="setFilter('graded')"
-                                class="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-200"
-                                :class="{ 'bg-blue-50 text-blue-600': filter === 'graded' }">
-                                <span class="text-sm">✅</span>
-                                <span class="text-sm font-medium">{{ $t('tasks.graded') }}</span>
-                            </button>
-                            <button @click="setFilter('pending')"
-                                class="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-200"
-                                :class="{ 'bg-blue-50 text-blue-600': filter === 'pending' }">
-                                <span class="text-sm">⏳</span>
-                                <span class="text-sm font-medium">{{ $t('tasks.pending') }}</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Loading state -->
-        <div v-if="loading" class="flex justify-center py-8">
-            <Loading />
-        </div>
-
-        <!-- Error state -->
-        <Alert v-if="error" :show="!!error" type="error" title="Xatolik" :message="error" class="mb-4" />
-
+    <TaskPageLayout :activeTab="activeTab" :loading="loading" :error="error" :showSubmissionsTab="true"
+        :filterOptions="activeTab === 'submissions' ? submissionFilterOptions : []" :currentFilter="filter"
+        @tab-change="handleTabChange" @filter-change="(newFilter) => filter = newFilter">
         <!-- Tasks Tab -->
-        <div v-if="activeTab === 'tasks' && !loading">
+        <div v-if="activeTab === 'tasks'">
             <div v-if="filteredTasks.length > 0" class="grid gap-4">
                 <TaskCard v-for="task in filteredTasks" :key="task._id" :task="task"
                     :submission="getSubmission(task._id)" @submit="openTask" />
@@ -214,7 +104,7 @@ onUnmounted(() => {
         </div>
 
         <!-- Submissions Tab -->
-        <div v-if="activeTab === 'submissions' && !loading">
+        <div v-if="activeTab === 'submissions'">
             <div v-if="filteredSubmissions.length > 0" class="grid gap-4">
                 <SubmissionCard v-for="submission in filteredSubmissions" :key="submission.id"
                     :submission="submission" />
@@ -223,9 +113,9 @@ onUnmounted(() => {
                 {{ $t('tasks.noSubmittedTasks') }}
             </div>
         </div>
+    </TaskPageLayout>
 
-        <!-- Task detail modal -->
-        <TaskDetailModal v-if="selectedTask" :task="selectedTask" :submission="getSubmission(selectedTask._id)"
-            @close="selectedTask = null" @submit="handleSubmit" />
-    </div>
+    <!-- Task detail modal -->
+    <TaskDetailModal v-if="selectedTask" :task="selectedTask" :submission="getSubmission(selectedTask._id)"
+        @close="selectedTask = null" @submit="handleSubmit" />
 </template>

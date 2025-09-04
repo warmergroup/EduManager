@@ -8,8 +8,7 @@ import TaskCard from '@/components/teacher/TaskCard.vue'
 import TaskFormModal from '@/components/teacher/TaskFormModal.vue'
 import SubmissionCard from '@/components/student/SubmissionCard.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
-import Loading from '@/components/ui/Loading.vue'
-import Alert from '@/components/ui/Alert.vue'
+import TaskPageLayout from '@/components/common/TaskPageLayout.vue'
 
 // Stores
 const taskStore = useTasksStore()
@@ -33,11 +32,6 @@ const filteredSubmissions = computed(() => {
     )
 })
 
-// // Methods
-// const openCreateModal = () => {
-//     selectedTask.value = undefined
-//     showModal.value = true
-// }
 
 const editTask = (task: Task) => {
     selectedTask.value = task
@@ -101,92 +95,38 @@ onMounted(async () => {
 </script>
 
 <template>
-
-    <div class="max-w-7xl mx-auto">
-        <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Vazifalar va Topshiriqlar</h1>
-            <p class="mt-2 text-gray-600">Vazifalarni yaratish, tahrirlash va student topshirishlarini ko'rish</p>
-        </div>
-
-        <!-- Error Display -->
-        <Alert v-if="error" :show="!!error" type="error" title="Xatolik" :message="error" class="mb-6" />
-
-        <!-- Tabs -->
-        <div class="mb-6">
-            <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8">
-                    <button @click="handleTabChange('tasks')" :class="[
-                        'py-2 px-1 border-b-2 font-medium text-sm',
-                        activeTab === 'tasks'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    ]">
-                        📝 Vazifalar
-                    </button>
-                    <button @click="handleTabChange('submissions')" :class="[
-                        'py-2 px-1 border-b-2 font-medium text-sm',
-                        activeTab === 'submissions'
-                            ? 'border-blue-500 text-blue-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    ]">
-                        📤 Topshirilgan Vazifalar
-                    </button>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Filter and Actions -->
-        <div class="flex justify-between items-center mb-6">
-            <div class="flex gap-4">
-                <select v-model="filter" class="px-4 py-2 border rounded-lg">
-                    <option value="all">Hammasi</option>
-                    <option v-if="activeTab === 'submissions'" value="graded">✅ Baholangan</option>
-                    <option v-if="activeTab === 'submissions'" value="pending">⏳ Kutilmoqda</option>
-                </select>
-            </div>
-
-            <router-link v-if="activeTab === 'tasks'" to="/teacher/create-task"
-                class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                📝 Vazifa Yaratish
-            </router-link>
-        </div>
-
-        <!-- Loading State -->
-        <div v-if="loading" class="flex justify-center py-8">
-            <Loading />
-        </div>
-
+    <TaskPageLayout :activeTab="activeTab" :loading="loading" :error="error" :showSubmissionsTab="true"
+        :currentFilter="filter" :showCreateButton="true" :createButtonText="$t('tasks.createTask')"
+        createButtonLink="/teacher/create-task" @tab-change="handleTabChange"
+        @filter-change="(newFilter) => filter = newFilter">
         <!-- Tasks Tab -->
-        <div v-if="activeTab === 'tasks' && !loading">
+        <div v-if="activeTab === 'tasks'">
             <div v-if="tasks.length > 0" class="grid gap-4">
                 <TaskCard v-for="task in tasks" :key="task._id" :task="task" :showActions="true" @edit="editTask"
                     @delete="confirmDelete" />
             </div>
             <div v-else class="text-center py-8 text-gray-500">
-                <p class="text-lg font-medium mb-2">Hali vazifalar mavjud emas</p>
-                <p class="text-sm">Birinchi vazifani yaratish uchun yuqoridagi "Yangi Vazifa" tugmasini bosing</p>
+                <p class="text-lg font-medium mb-2">{{ $t('tasks.noTasks') }}</p>
+                <p class="text-sm">{{ $t('tasks.noTasksDesc') }}</p>
             </div>
         </div>
 
         <!-- Submissions Tab -->
-        <div v-if="activeTab === 'submissions' && !loading">
+        <div v-if="activeTab === 'submissions'">
             <div v-if="filteredSubmissions.length > 0" class="grid gap-4">
                 <SubmissionCard v-for="submission in filteredSubmissions" :key="submission.id"
                     :submission="submission" />
             </div>
             <div v-else class="text-center py-8 text-gray-500">
-                <p class="text-lg font-medium mb-2">Hali topshirishlar mavjud emas</p>
-                <p class="text-sm">Student'lar vazifalarni topshirgandan so'ng bu yerda ko'rinadi</p>
+                <p class="text-lg font-medium mb-2">{{ $t('tasks.noSubmittedTasks') }}</p>
             </div>
         </div>
+    </TaskPageLayout>
 
-        <!-- Create/Edit Modal -->
-        <TaskFormModal v-if="showModal" :task="selectedTask" @close="closeModal" @submit="handleSubmit" />
+    <!-- Create/Edit Modal -->
+    <TaskFormModal v-if="showModal" :task="selectedTask" @close="closeModal" @submit="handleSubmit" />
 
-        <!-- Delete Confirmation Modal -->
-        <ConfirmModal v-if="showDeleteModal" title="Vazifani o'chirish"
-            message="Bu vazifani o'chirishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi." @confirm="deleteTask"
-            @cancel="showDeleteModal = false" />
-    </div>
+    <!-- Delete Confirmation Modal -->
+    <ConfirmModal v-if="showDeleteModal" :title="$t('tasks.deleteTask')" :message="$t('tasks.confirmDelete')"
+        @confirm="deleteTask" @cancel="showDeleteModal = false" />
 </template>
