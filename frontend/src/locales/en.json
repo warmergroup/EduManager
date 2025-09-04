@@ -102,6 +102,15 @@
       "backToHome": "Back to Home"
     }
   },
+  "aiChat": {
+    "title": "AI Assistant",
+    "description": "Get answers to your questions with AI assistance",
+    "clearChat": "Clear Chat",
+    "askQuestion": "Ask a question",
+    "loading": "Loading...",
+    "send": "Send",
+    "error": "Error"
+  },
   "navigation": {
     "dashboard": "Dashboard",
     "videos": "Videos",
@@ -134,8 +143,12 @@
         "totalVideos": "Total Videos",
         "totalTasks": "Total Tasks",
         "totalStudents": "Total Students",
-        "totalSubmissions": "Total Submissions"
-      }
+        "totalSubmissions": "Total Submissions",
+        "submissions": "submissions",
+        "averageScore": "Average Score"
+      },
+      "description": "Teacher dashboard with analytics and tasks",
+      "monthlyActivity": "Monthly Activity"
     },
     "student": {
       "title": "Student Dashboard",
@@ -144,8 +157,13 @@
         "totalVideos": "Total Videos",
         "totalTasks": "Total Tasks",
         "completedTasks": "Completed Tasks",
-        "pendingTasks": "Pending Tasks"
-      },
+        "pendingTasks": "Pending Tasks",
+        "submittedTasks": "Submitted Tasks",
+        "pendingGrades": "Pending Grades",
+        "averageScore": "Average Score",
+        "totalProgress": "Total Progress",
+        "completion": "Completion"
+        },
       "description": "Your learning progress and tasks",
       "totalTasks": "Total Tasks",
       "submittedTasks": "Submitted Tasks",
@@ -172,6 +190,7 @@
     "duration": "Duration",
     "createdBy": "Created By",
     "createdAt": "Created At",
+    "loading": "Videos are loading...",
     "noVideos": "No videos available",
     "noVideosDesc": "No videos have been added yet",
     "totalVideos": "Total Videos",
@@ -225,14 +244,34 @@
   },
   "profile": {
     "title": "Profile",
+    "description": "Manage your profile and settings",
+    "student": "Student",
+    "teacher": "Teacher",
+    "fullNamePlaceholder": "Enter your full name",
+    "emailPlaceholder": "Enter your email address",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Leave empty to keep current password",
+    "loading": "Updating...",
+    "save": "Save",
+    "progress": "Progress",
+    "submittedTasks": "Submitted Tasks",
+    "totalTasks": "Total Tasks",
+    "totalVideos": "Total Videos",
+    "totalSubmissions": "Total Submissions",
+    "gradedSubmissions": "Graded Submissions",
+    "gradedTasks": "Graded Tasks",
+    "averageScore": "Average Score",
+    "progressPercentage": "Progress Percentage",
+    "accountInfo": "Account Information",
+    "registeredAt": "Registered At",
+    "updateSuccess": "Profile updated successfully",
+    "updateError": "Failed to update profile",
     "editProfile": "Edit Profile",
     "personalInfo": "Personal Information",
     "fullName": "Full Name",
     "email": "Email Address",
     "role": "Role",
-    "createdAt": "Member Since",
-    "updateSuccess": "Profile updated successfully",
-    "updateError": "Failed to update profile"
+    "createdAt": "Member Since"
   },
   "file": {
     "upload": "Upload File",

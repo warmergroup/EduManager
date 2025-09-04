@@ -13,6 +13,7 @@ import taskRoutes from "./routes/tasks.js";
 import submissionRoutes from "./routes/submissions.js";
 import videoRoutes from "./routes/videos.js";
 import userRoutes from "./routes/users.js";
+import analyticsRoutes from "./routes/analytics.js";
 
 const app = express();
 
@@ -79,6 +80,7 @@ app.get("/", (req, res) => {
       videos: "/api/videos",
       users: "/api/users",
       ai: "/api/ai",
+      analytics: "/api/analytics",
     },
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
@@ -93,6 +95,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
 // Error handling
 app.use(errorHandler);

@@ -12,6 +12,18 @@ export interface TeacherStats {
   totalStudents: number
 }
 
+export interface TaskAnalytics {
+  _id: string
+  title: string
+  submissionCount: number
+  completionRate: number
+}
+
+export interface MonthlyActivity {
+  month: string
+  activity: number
+}
+
 export interface StudentData extends User {
   totalSubmissions?: number
   averageScore?: number
@@ -29,6 +41,8 @@ export const useTeacherStore = defineStore('teacher', () => {
   })
 
   const students = ref<StudentData[]>([])
+  const taskAnalytics = ref<TaskAnalytics[]>([])
+  const monthlyActivity = ref<MonthlyActivity[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
 
@@ -119,6 +133,57 @@ export const useTeacherStore = defineStore('teacher', () => {
     ]
   }
 
+  const fetchTaskAnalytics = async () => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.get('/api/analytics/tasks')
+      
+      if (response.data.success && response.data.data.tasks) {
+        taskAnalytics.value = response.data.data.tasks
+      }
+    } catch (err: any) {
+      error.value = err.response?.data?.message || 'Task analytics yuklashda xatolik yuz berdi'
+      console.error('Task analytics fetch error:', err)
+      
+      // Mock data for development
+      taskAnalytics.value = [
+        { _id: '1', title: 'Matematika vazifasi', submissionCount: 15, completionRate: 80 },
+        { _id: '2', title: 'Fizika loyihasi', submissionCount: 12, completionRate: 65 },
+        { _id: '3', title: 'Ingliz tili', submissionCount: 18, completionRate: 90 }
+      ]
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const fetchMonthlyActivity = async () => {
+    try {
+      loading.value = true
+      error.value = null
+      
+      const response = await api.get('/api/analytics/monthly-activity')
+      
+      if (response.data.success && response.data.data.monthlyActivity) {
+        monthlyActivity.value = response.data.data.monthlyActivity
+      }
+    } catch (err: any) {
+      error.value = err.response?.data?.message || 'Monthly activity yuklashda xatolik yuz berdi'
+      console.error('Monthly activity fetch error:', err)
+      
+      // Mock data for development
+      monthlyActivity.value = [
+        { month: 'Yanvar', activity: 85 },
+        { month: 'Fevral', activity: 92 },
+        { month: 'Mart', activity: 78 },
+        { month: 'Aprel', activity: 88 }
+      ]
+    } finally {
+      loading.value = false
+    }
+  }
+
   const resetStore = () => {
     stats.value = {
       totalTasks: 0,
@@ -129,18 +194,24 @@ export const useTeacherStore = defineStore('teacher', () => {
       totalStudents: 0
     }
     students.value = []
+    taskAnalytics.value = []
+    monthlyActivity.value = []
     error.value = null
   }
 
   return {
     stats,
     students,
+    taskAnalytics,
+    monthlyActivity,
     loading,
     error,
     isLoading,
     hasError,
     fetchTeacherStats,
     fetchStudents,
+    fetchTaskAnalytics,
+    fetchMonthlyActivity,
     resetStore
   }
 })

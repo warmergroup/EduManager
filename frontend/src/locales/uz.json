@@ -102,6 +102,15 @@
       "backToHome": "Asosiy sahifaga qaytish"
     }
   },
+  "aiChat": {
+    "title": "AI Yordamchisi",
+    "description": "O'qish bo'yicha savollaringizga sun'iy intellekt yordamida javob oling",
+    "clearChat": "Chatni tozalash",
+    "askQuestion": "Savolingizni yozing",
+    "loading": "Javob yozilmoqda...",
+    "send": "Yuborish",
+    "error": "Xatolik"
+  },
   "navigation": {
     "dashboard": "Boshqaruv paneli",
     "videos": "Videolar",
@@ -113,18 +122,7 @@
     "settings": "Sozlamalar",
     "AIassistant": "AI yordamchisi",
     "profile": "Profil",
-    "logout": "Chiqish",
-    "studentDashboard": "Dashboard",
-    "studentTasks": "Vazifalar",
-    "studentVideos": "Video Darslar",
-    "studentAI": "AI Yordamchisi",
-    "studentProfile": "Profil",
-    "teacherDashboard": "Dashboard",
-    "teacherTasks": "Vazifalar",
-    "teacherVideos": "Video Darslar",
-    "teacherStudents": "Student'lar",
-    "teacherAI": "AI Yordamchisi",
-    "teacherProfile": "Profil"
+    "logout": "Chiqish"
   },
   "dashboard": {
     "teacher": {
@@ -134,17 +132,28 @@
         "totalVideos": "Jami videolar",
         "totalTasks": "Jami vazifalar",
         "totalStudents": "Jami talabalar",
-        "totalSubmissions": "Jami topshiriqlar"
-      }
+        "totalSubmissions": "Jami topshiriqlar",
+        "submissions": "topshiriq",
+        "averageScore": "O'rtacha ball"
+      },
+      "description": "O'qituvchi paneli bilan statistikalar va vazifalar",
+      "monthlyActivity": "Oylik Faollik"
     },
     "student": {
       "title": "Talaba paneli",
       "welcome": "Xush kelibsiz",
       "stats": {
         "totalVideos": "Jami videolar",
-        "totalTasks": "Jami vazifalar",
+       
         "completedTasks": "Bajarilgan vazifalar",
-        "pendingTasks": "Kutilayotgan vazifalar"
+        "pendingTasks": "Kutilayotgan vazifalar",
+        "totalTasks": "Jami vazifalar",
+
+        "submittedTasks": "Bajarilgan vazifalar",
+        "pendingGrades": "Baholash kutilmoqda",
+        "averageScore": "O'rtacha ball",
+        "totalProgress": "Umumiy Progress",
+        "completion": "Tugallangan"
       },
       "description": "O'qish jarayonidagi natijalaringiz va vazifalar",
       "totalTasks": "Jami vazifalar",
@@ -171,6 +180,7 @@
     "thumbnail": "Rasm",
     "duration": "Davomiyligi",
     "createdAt": "Yaratilgan vaqt",
+    "loading": "Videolar yuklanmoqda...",
     "noVideos": "Videolar mavjud emas",
     "noVideosDesc": "Hali hech qanday video qo'shilmagan",
     "totalVideos": "Jami videolar",
@@ -231,7 +241,27 @@
     "role": "Rol",
     "createdAt": "Ro'yxatdan o'tgan vaqt",
     "updateSuccess": "Profil muvaffaqiyatli yangilandi",
-    "updateError": "Profilni yangilashda xatolik yuz berdi"
+    "updateError": "Profilni yangilashda xatolik yuz berdi",
+    "description": "Profilingizni va sozlamalaringizni boshqarish",
+    "student": "Talaba",
+    "teacher": "O'qituvchi",
+    "fullNamePlaceholder": "To'liq ismingizni kiriting",
+    "emailPlaceholder": "Email manzilingizni kiriting",
+    "newPassword": "Yangi parol",
+    "newPasswordPlaceholder": "O'zgartirmaslik uchun bo'sh qoldiring",
+    "loading": "Yangilanmoqda...",
+    "save": "Saqlash",
+    "progress": "Progress",
+    "submittedTasks": "Topshirilgan vazifalar",
+    "totalTasks": "Jami vazifalar",
+    "totalVideos": "Jami videolar",
+    "totalSubmissions": "Jami topshiriqlar",
+    "gradedSubmissions": "Baholangan vazifalar",
+    "gradedTasks": "Baholangan vazifalar",
+    "averageScore": "O'rtacha ball",
+    "progressPercentage": "Progress foizi",
+    "accountInfo": "Hisob ma'lumotlari",
+    "registeredAt": "Ro'yxatdan o'tgan vaqt"
   },
   "file": {
     "upload": "Fayl yuklash",

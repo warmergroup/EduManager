@@ -9,28 +9,18 @@ import type { Task, Submission } from '../../types'
 import { AcademicCapIcon } from '@heroicons/vue/24/outline'
 
 const teacherStore = useTeacherStore()
-const { stats: analytics } = storeToRefs(teacherStore)
+const { stats: analytics, taskAnalytics, monthlyActivity } = storeToRefs(teacherStore)
 
 const selectedTask = ref<Task | null>(null)
 const selectedSubmission = ref<Submission | null>(null)
 const showGradeModal = ref(false)
 
-// Mock data for charts (TODO: Replace with real data from backend)
-const recentTasks = ref([
-  { id: 1, title: 'Matematika vazifasi', submissionCount: 15, completionRate: 80 },
-  { id: 2, title: 'Fizika loyihasi', submissionCount: 12, completionRate: 65 },
-  { id: 3, title: 'Ingliz tili', submissionCount: 18, completionRate: 90 }
-])
-
-const monthlyActivity = ref([
-  { month: 'Yanvar', activity: 85 },
-  { month: 'Fevral', activity: 92 },
-  { month: 'Mart', activity: 78 },
-  { month: 'Aprel', activity: 88 }
-])
-
 onMounted(async () => {
-  await teacherStore.fetchTeacherStats()
+  await Promise.all([
+    teacherStore.fetchTeacherStats(),
+    teacherStore.fetchTaskAnalytics(),
+    teacherStore.fetchMonthlyActivity()
+  ])
 })
 
 const viewSubmissions = (task: Task) => {
@@ -59,8 +49,8 @@ const handleGradeSuccess = () => {
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-      <p class="mt-2 text-gray-600">O'qituvchilik faoliyatidagi statistikalar va vazifalar</p>
+      <h1 class="text-3xl font-bold text-gray-900">{{ $t('dashboard.teacher.title') }}</h1>
+      <p class="mt-2 text-gray-600">{{ $t('dashboard.teacher.description') }}</p>
     </div>
 
     <!-- Overview Cards -->
@@ -76,7 +66,7 @@ const handleGradeSuccess = () => {
             </svg>
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Jami Vazifalar</p>
+            <p class="text-sm font-medium text-gray-600">{{ $t('dashboard.teacher.stats.totalTasks') }}</p>
             <p class="text-2xl font-semibold text-gray-900">{{ analytics.totalTasks || 0 }}</p>
           </div>
         </div>
@@ -92,7 +82,7 @@ const handleGradeSuccess = () => {
             </svg>
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Video Darslar</p>
+            <p class="text-sm font-medium text-gray-600">{{ $t('dashboard.teacher.stats.totalVideos') }}</p>
             <p class="text-2xl font-semibold text-gray-900">{{ analytics.totalVideos || 0 }}</p>
           </div>
         </div>
@@ -104,7 +94,7 @@ const handleGradeSuccess = () => {
             <AcademicCapIcon class="w-6 h-6 text-yellow-600" />
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">Talabalar</p>
+            <p class="text-sm font-medium text-gray-600">{{ $t('dashboard.teacher.stats.totalStudents') }}</p>
             <p class="text-2xl font-semibold text-gray-900">{{ analytics.totalStudents || 0 }}</p>
           </div>
         </div>
@@ -120,7 +110,7 @@ const handleGradeSuccess = () => {
             </svg>
           </div>
           <div class="ml-4">
-            <p class="text-sm font-medium text-gray-600">O'rtacha Ball</p>
+            <p class="text-sm font-medium text-gray-600">{{ $t('dashboard.teacher.stats.averageScore') }}</p>
             <p class="text-2xl font-semibold text-gray-900">{{ analytics.averageScore || 0 }}/100</p>
           </div>
         </div>
@@ -133,12 +123,13 @@ const handleGradeSuccess = () => {
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
     <!-- Task Completion Chart -->
     <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-medium text-gray-900 mb-4">Vazifalar Bajarilishi</h3>
+      <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('dashboard.teacher.stats.totalTasks') }}</h3>
       <div class="space-y-4">
-        <div v-for="task in recentTasks" :key="task.id" class="flex items-center justify-between">
+        <div v-for="task in taskAnalytics" :key="task._id" class="flex items-center justify-between">
           <div class="flex-1">
             <p class="text-sm font-medium text-gray-900">{{ task.title }}</p>
-            <p class="text-xs text-gray-500">{{ task.submissionCount }} ta topshiriq</p>
+            <p class="text-xs text-gray-500">{{ task.submissionCount }} {{ $t('dashboard.teacher.stats.submissions') }}
+            </p>
           </div>
           <div class="flex items-center space-x-2">
             <div class="w-24 bg-gray-200 rounded-full h-2">
@@ -153,7 +144,7 @@ const handleGradeSuccess = () => {
 
     <!-- Monthly Activity Chart -->
     <div class="bg-white rounded-lg shadow p-6">
-      <h3 class="text-lg font-medium text-gray-900 mb-4">Oylik Faollik</h3>
+      <h3 class="text-lg font-medium text-gray-900 mb-4">{{ $t('dashboard.teacher.monthlyActivity') }}</h3>
       <div class="space-y-4">
         <div v-for="month in monthlyActivity" :key="month.month" class="flex items-center justify-between">
           <span class="text-sm text-gray-600">{{ month.month }}</span>

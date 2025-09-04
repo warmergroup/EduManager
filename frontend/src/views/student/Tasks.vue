@@ -206,7 +206,7 @@ onUnmounted(() => {
         <div v-if="activeTab === 'tasks' && !loading">
             <div v-if="filteredTasks.length > 0" class="grid gap-4">
                 <TaskCard v-for="task in filteredTasks" :key="task._id" :task="task"
-                    :submission="getSubmission(task._id)" @click="openTask(task)" />
+                    :submission="getSubmission(task._id)" @submit="openTask" />
             </div>
             <div v-else class="text-center py-8 text-gray-500">
                 {{ $t('tasks.noTasks') }}

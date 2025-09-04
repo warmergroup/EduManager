@@ -50,8 +50,8 @@ onMounted(async () => {
   <div class="max-w-6xl mx-auto">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">👤 Shaxsiy Profil</h1>
-      <p class="mt-2 text-gray-600">Shaxsiy ma'lumotlaringiz va sozlamalarni boshqarish</p>
+      <h1 class="text-3xl font-bold text-gray-900">{{ $t('profile.title') }}</h1>
+      <p class="mt-2 text-gray-600">{{ $t('profile.description') }}</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -70,7 +70,7 @@ onMounted(async () => {
               <p class="text-gray-600">{{ user?.email }}</p>
               <span
                 class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200">
-                🎓 Talaba
+                🎓 {{ $t('profile.student') }}
               </span>
             </div>
           </div>
@@ -78,30 +78,30 @@ onMounted(async () => {
           <!-- Profile Form -->
           <form @submit.prevent="updateProfile" class="space-y-5">
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">To'liq ism</label>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.fullName') }}</label>
               <input v-model="form.fullName" type="text"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                placeholder="To'liq ismingizni kiriting" required />
+                :placeholder="$t('profile.fullNamePlaceholder')" required />
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Email manzil</label>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.email') }}</label>
               <input v-model="form.email" type="email"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                placeholder="Email manzilingizni kiriting" required />
+                :placeholder="$t('profile.emailPlaceholder')" required />
             </div>
 
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Yangi parol (ixtiyoriy)</label>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.newPassword') }}</label>
               <input v-model="form.newPassword" type="password"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                placeholder="O'zgartirmaslik uchun bo'sh qoldiring" />
+                :placeholder="$t('profile.newPasswordPlaceholder')" />
             </div>
 
             <div class="flex justify-end pt-4">
               <button type="submit" :disabled="loading"
                 class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-green-700 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                {{ loading ? '⏳ Yangilanmoqda...' : '💾 Ma\'lumotlarni saqlash' }}
+                {{ loading ? '⏳ ' + $t('profile.loading') : '💾 ' + $t('profile.save') }}
               </button>
             </div>
           </form>
@@ -112,27 +112,27 @@ onMounted(async () => {
       <div class="space-y-6">
         <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
           <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            📊 O'qish Progressi
+            📊 {{ $t('profile.progress') }}
           </h3>
           <div class="space-y-4">
             <div class="flex justify-between items-center py-2 border-b border-gray-100">
-              <span class="text-gray-600">Topshirilgan vazifalar:</span>
+              <span class="text-gray-600">{{ $t('profile.submittedTasks') }}:</span>
               <span class="font-bold text-green-600">{{ stats?.submittedTasks || 0 }}</span>
             </div>
             <div class="flex justify-between items-center py-2 border-b border-gray-100">
-              <span class="text-gray-600">Jami vazifalar:</span>
+              <span class="text-gray-600">{{ $t('profile.totalTasks') }}:</span>
               <span class="font-bold text-blue-600">{{ stats?.totalTasks || 0 }}</span>
             </div>
             <div class="flex justify-between items-center py-2 border-b border-gray-100">
-              <span class="text-gray-600">Baholangan vazifalar:</span>
+              <span class="text-gray-600">{{ $t('profile.gradedTasks') }}:</span>
               <span class="font-bold text-purple-600">{{ stats?.gradedTasks || 0 }}</span>
             </div>
             <div class="flex justify-between items-center py-2 border-b border-gray-100">
-              <span class="text-gray-600">O'rtacha ball:</span>
+              <span class="text-gray-600">{{ $t('profile.averageScore') }}:</span>
               <span class="font-bold text-orange-600">{{ stats?.averageScore || 0 }}/100</span>
             </div>
             <div class="flex justify-between items-center py-2">
-              <span class="text-gray-600">Progress foizi:</span>
+              <span class="text-gray-600">{{ $t('profile.progressPercentage') }}:</span>
               <span class="font-bold text-indigo-600">{{ stats?.completionPercentage || 0 }}%</span>
             </div>
           </div>
@@ -140,12 +140,12 @@ onMounted(async () => {
 
         <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
           <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            🕒 Hisob ma'lumotlari
+            🕒 {{ $t('profile.accountInfo') }}
           </h3>
           <div class="space-y-2 text-sm text-gray-600">
             <p class="flex items-center">
               <span class="mr-2">📅</span>
-              Ro'yxatdan o'tgan: {{ formatDate(user?.createdAt) }}
+              {{ $t('profile.registeredAt') }}: {{ formatDate(user?.createdAt) }}
             </p>
           </div>
         </div>

@@ -23,20 +23,20 @@ const isTeacher = computed(() => user.value?.role === 'teacher')
 const showDevInfo = ref(false)
 
 const studentNavigation = [
-  { name: 'StudentDashboard', labelKey: 'navigation.studentDashboard', to: '/student/dashboard', icon: HomeIcon },
-  { name: 'StudentTasks', labelKey: 'navigation.studentTasks', to: '/student/tasks', icon: DocumentTextIcon },
-  { name: 'StudentVideos', labelKey: 'navigation.studentVideos', to: '/student/videos', icon: VideoCameraIcon },
-  { name: 'StudentAI', labelKey: 'navigation.studentAI', to: '/student/ai', icon: ChatBubbleLeftRightIcon },
-  { name: 'StudentProfile', labelKey: 'navigation.studentProfile', to: '/student/profile', icon: UserIcon }
+  { name: 'Dashboard', labelKey: 'navigation.dashboard', to: '/student/dashboard', icon: HomeIcon },
+  { name: 'Tasks', labelKey: 'navigation.tasks', to: '/student/tasks', icon: DocumentTextIcon },
+  { name: 'Videos', labelKey: 'navigation.videos', to: '/student/videos', icon: VideoCameraIcon },
+  { name: 'AI', labelKey: 'navigation.AIassistant', to: '/student/ai', icon: ChatBubbleLeftRightIcon },
+  { name: 'Profile', labelKey: 'navigation.profile', to: '/student/profile', icon: UserIcon }
 ]
 
 const teacherNavigation = [
-  { name: 'TeacherDashboard', labelKey: 'navigation.teacherDashboard', to: '/teacher/dashboard', icon: HomeIcon },
-  { name: 'TeacherTasks', labelKey: 'navigation.teacherTasks', to: '/teacher/tasks', icon: DocumentTextIcon },
-  { name: 'TeacherVideos', labelKey: 'navigation.teacherVideos', to: '/teacher/videos', icon: VideoCameraIcon },
-  { name: 'TeacherStudents', labelKey: 'navigation.teacherStudents', to: '/teacher/students', icon: UsersIcon },
-  { name: 'TeacherAI', labelKey: 'navigation.teacherAI', to: '/teacher/ai', icon: CpuChipIcon },
-  { name: 'TeacherProfile', labelKey: 'navigation.teacherProfile', to: '/teacher/profile', icon: UserIcon }
+  { name: 'Dashboard', labelKey: 'navigation.dashboard', to: '/teacher/dashboard', icon: HomeIcon },
+  { name: 'Tasks', labelKey: 'navigation.tasks', to: '/teacher/tasks', icon: DocumentTextIcon },
+  { name: 'Videos', labelKey: 'navigation.videos', to: '/teacher/videos', icon: VideoCameraIcon },
+  { name: 'Students', labelKey: 'navigation.students', to: '/teacher/students', icon: UsersIcon },
+  { name: 'AI', labelKey: 'navigation.AIassistant', to: '/teacher/ai', icon: CpuChipIcon },
+  { name: 'Profile', labelKey: 'navigation.profile', to: '/teacher/profile', icon: UserIcon }
 ]
 
 const navigationItems = computed(() => {

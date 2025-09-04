@@ -14,21 +14,21 @@ const pageTitle = computed(() => {
   const routeName = route.name as string
   const titleKeys: { [key: string]: string } = {
     // Student pages
-    'StudentDashboard': 'navigation.studentDashboard',
-    'StudentTasks': 'navigation.studentTasks',
+    'StudentDashboard': 'navigation.dashboard',
+    'StudentTasks': 'navigation.tasks',
     'StudentSubmissions': 'navigation.submissions',
-    'StudentVideos': 'navigation.studentVideos',
-    'StudentAI': 'navigation.studentAI',
-    'StudentProfile': 'navigation.studentProfile',
+    'StudentVideos': 'navigation.videos',
+    'StudentAI': 'navigation.AIassistant',
+    'StudentProfile': 'navigation.profile',
 
     // Teacher pages
-    'TeacherDashboard': 'navigation.teacherDashboard',
-    'TeacherTasks': 'navigation.teacherTasks',
+    'TeacherDashboard': 'navigation.dashboard',
+    'TeacherTasks': 'navigation.tasks', 
     'TeacherSubmissions': 'navigation.submissions',
-    'TeacherVideos': 'navigation.teacherVideos',
-    'TeacherStudents': 'navigation.teacherStudents',
-    'TeacherAI': 'navigation.teacherAI',
-    'TeacherProfile': 'navigation.teacherProfile'
+    'TeacherVideos': 'navigation.videos',
+    'TeacherStudents': 'navigation.students',
+    'TeacherAI': 'navigation.AIassistant',
+    'TeacherProfile': 'navigation.profile'
   }
   const titleKey = titleKeys[routeName] || 'navigation.dashboard'
   return titleKey
@@ -90,16 +90,6 @@ const toggleDesktopSidebar = () => {
 
         <!-- Language Switcher -->
         <LanguageSwitcher />
-
-        <!-- Logout Button
-        <button @click="authStore.logout"
-          class="flex items-center px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-          </svg>
-          <span class="hidden sm:inline">Chiqish</span>
-        </button> -->
       </div>
     </div>
   </header>

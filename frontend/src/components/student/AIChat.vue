@@ -82,17 +82,17 @@ const clearChat = () => {
 <template>
   <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100 h-96 flex flex-col">
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-xl font-semibold text-gray-900">🤖 AI Yordamchisi</h3>
+      <h3 class="text-xl font-semibold text-gray-900">🤖 {{ $t('aiChat.title') }}</h3>
       <button @click="clearChat"
         class="px-3 py-1 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 transition-colors">
-        🗑️ Chatni tozalash
+        🗑️ {{ $t('aiChat.clearChat') }}
       </button>
     </div>
 
     <div ref="messagesContainer" class="flex-1 overflow-y-auto space-y-4 mb-4 p-4 bg-gray-50 rounded-lg">
       <div v-if="messages.length === 0" class="text-center text-gray-500 py-8">
         <ChatBubbleLeftRightIcon class="mx-auto h-8 w-8 mb-2" />
-        <p>O'qish bo'yicha savollaringizni bering!</p>
+        <p>{{ $t('aiChat.askQuestion') }}</p>
       </div>
 
       <div v-for="message in messages" :key="message.id" class="flex"
@@ -108,21 +108,22 @@ const clearChat = () => {
 
       <div v-if="loading" class="flex justify-start">
         <div class="bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm">
-          <Loading text="Javob yozilmoqda..." />
+          <Loading :text="$t('aiChat.loading')" />
         </div>
       </div>
     </div>
 
     <form @submit.prevent="sendMessage" class="flex gap-2">
-      <input v-model="newMessage" type="text" placeholder="Savolingizni yozing..."
+      <input v-model="newMessage" type="text" :placeholder="$t('aiChat.askQuestion')"
         class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
         :disabled="loading" />
       <button type="submit" :disabled="loading || !newMessage.trim()"
         class="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-        {{ loading ? '⏳' : '📤' }}
+        {{ loading ? '⏳' : '📤' }} {{ $t('aiChat.send') }}
       </button>
     </form>
 
-    <Alert v-if="error" :show="!!error" type="error" title="Xatolik" :message="error" @close="error = undefined" />
+    <Alert v-if="error" :show="!!error" type="error" :title="$t('aiChat.error')" :message="error"
+      @close="error = undefined" />
   </div>
 </template>
