@@ -10,7 +10,7 @@ export const useLanguageStore = defineStore('language', () => {
   ]
 
   // Joriy til
-  const currentLanguage = ref<string>('uz')
+  const currentLanguage = ref<string>('en')
 
   // I18n instance
   const { locale } = useI18n()

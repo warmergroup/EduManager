@@ -42,17 +42,6 @@ const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('uz-UZ')
 }
 
-const clearFilters = () => {
-    searchQuery.value = ''
-    filterRole.value = ''
-    currentPage.value = 1
-}
-
-// const viewStudentDetails = (student: any) => {
-//     // TODO: Navigate to student details page or open modal
-//     console.log('View student details:', student)
-// }
-
 onMounted(async () => {
     await teacherStore.fetchStudents()
 })
@@ -102,7 +91,7 @@ onMounted(async () => {
                                 <p class="text-sm text-gray-600">{{ student.email }}</p>
                                 <p class="text-xs text-gray-500">{{ $t('students.regestered') }}: {{
                                     formatDate(student.createdAt)
-                                    }}</p>
+                                }}</p>
                             </div>
                         </div>
 
