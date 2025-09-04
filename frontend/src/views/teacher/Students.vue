@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useTeacherStore } from '@/stores/teacher'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 const teacherStore = useTeacherStore()
 
@@ -64,7 +65,7 @@ onMounted(async () => {
             <h1 class="text-3xl font-bold text-gray-900">👥 Student'lar</h1>
             <p class="mt-2 text-gray-600">Barcha student'lar ro'yxati va ularning natijalari</p>
         </div>
-
+        <PageHeader :title="$t('dashboard.teacher.title')" :description="$t('dashboard.teacher.description')" />
         <!-- Search and Filter -->
         <div class="bg-white shadow rounded-lg p-6 mb-8">
             <div class="flex flex-col sm:flex-row gap-4">
@@ -140,7 +141,7 @@ onMounted(async () => {
                 <div class="flex items-center justify-between">
                     <div class="text-sm text-gray-700">
                         {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize,
-                            filteredStudents.length) }}
+                        filteredStudents.length) }}
                         dan {{ filteredStudents.length }} ta
                     </div>
                     <div class="flex space-x-2">

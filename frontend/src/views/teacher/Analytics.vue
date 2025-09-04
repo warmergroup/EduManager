@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 const loading = ref(false)
 const analytics = ref({
@@ -76,7 +77,7 @@ onMounted(async () => {
                 <h1 class="text-3xl font-bold text-gray-900">Analitika</h1>
                 <p class="mt-2 text-gray-600">O'qituvchilik faoliyatidagi statistikalar va natijalar</p>
             </div>
-
+            <PageHeader :title="$t('dashboard.teacher.title')" :description="$t('dashboard.teacher.description')" />
             <!-- Overview Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white rounded-lg shadow p-6">

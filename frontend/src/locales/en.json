@@ -104,7 +104,19 @@
   },
   "aiChat": {
     "title": "AI Assistant",
-    "description": "Get answers to your questions with AI assistance",
+    "teacher":  {
+      "description":"Improve your learning process with assignments, video lessons, and an AI assistant.",
+      "createTask":"Create Task",
+      "topic": "",
+      "topicPlaceholder":"For example, Physics - Newton's 2nd Law Problem",
+      "difficulty": "Select a level",
+      "beginner": "beginner",
+      "intermediate": "intermediate",
+      "advanced":"advanced"
+    },
+    "student":{
+      "description": "Get answers to your questions with AI assistance"
+    },
     "clearChat": "Clear Chat",
     "askQuestion": "Ask a question",
     "loading": "Loading...",

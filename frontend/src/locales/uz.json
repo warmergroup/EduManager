@@ -103,8 +103,20 @@
     }
   },
   "aiChat": {
+    "teacher":  {
+      "description":"Vazifalar, video darslar va AI yordamchisi bilan ta'lim jarayonini yaxshilang.",
+      "createTask":"Vazifa yaratish",
+      "topic": "Mavzu yoki fanni yozing",
+      "topicPlaceholder":"Masalan, Fizika - Nyutonning 2-qonuni bo'yicha masala",
+      "difficulty": "Darajani tanlang",
+      "beginner": "boshlang'ich",
+      "intermediate": "O'rta",
+      "advanced":"Qiyin"
+    },
+    "student":{
+      "description":"O'qish bo'yicha savollaringizga sun'iy intellekt yordamida javob oling"
+    },
     "title": "AI Yordamchisi",
-    "description": "O'qish bo'yicha savollaringizga sun'iy intellekt yordamida javob oling",
     "clearChat": "Chatni tozalash",
     "askQuestion": "Savolingizni yozing",
     "loading": "Javob yozilmoqda...",

@@ -10,6 +10,7 @@ import SubmissionCard from '@/components/student/SubmissionCard.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import TaskPageLayout from '@/components/common/TaskPageLayout.vue'
 
+
 // Stores
 const taskStore = useTasksStore()
 const submissionStore = useSubmissionsStore()
@@ -106,6 +107,7 @@ onMounted(async () => {
         :filterOptions="activeTab === 'submissions' ? submissionFilterOptions : []" :currentFilter="filter"
         :showCreateButton="true" :createButtonText="$t('tasks.createTask')" createButtonLink="/teacher/create-task"
         @tab-change="handleTabChange" @filter-change="(newFilter) => filter = newFilter">
+
         <!-- Tasks Tab -->
         <div v-if="activeTab === 'tasks'">
             <div v-if="tasks.length > 0" class="grid gap-4">
@@ -128,6 +130,7 @@ onMounted(async () => {
                 <p class="text-lg font-medium mb-2">{{ $t('tasks.noSubmittedTasks') }}</p>
             </div>
         </div>
+
     </TaskPageLayout>
 
     <!-- Create/Edit Modal -->

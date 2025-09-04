@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTeacherStore } from '@/stores/teacher'
 import { userAPI } from '@/services/api'
+import PageHeader from '@/components/common/PageHeader.vue'
 
 const authStore = useAuthStore()
 const teacherStore = useTeacherStore()
@@ -78,11 +79,7 @@ onMounted(async () => {
 <template>
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">{{ $t('profile.title') }}</h1>
-            <p class="mt-2 text-gray-600">{{ $t('profile.description') }}</p>
-        </div>
-
+        <PageHeader :title="$t('profile.title')" :description="$t('profile.description')" />
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Profile Card -->
             <div class="lg:col-span-2">
@@ -107,21 +104,24 @@ onMounted(async () => {
                     <!-- Profile Form -->
                     <form @submit.prevent="updateProfile" class="space-y-5">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.fullName') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.fullName')
+                                }}</label>
                             <input v-model="form.fullName" type="text"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                 :placeholder="$t('profile.fullNamePlaceholder')" required />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.email') }}</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.email')
+                                }}</label>
                             <input v-model="form.email" type="email"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                                 :placeholder="$t('profile.emailPlaceholder')" required />
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.newPassword') }}
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">{{ $t('profile.newPassword')
+                                }}
                                 (ixtiyoriy)</label>
                             <input v-model="form.newPassword" type="password"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"

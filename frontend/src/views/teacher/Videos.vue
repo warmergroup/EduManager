@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import VideoManager from '../../components/teacher/VideoManager.vue'
+import PageHeader from '@/components/common/PageHeader.vue'
 </script>
 
 <template>
@@ -10,6 +11,8 @@ import VideoManager from '../../components/teacher/VideoManager.vue'
       <h1 class="text-3xl font-bold text-gray-900">🎥 Video Darslar Menejeri</h1>
       <p class="mt-2 text-gray-600">Video darslarni qo'shish, tahrirlash va boshqarish</p>
     </div>
+
+    <PageHeader :title="$t('dashboard.teacher.title')" :description="$t('dashboard.teacher.description')" />
 
     <VideoManager />
   </div>

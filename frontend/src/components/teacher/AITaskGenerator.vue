@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { generateTask as generateAITask } from '../../services/ai'
 // import type { AIRequest, AIResponse } from '@/types'
 import { useTasksStore } from '../../stores/tasks'
@@ -15,6 +15,7 @@ const copied = ref(false)
 const taskCreated = ref(false)
 const generatedTask = ref('')
 const showCreateModal = ref(false)
+const isDifficultyDropdownOpen = ref(false)
 
 type Difficulty = 'beginner' | 'intermediate' | 'advanced'
 
@@ -38,6 +39,44 @@ const createForm = reactive<CreateForm>({
   title: '',
   description: '',
   dueDate: ''
+})
+
+// Difficulty options for dropdown
+const difficultyOptions = [
+  { value: 'beginner', label: 'Beginner', icon: '🟢', translationKey: 'aiChat.teacher.beginner' },
+  { value: 'intermediate', label: 'Intermediate', icon: '🟡', translationKey: 'aiChat.teacher.intermediate' },
+  { value: 'advanced', label: 'Advanced', icon: '🔴', translationKey: 'aiChat.teacher.advanced' }
+]
+
+// Dropdown functions
+const toggleDifficultyDropdown = () => {
+  isDifficultyDropdownOpen.value = !isDifficultyDropdownOpen.value
+}
+
+const selectDifficulty = (option: typeof difficultyOptions[0]) => {
+  form.difficulty = option.value as Difficulty
+  isDifficultyDropdownOpen.value = false
+}
+
+const getSelectedDifficultyLabel = () => {
+  const selected = difficultyOptions.find(opt => opt.value === form.difficulty)
+  return selected ? `${selected.icon} ${selected.label}` : ''
+}
+
+// Click outside handler
+const handleClickOutside = (event: Event) => {
+  const target = event.target as HTMLElement
+  if (!target.closest('.relative')) {
+    isDifficultyDropdownOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 
 const handleGenerateTask = async () => {
@@ -118,27 +157,46 @@ const handleCreateTask = async () => {
   <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
     <!-- Generate Task Section -->
     <div class="mb-8">
-      <h2 class="text-2xl font-bold text-gray-900 mb-4">🚀 Vazifa Yaratish</h2>
-      <p class="text-gray-600 mb-6">Sun'iy intellekt yordamida yaratuvchan vazifalar yarating</p>
+      <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $t('aiChat.teacher.createTask') }}</h2>
 
       <form @submit.prevent="handleGenerateTask" class="space-y-5">
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">📚 Mavzu yoki fan</label>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">📚 {{ $t('aiChat.teacher.topic') }}</label>
           <input v-model="form.topic" type="text" placeholder="Masalan: Matematika, Fizika, Tarix..."
             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             required />
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">📊 Qiyinlik darajasi</label>
-          <select v-model="form.difficulty"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-            required>
-            <option value="">Qiyinlik darajasini tanlang</option>
-            <option value="beginner">🟢 Boshlang'ich</option>
-            <option value="intermediate">🟡 O'rta</option>
-            <option value="advanced">🔴 Yuqori</option>
-          </select>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">📊 {{ $t('aiChat.teacher.difficulty') }}</label>
+
+          <!-- Custom Dropdown -->
+          <div class="relative">
+            <button type="button" @click="toggleDifficultyDropdown"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-left flex items-center justify-between">
+              <span class="text-gray-700">
+                {{ form.difficulty ? getSelectedDifficultyLabel() : $t('aiChat.teacher.difficulty') }}
+              </span>
+              <svg class="w-5 h-5 text-gray-400 transition-transform duration-200"
+                :class="{ 'rotate-180': isDifficultyDropdownOpen }" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            <!-- Dropdown Menu -->
+            <div v-if="isDifficultyDropdownOpen"
+              class="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+              <div class="py-1">
+                <button v-for="option in difficultyOptions" :key="option.value" @click="selectDifficulty(option)"
+                  class="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-gray-50 transition-colors duration-200"
+                  :class="{ 'bg-blue-50 text-blue-600': form.difficulty === option.value }">
+                  <span class="text-sm">{{ option.icon }}</span>
+                  <span class="text-sm font-medium">{{ $t(option.translationKey) }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <button type="submit" :disabled="loading"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useTasksStore } from '@/stores/tasks'
 import { useSubmissionsStore } from '@/stores/submissions'
@@ -66,12 +66,6 @@ const handleSubmit = async (taskId: string, file: File, textResponse?: string) =
     } catch (err) {
         console.error('Failed to submit task:', err)
     }
-}
-
-const switchToSubmissions = async () => {
-    activeTab.value = 'submissions'
-    // Refresh submissions when switching to submissions tab
-    await submissionStore.fetchStudentProgress()
 }
 
 // Tab change handler

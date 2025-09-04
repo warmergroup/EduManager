@@ -7,6 +7,8 @@ import GradeForm from '../../components/teacher/GradeForm.vue'
 import { useTeacherStore } from '@/stores/teacher'
 import type { Task, Submission } from '../../types'
 import { AcademicCapIcon } from '@heroicons/vue/24/outline'
+import PageHeader from '@/components/common/PageHeader.vue'
+
 
 const teacherStore = useTeacherStore()
 const { stats: analytics, taskAnalytics, monthlyActivity } = storeToRefs(teacherStore)
@@ -48,10 +50,7 @@ const handleGradeSuccess = () => {
 <template>
   <div class="max-w-7xl mx-auto">
     <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">{{ $t('dashboard.teacher.title') }}</h1>
-      <p class="mt-2 text-gray-600">{{ $t('dashboard.teacher.description') }}</p>
-    </div>
+    <PageHeader :title="$t('dashboard.teacher.title')" :description="$t('dashboard.teacher.description')" />
 
     <!-- Overview Cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
