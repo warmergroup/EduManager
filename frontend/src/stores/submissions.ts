@@ -53,8 +53,6 @@ export const useSubmissionsStore = defineStore('submissions', () => {
         }
       }
       
-      console.log('Raw response data:', responseData)
-      
       if (responseData && responseData.length > 0) {
         // Transform backend data to frontend format
         const transformedSubmissions = responseData.map((submission: any) => ({
@@ -74,7 +72,6 @@ export const useSubmissionsStore = defineStore('submissions', () => {
           gradedAt: submission.gradedAt
         }))
         
-        console.log('Transformed submissions:', transformedSubmissions)
         submissions.value = transformedSubmissions
       } else {
         // Use mock data based on role

@@ -54,6 +54,16 @@ router.get("/progress", isStudent, getStudentProgress)
 // @access  Private (Student only)
 router.get("/student/my-submissions", isStudent, getMySubmissions)
 
+// @route   PUT /api/submissions/:submissionId/grade
+// @desc    Grade submission
+// @access  Private (Teacher only - own tasks)
+router.put("/:submissionId/grade", teacherOnly, validateGrade, gradeSubmission)
+
+// @route   GET /api/submissions/single/:submissionId
+// @desc    Get single submission by ID
+// @access  Private (Student owns or Teacher created task)
+router.get("/single/:submissionId", getSubmissionById)
+
 // @route   POST /api/submissions/:taskId
 // @desc    Submit assignment file
 // @access  Private (Student only)
@@ -63,15 +73,5 @@ router.post("/:taskId", isStudent, upload.single("file"), handleUploadError, sub
 // @desc    Get submissions for a task
 // @access  Private (Students see own, Teachers see all for their tasks)
 router.get("/:taskId", getSubmissions)
-
-// @route   GET /api/submissions/single/:submissionId
-// @desc    Get single submission by ID
-// @access  Private (Student owns or Teacher created task)
-router.get("/single/:submissionId", getSubmissionById)
-
-// @route   PUT /api/submissions/:submissionId/grade
-// @desc    Grade submission
-// @access  Private (Teacher only - own tasks)
-router.put("/:submissionId/grade", teacherOnly, validateGrade, gradeSubmission)
 
 export default router

@@ -7,6 +7,7 @@ import type { Task, TaskCreate, SubmissionData } from '@/types'
 import TaskCard from '@/components/teacher/TaskCard.vue'
 import TaskFormModal from '@/components/teacher/TaskFormModal.vue'
 import SubmissionCard from '@/components/student/SubmissionCard.vue'
+import GradeModal from '@/components/teacher/GradeModal.vue'
 import ConfirmModal from '@/components/ui/ConfirmModal.vue'
 import TaskPageLayout from '@/components/common/TaskPageLayout.vue'
 
@@ -20,7 +21,9 @@ const { submissions } = storeToRefs(submissionStore)
 // State
 const showModal = ref(false)
 const showDeleteModal = ref(false)
+const showGradeModal = ref(false)
 const selectedTask = ref<Task | undefined>(undefined)
+const selectedSubmission = ref<SubmissionData | undefined>(undefined)
 const taskToDelete = ref<string | null>(null)
 const activeTab = ref('tasks') // 'tasks' or 'submissions'
 const filter = ref('all')
@@ -34,15 +37,10 @@ const submissionFilterOptions = [
 
 // Computed
 const filteredSubmissions = computed(() => {
-    console.log('All submissions:', submissions.value)
-    console.log('Current filter:', filter.value)
-
     if (filter.value === 'all') return submissions.value
-    const filtered = submissions.value.filter((s: SubmissionData) =>
+    return submissions.value.filter((s: SubmissionData) =>
         filter.value === 'graded' ? s.isGraded : !s.isGraded
     )
-    console.log('Filtered submissions:', filtered)
-    return filtered
 })
 
 
@@ -93,6 +91,28 @@ const deleteTask = async () => {
     }
 }
 
+// Grade functions
+const openGradeModal = (submission: SubmissionData) => {
+    selectedSubmission.value = submission
+    showGradeModal.value = true
+}
+
+const closeGradeModal = () => {
+    showGradeModal.value = false
+    selectedSubmission.value = undefined
+}
+
+const handleGrade = async (gradeData: { score: number; feedback: string }) => {
+    if (!selectedSubmission.value) return
+
+    try {
+        await submissionStore.gradeSubmission(selectedSubmission.value.id, gradeData)
+        closeGradeModal()
+    } catch (err) {
+        console.error('Failed to grade submission:', err)
+    }
+}
+
 // Lifecycle
 onMounted(async () => {
     try {
@@ -128,8 +148,8 @@ onMounted(async () => {
         <!-- Submissions Tab -->
         <div v-if="activeTab === 'submissions'">
             <div v-if="filteredSubmissions.length > 0" class="grid gap-4">
-                <SubmissionCard v-for="submission in filteredSubmissions" :key="submission.id"
-                    :submission="submission" />
+                <SubmissionCard v-for="submission in filteredSubmissions" :key="submission.id" :submission="submission"
+                    :showGradeButton="true" @grade="openGradeModal" />
             </div>
             <div v-else class="text-center py-8 text-gray-500">
                 <p class="text-lg font-medium mb-2">{{ $t('tasks.noSubmittedTasks') }}</p>
@@ -144,4 +164,8 @@ onMounted(async () => {
     <!-- Delete Confirmation Modal -->
     <ConfirmModal v-if="showDeleteModal" :title="$t('tasks.deleteTask')" :message="$t('tasks.confirmDelete')"
         @confirm="deleteTask" @cancel="showDeleteModal = false" />
+
+    <!-- Grade Modal -->
+    <GradeModal v-if="showGradeModal && selectedSubmission" :submission="selectedSubmission" @close="closeGradeModal"
+        @grade="handleGrade" />
 </template>

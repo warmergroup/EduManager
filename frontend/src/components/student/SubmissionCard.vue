@@ -21,6 +21,11 @@ interface SubmissionData {
 
 defineProps<{
     submission: SubmissionData
+    showGradeButton?: boolean
+}>()
+
+defineEmits<{
+    (e: 'grade', submission: SubmissionData): void
 }>()
 
 // File size formatting
@@ -81,11 +86,19 @@ const formatFileSize = (bytes: number | undefined | null): string => {
         <div v-if="submission.isGraded" class="border-t pt-3 md:pt-4">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm md:text-base text-gray-600">{{ $t('tasks.score') }}:</span>
-                <span class="text-sm md:text-base font-semibold">{{ submission.score }}/100</span>
+                <span class="text-sm md:text-base font-semibold text-green-600">{{ submission.score }}/100</span>
             </div>
-            <p v-if="submission.feedback" class="text-gray-600 text-xs md:text-sm">
+            <p v-if="submission.feedback" class="text-gray-600 text-xs md:text-sm mb-3">
                 {{ submission.feedback }}
             </p>
+        </div>
+
+        <!-- Grade Button -->
+        <div v-if="showGradeButton" class="border-t pt-3 md:pt-4">
+            <button @click="$emit('grade', submission)"
+                class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm md:text-base">
+                {{ submission.isGraded ? '✏️ ' + $t('tasks.editGrade') : '📝 ' + $t('tasks.gradeSubmission') }}
+            </button>
         </div>
     </div>
 </template>

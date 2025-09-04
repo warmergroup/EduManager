@@ -220,7 +220,7 @@ export const getSubmissionById = async (req, res) => {
 // @access  Private (Teacher only)
 export const gradeSubmission = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { submissionId } = req.params;
     const { score, feedback } = req.body;
 
     // Validate score
@@ -239,7 +239,7 @@ export const gradeSubmission = async (req, res) => {
     }
 
     // Find submission and check if it exists
-    const submission = await Submission.findById(id)
+    const submission = await Submission.findById(submissionId)
       .populate('taskId', 'title createdBy')
       .populate('studentId', 'fullName email');
 
@@ -260,7 +260,7 @@ export const gradeSubmission = async (req, res) => {
 
     // Update submission with grade and feedback
     const updatedSubmission = await Submission.findByIdAndUpdate(
-      id,
+      submissionId,
       {
         score,
         feedback: feedback || "",
