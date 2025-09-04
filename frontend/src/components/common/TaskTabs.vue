@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 
 interface Props {
     activeTab: string
@@ -27,15 +26,15 @@ const handleTabChange = (tab: string) => {
             <nav class="-mb-px flex space-x-8">
                 <button @click="handleTabChange('tasks')" :class="[
                     'py-2 px-1 border-b-2 font-medium text-sm',
-                    activeTab === 'tasks'
+                    props.activeTab === 'tasks'
                         ? 'border-blue-500 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 ]">
                     📝 {{ $t('tasks.tasks') }}
                 </button>
-                <button v-if="showSubmissionsTab" @click="handleTabChange('submissions')" :class="[
+                <button v-if="props.showSubmissionsTab" @click="handleTabChange('submissions')" :class="[
                     'py-2 px-1 border-b-2 font-medium text-sm',
-                    activeTab === 'submissions'
+                    props.activeTab === 'submissions'
                         ? 'border-blue-500 text-blue-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 ]">

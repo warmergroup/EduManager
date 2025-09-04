@@ -65,42 +65,36 @@ const handleCreateTask = () => {
         </div>
 
         <!-- Error Display -->
-        <Alert v-if="error" :show="!!error" type="error" title="Xatolik" :message="error" class="mb-6" />
+        <Alert v-if="props.error" :show="!!props.error" type="error" title="Xatolik" :message="props.error"
+            class="mb-6" />
 
         <!-- Tabs -->
-        <TaskTabs :activeTab="activeTab" :showSubmissionsTab="showSubmissionsTab" @tab-change="handleTabChange" />
+        <TaskTabs :activeTab="props.activeTab" :showSubmissionsTab="props.showSubmissionsTab"
+            @tab-change="handleTabChange" />
 
         <!-- Filter and Actions -->
         <div class="flex justify-between items-center mb-6">
             <div class="flex gap-4">
                 <!-- Filter Dropdown -->
-                <FilterDropdown v-if="filterOptions.length > 0" :modelValue="currentFilter" :options="filterOptions"
-                    @update:modelValue="handleFilterChange" />
-
-                <!-- Simple Select for Teacher Tasks -->
-                <select v-else-if="activeTab === 'submissions'" v-model="currentFilter"
-                    @change="handleFilterChange(currentFilter)" class="px-4 py-2 border rounded-lg">
-                    <option value="all">{{ $t('tasks.all') }}</option>
-                    <option value="graded">✅ {{ $t('tasks.graded') }}</option>
-                    <option value="pending">⏳ {{ $t('tasks.pending') }}</option>
-                </select>
+                <FilterDropdown v-if="props.filterOptions.length > 0" :modelValue="props.currentFilter"
+                    :options="props.filterOptions" @update:modelValue="handleFilterChange" />
             </div>
 
             <!-- Create Task Button -->
-            <router-link v-if="showCreateButton && activeTab === 'tasks'" :to="createButtonLink"
+            <router-link v-if="props.showCreateButton && props.activeTab === 'tasks'" :to="props.createButtonLink"
                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                📝 {{ createButtonText }}
+                📝 {{ props.createButtonText }}
             </router-link>
 
             <!-- Create Task Button (Event) -->
-            <button v-else-if="showCreateButton && activeTab === 'tasks'" @click="handleCreateTask"
+            <button v-else-if="props.showCreateButton && props.activeTab === 'tasks'" @click="handleCreateTask"
                 class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                📝 {{ createButtonText }}
+                📝 {{ props.createButtonText }}
             </button>
         </div>
 
         <!-- Loading State -->
-        <div v-if="loading" class="flex justify-center py-8">
+        <div v-if="props.loading" class="flex justify-center py-8">
             <Loading />
         </div>
 

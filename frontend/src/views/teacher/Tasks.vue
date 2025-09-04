@@ -24,6 +24,13 @@ const taskToDelete = ref<string | null>(null)
 const activeTab = ref('tasks') // 'tasks' or 'submissions'
 const filter = ref('all')
 
+// Filter options for submissions tab
+const submissionFilterOptions = [
+    { value: 'all', label: 'All', icon: '🔍', translationKey: 'tasks.all' },
+    { value: 'graded', label: 'Graded', icon: '✅', translationKey: 'tasks.graded' },
+    { value: 'pending', label: 'Pending', icon: '⏳', translationKey: 'tasks.pending' }
+]
+
 // Computed
 const filteredSubmissions = computed(() => {
     if (filter.value === 'all') return submissions.value
@@ -96,9 +103,9 @@ onMounted(async () => {
 
 <template>
     <TaskPageLayout :activeTab="activeTab" :loading="loading" :error="error" :showSubmissionsTab="true"
-        :currentFilter="filter" :showCreateButton="true" :createButtonText="$t('tasks.createTask')"
-        createButtonLink="/teacher/create-task" @tab-change="handleTabChange"
-        @filter-change="(newFilter) => filter = newFilter">
+        :filterOptions="activeTab === 'submissions' ? submissionFilterOptions : []" :currentFilter="filter"
+        :showCreateButton="true" :createButtonText="$t('tasks.createTask')" createButtonLink="/teacher/create-task"
+        @tab-change="handleTabChange" @filter-change="(newFilter) => filter = newFilter">
         <!-- Tasks Tab -->
         <div v-if="activeTab === 'tasks'">
             <div v-if="tasks.length > 0" class="grid gap-4">
