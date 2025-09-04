@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { generateTask as generateAITask } from '../../services/ai'
 // import type { AIRequest, AIResponse } from '@/types'
 import { useTasksStore } from '../../stores/tasks'
@@ -7,6 +8,7 @@ import type { TaskCreate } from '@/types'
 import Alert from '../ui/Alert.vue'
 
 const tasksStore = useTasksStore()
+const { t } = useI18n()
 
 const loading = ref(false)
 const createLoading = ref(false)
@@ -60,7 +62,7 @@ const selectDifficulty = (option: typeof difficultyOptions[0]) => {
 
 const getSelectedDifficultyLabel = () => {
   const selected = difficultyOptions.find(opt => opt.value === form.difficulty)
-  return selected ? `${selected.icon} ${selected.label}` : ''
+  return selected ? `${selected.icon} ${t(selected.translationKey)}` : ''
 }
 
 // Click outside handler
