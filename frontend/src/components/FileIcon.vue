@@ -7,13 +7,18 @@
     </svg>
 
     <!-- PDF Icon -->
-    <svg v-else-if="fileType.includes('pdf')" class="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+    <svg v-else-if="fileType.includes('pdf')" :class="[
+        'w-8 h-8',
+        props.variant === 'student' ? 'text-blue-500' : 'text-red-500'
+    ]" fill="currentColor" viewBox="0 0 20 20">
         <path d="M4 18h12V6l-4-4H4v16zm2-14h5v4h4v8H6V4z" />
     </svg>
 
     <!-- Word Icon -->
-    <svg v-else-if="fileType.includes('word') || fileType.includes('docx')" class="w-8 h-8 text-blue-500"
-        fill="currentColor" viewBox="0 0 20 20">
+    <svg v-else-if="fileType.includes('word') || fileType.includes('docx')" :class="[
+        'w-8 h-8',
+        props.variant === 'student' ? 'text-blue-500' : 'text-blue-500'
+    ]" fill="currentColor" viewBox="0 0 20 20">
         <path d="M4 18h12V6l-4-4H4v16zm2-14h5v4h4v8H6V4z" />
     </svg>
 
@@ -45,6 +50,7 @@ interface TaskFile {
 
 const props = defineProps<{
     file: FilePreview | TaskFile
+    variant?: 'teacher' | 'student' // teacher = red icons, student = blue icons
 }>()
 
 // Get file type from either interface

@@ -202,15 +202,15 @@ const handleCreateTask = async () => {
         </div>
 
         <button type="submit" :disabled="loading"
-          class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-          {{ loading ? '⏳ Vazifa yaratilmoqda...' : '🤖 AI yordamida vazifa yaratish' }}
+          class="w-48 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+          {{ loading ? '⏳ Vazifa yaratilmoqda...' : 'vazifa yaratish' }}
         </button>
       </form>
     </div>
 
     <!-- Generated Task Section -->
     <div v-if="generatedTask" class="mb-8">
-      <h3 class="text-xl font-semibold text-gray-900 mb-4">✨ Yaratilgan Vazifa</h3>
+      <h3 class="text-xl font-semibold text-gray-900 mb-4">✨ {{ $t('aiChat.teacher.generatedTask') }}</h3>
       <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
         <p class="text-gray-800 whitespace-pre-wrap">{{ generatedTask }}</p>
       </div>
@@ -235,11 +235,11 @@ const handleCreateTask = async () => {
     <!-- Create Task Modal -->
     <div v-if="showCreateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
-        <h3 class="text-xl font-bold text-gray-900 mb-4">💾 Vazifani Saqlash</h3>
+        <h3 class="text-xl font-bold text-gray-900 mb-4">💾 {{ $t('aiChat.teacher.saveTask') }}</h3>
 
         <form @submit.prevent="handleCreateTask" class="space-y-4">
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">📝 Vazifa nomi</label>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">📝{{ $t('aiChat.teacher.taskName') }} </label>
             <input v-model="createForm.title" type="text"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required />

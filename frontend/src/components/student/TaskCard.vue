@@ -15,8 +15,8 @@ defineEmits<{
 }>()
 
 // File size formatting
-const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes'
+const formatFileSize = (bytes: number | undefined | null): string => {
+    if (!bytes || bytes === 0 || isNaN(bytes)) return '0 Bytes'
     const k = 1024
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
@@ -108,7 +108,7 @@ const downloadFile = async (event: Event) => {
                 <div class="md:hidden">
                     <div class="flex items-center mb-2">
                         <div class="flex-shrink-0 mr-2">
-                            <FileIcon :file="task.file" />
+                            <FileIcon :file="task.file" variant="student" />
                         </div>
                         <div class="flex-1 min-w-0 overflow-hidden">
                             <p class="text-xs font-medium text-gray-900 truncate">
@@ -136,7 +136,7 @@ const downloadFile = async (event: Event) => {
                 <!-- Desktop Layout: All in one row -->
                 <div class="hidden md:flex items-center">
                     <div class="flex-shrink-0 mr-3">
-                        <FileIcon :file="task.file" />
+                        <FileIcon :file="task.file" variant="student" />
                     </div>
                     <div class="flex-1 min-w-0 overflow-hidden">
                         <p class="text-sm font-medium text-gray-900 truncate">

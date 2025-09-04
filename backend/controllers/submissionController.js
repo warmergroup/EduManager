@@ -107,7 +107,15 @@ export const getAllSubmissions = async (req, res) => {
     res.json({
       success: true,
       message: 'Submissions retrieved successfully',
-      data: { submissions }
+      data: { 
+        submissions: submissions.docs,
+        pagination: {
+          page: submissions.page,
+          limit: submissions.limit,
+          total: submissions.totalDocs,
+          pages: submissions.totalPages
+        }
+      }
     })
   } catch (error) {
     console.error('Get all submissions error:', error)

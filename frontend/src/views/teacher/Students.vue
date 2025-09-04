@@ -61,27 +61,14 @@ onMounted(async () => {
 <template>
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">👥 Student'lar</h1>
-            <p class="mt-2 text-gray-600">Barcha student'lar ro'yxati va ularning natijalari</p>
-        </div>
-        <PageHeader :title="$t('dashboard.teacher.title')" :description="$t('dashboard.teacher.description')" />
+        <PageHeader :title="$t('students.title')" :description="$t('students.allStudentListandResults')" />
+
         <!-- Search and Filter -->
         <div class="bg-white shadow rounded-lg p-6 mb-8">
             <div class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1">
-                    <input v-model="searchQuery" type="text" placeholder="Student ismi yoki email bo'ylab qidirish..."
-                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" />
-                </div>
-                <div class="flex gap-2">
-                    <select v-model="filterRole"
-                        class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <option value="">Barcha rollar</option>
-                        <option value="student">Student</option>
-                    </select>
-                    <button @click="clearFilters" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-                        Tozalash
-                    </button>
+                    <input v-model="searchQuery" type="text" :placeholder="$t('students.placeholder')"
+                        class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
             </div>
         </div>
@@ -89,16 +76,16 @@ onMounted(async () => {
         <!-- Students List -->
         <div class="bg-white shadow rounded-lg">
             <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Student'lar Ro'yxati</h3>
+                <h3 class="text-lg font-medium text-gray-900">{{ $t('students.studentList') }}</h3>
             </div>
 
             <div v-if="loading" class="p-6 text-center">
                 <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
-                <p class="mt-2 text-gray-600">Yuklanmoqda...</p>
+                <p class="mt-2 text-gray-600">{{ $t('students.loading') }}</p>
             </div>
 
             <div v-else-if="filteredStudents.length === 0" class="p-6 text-center">
-                <p class="text-gray-500">Student'lar topilmadi</p>
+                <p class="text-gray-500">{{ $t('students.noStudentsFound') }}</p>
             </div>
 
             <div v-else class="divide-y divide-gray-200">
@@ -113,7 +100,8 @@ onMounted(async () => {
                             <div>
                                 <h4 class="text-lg font-medium text-gray-900">{{ student.fullName }}</h4>
                                 <p class="text-sm text-gray-600">{{ student.email }}</p>
-                                <p class="text-xs text-gray-500">Ro'yxatdan o'tgan: {{ formatDate(student.createdAt)
+                                <p class="text-xs text-gray-500">{{ $t('students.regestered') }}: {{
+                                    formatDate(student.createdAt)
                                     }}</p>
                             </div>
                         </div>
@@ -121,15 +109,15 @@ onMounted(async () => {
                         <div class="flex items-center space-x-4">
                             <div class="text-right">
                                 <p class="text-sm font-medium text-gray-900">{{ student.totalSubmissions || 0 }}</p>
-                                <p class="text-xs text-gray-500">Topshiriqlar</p>
+                                <p class="text-xs text-gray-500">{{ $t('students.tasks') }}</p>
                             </div>
                             <div class="text-right">
                                 <p class="text-sm font-medium text-gray-900">{{ student.averageScore || 0 }}/100</p>
-                                <p class="text-xs text-gray-500">O'rtacha ball</p>
+                                <p class="text-xs text-gray-500">{{ $t('students.averageScore') }}</p>
                             </div>
                             <div class="text-right">
                                 <p class="text-sm font-medium text-gray-900">{{ student.completionRate || 0 }}%</p>
-                                <p class="text-xs text-gray-500">Bajarilgan</p>
+                                <p class="text-xs text-gray-500">{{ $t('students.completed') }}</p>
                             </div>
                         </div>
                     </div>
@@ -141,20 +129,20 @@ onMounted(async () => {
                 <div class="flex items-center justify-between">
                     <div class="text-sm text-gray-700">
                         {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize,
-                        filteredStudents.length) }}
-                        dan {{ filteredStudents.length }} ta
+                            filteredStudents.length) }}
+                        {{ $t('students.from') }} {{ filteredStudents.length }} {{ $t('students.students') }}
                     </div>
                     <div class="flex space-x-2">
                         <button @click="currentPage--" :disabled="currentPage === 1"
                             class="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50">
-                            Oldingi
+                            {{ $t('students.previous') }}
                         </button>
                         <span class="px-3 py-1 text-sm text-gray-700">
                             {{ currentPage }} / {{ totalPages }}
                         </span>
                         <button @click="currentPage++" :disabled="currentPage === totalPages"
                             class="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50">
-                            Keyingi
+                            {{ $t('students.next') }}
                         </button>
                     </div>
                 </div>

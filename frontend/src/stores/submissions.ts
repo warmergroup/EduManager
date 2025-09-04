@@ -53,9 +53,11 @@ export const useSubmissionsStore = defineStore('submissions', () => {
         }
       }
       
+      console.log('Raw response data:', responseData)
+      
       if (responseData && responseData.length > 0) {
         // Transform backend data to frontend format
-        submissions.value = responseData.map((submission: any) => ({
+        const transformedSubmissions = responseData.map((submission: any) => ({
           id: submission._id,
           taskId: submission.taskId._id || submission.taskId,
           taskTitle: submission.taskId.title || 'Unknown Task',
@@ -63,12 +65,17 @@ export const useSubmissionsStore = defineStore('submissions', () => {
           studentName: submission.studentId.fullName || 'Unknown Student',
           fileUrl: submission.fileUrl,
           fileName: submission.fileName,
+          fileSize: submission.fileSize,
+          mimeType: submission.mimeType,
           submittedAt: submission.createdAt,
           isGraded: submission.isGraded,
           score: submission.score,
           feedback: submission.feedback,
           gradedAt: submission.gradedAt
         }))
+        
+        console.log('Transformed submissions:', transformedSubmissions)
+        submissions.value = transformedSubmissions
       } else {
         // Use mock data based on role
         if (userRole === 'teacher') {

@@ -254,6 +254,16 @@
     "pending": "Pending",
     "fileUploaded": "File uploaded"
   },
+  "students":{
+    "title":"Students",
+    "studentList":"Student List",
+    "allStudentListandResults":"All students and their results",
+    "placeholder":"Search by student name or email...",
+    "tasks":"tasks",
+    "averageScore":"Average score",
+    "completed": "Completed",
+    "regestered": "Registered"
+  },
   "profile": {
     "title": "Profile",
     "description": "Manage your profile and settings",

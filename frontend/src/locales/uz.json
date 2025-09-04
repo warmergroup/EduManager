@@ -244,6 +244,16 @@
     "pending": "Kutilmoqda",
     "fileUploaded": "Fayl yuklangan"
   },
+  "students":{
+    "title":"Talabalar",
+    "studentList":"Talabalar ruyxati",
+    "allStudentListandResults":"Barcha talabalar ruyxati va ularning natijalari",
+    "placeholder":"Student ismi yoki email bo'ylab qidirish...",
+    "tasks":"vazifalar",
+    "averageScore":"O'rtacha ball",
+    "completed": "Tugallangan",
+    "regestered": "Ruyxatdan o'tgan"
+  },
   "profile": {
     "title": "Profil",
     "editProfile": "Profilni tahrirlash",

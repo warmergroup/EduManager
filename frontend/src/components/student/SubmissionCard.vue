@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { formatDate } from '@/utils/date'
+import FileIcon from '../FileIcon.vue'
 
 interface SubmissionData {
     id: string
@@ -9,6 +10,8 @@ interface SubmissionData {
     studentName: string
     fileUrl: string
     fileName: string
+    fileSize?: number
+    mimeType?: string
     submittedAt: string
     isGraded: boolean
     score?: number
@@ -19,6 +22,15 @@ interface SubmissionData {
 defineProps<{
     submission: SubmissionData
 }>()
+
+// File size formatting
+const formatFileSize = (bytes: number | undefined | null): string => {
+    if (!bytes || bytes === 0 || isNaN(bytes)) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
 </script>
 
 <template>
@@ -44,14 +56,20 @@ defineProps<{
 
         <!-- File Info -->
         <div class="flex items-center mb-3 md:mb-4 p-2 md:p-3 bg-gray-50 rounded-lg overflow-hidden">
-            <svg class="h-5 w-5 md:h-6 md:w-6 text-gray-400 mr-2 md:mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
+            <div class="flex-shrink-0 mr-2 md:mr-3">
+                <FileIcon :file="{
+                    fileName: submission.fileName,
+                    mimeType: submission.mimeType || 'application/octet-stream',
+                    fileSize: submission.fileSize || 0,
+                    fileUrl: submission.fileUrl,
+                    fileId: submission.id
+                }" variant="student" />
+            </div>
             <div class="flex-1 min-w-0 overflow-hidden">
                 <p class="text-sm md:text-base font-medium truncate">{{ submission.fileName }}</p>
-                <p class="text-xs md:text-sm text-gray-500 truncate">{{ $t('tasks.fileUploaded') }}</p>
+                <p class="text-xs md:text-sm text-gray-500 truncate">
+                    {{ $t('tasks.fileUploaded') }} • {{ formatFileSize(submission.fileSize) }}
+                </p>
             </div>
             <a :href="submission.fileUrl" target="_blank"
                 class="ml-2 md:ml-auto text-blue-500 hover:text-blue-600 flex-shrink-0 text-xs md:text-sm whitespace-nowrap">

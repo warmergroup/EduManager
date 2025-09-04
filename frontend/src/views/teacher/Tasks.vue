@@ -34,10 +34,15 @@ const submissionFilterOptions = [
 
 // Computed
 const filteredSubmissions = computed(() => {
+    console.log('All submissions:', submissions.value)
+    console.log('Current filter:', filter.value)
+
     if (filter.value === 'all') return submissions.value
-    return submissions.value.filter((s: SubmissionData) =>
+    const filtered = submissions.value.filter((s: SubmissionData) =>
         filter.value === 'graded' ? s.isGraded : !s.isGraded
     )
+    console.log('Filtered submissions:', filtered)
+    return filtered
 })
 
 
@@ -93,7 +98,7 @@ onMounted(async () => {
     try {
         await Promise.all([
             taskStore.fetchTasks(),
-            submissionStore.fetchMySubmissions()
+            submissionStore.fetchSubmissions() // Fetch all submissions for teacher
         ])
     } catch (err) {
         console.error('Failed to load data:', err)
