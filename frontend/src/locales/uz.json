@@ -259,7 +259,15 @@
     "tasks":"vazifalar",
     "averageScore":"O'rtacha ball",
     "completed": "Tugallangan",
-    "regestered": "Ruyxatdan o'tgan"
+    "graded": "Baholangan",
+    "pending": "Kutilmoqda",
+    "regestered": "Ruyxatdan o'tgan",
+    "noStudentsFound": "Talabalar topilmadi",
+    "loading": "Yuklanmoqda...",
+    "from": "dan",
+    "students": "talaba",
+    "previous": "Oldingi",
+    "next": "Keyingi"
   },
   "profile": {
     "title": "Profil",

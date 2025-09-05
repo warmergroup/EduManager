@@ -2,6 +2,7 @@ import express from 'express';
 import { protect, teacherOnly } from '../middleware/auth.js';
 import {
     getAllUsers,
+    getStudentsWithStats,
     getUserProfile,
     updateUserProfile,
     getTeacherStats,
@@ -28,5 +29,6 @@ router.get('/stats/student', getUserProfile, getStudentStats);
 
 // Admin/Teacher only routes
 router.get('/', teacherOnly, getAllUsers);
+router.get('/students/stats', teacherOnly, getStudentsWithStats);
 
 export default router;

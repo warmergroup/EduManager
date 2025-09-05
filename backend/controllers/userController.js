@@ -13,10 +13,94 @@ export const getAllUsers = async (req, res) => {
             data: { users }
         });
     } catch (error) {
-        console.error('Get all users error:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error'
+        });
+    }
+};
+
+// Get students with statistics (for teachers)
+export const getStudentsWithStats = async (req, res) => {
+    try {
+        const { page = 1, limit = 10, search = '' } = req.query;
+        const skip = (page - 1) * limit;
+
+        // Build search query
+        let searchQuery = { role: 'student' };
+        if (search) {
+            searchQuery = {
+                ...searchQuery,
+                $or: [
+                    { fullName: { $regex: search, $options: 'i' } },
+                    { email: { $regex: search, $options: 'i' } }
+                ]
+            };
+        }
+
+        // Get students with pagination
+        const students = await User.find(searchQuery, '-passwordHash')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit));
+
+        // Get statistics for each student
+        const studentsWithStats = await Promise.all(
+            students.map(async (student) => {
+                // Get student's submissions
+                const submissions = await Submission.find({ studentId: student._id })
+                    .populate('taskId', 'title createdBy');
+
+                // Calculate statistics
+                const totalSubmissions = submissions.length;
+                const gradedSubmissions = submissions.filter(s => s.isGraded).length;
+                const averageScore = gradedSubmissions > 0 
+                    ? Math.round(submissions.filter(s => s.isGraded).reduce((sum, s) => sum + s.score, 0) / gradedSubmissions)
+                    : 0;
+
+                // Get total tasks available to this student
+                const totalTasks = await Task.countDocuments();
+
+                // Calculate completion rate
+                const completionRate = totalTasks > 0 ? Math.round((totalSubmissions / totalTasks) * 100) : 0;
+
+                return {
+                    _id: student._id,
+                    fullName: student.fullName,
+                    email: student.email,
+                    role: student.role,
+                    createdAt: student.createdAt,
+                    totalSubmissions,
+                    averageScore,
+                    completionRate,
+                    gradedSubmissions,
+                    pendingSubmissions: totalSubmissions - gradedSubmissions
+                };
+            })
+        );
+
+        // Get total count for pagination
+        const totalStudents = await User.countDocuments(searchQuery);
+
+        res.json({
+            success: true,
+            data: {
+                students: studentsWithStats,
+                pagination: {
+                    currentPage: parseInt(page),
+                    totalPages: Math.ceil(totalStudents / limit),
+                    totalStudents,
+                    hasNext: page * limit < totalStudents,
+                    hasPrev: page > 1
+                }
+            }
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching students with statistics',
+            error: error.message
         });
     }
 };
@@ -39,7 +123,6 @@ export const getUserProfile = async (req, res) => {
             data: { user }
         });
     } catch (error) {
-        console.error('Get user profile error:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error'
@@ -94,7 +177,6 @@ export const updateUserProfile = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Update user profile error:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error'
@@ -149,7 +231,6 @@ export const getTeacherStats = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get teacher stats error:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error'
@@ -189,7 +270,6 @@ export const getStudentStats = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get student stats error:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error'

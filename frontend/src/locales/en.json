@@ -269,7 +269,15 @@
     "tasks":"tasks",
     "averageScore":"Average score",
     "completed": "Completed",
-    "regestered": "Registered"
+    "graded": "Graded",
+    "pending": "Pending",
+    "regestered": "Registered",
+    "noStudentsFound": "No students found",
+    "loading": "Loading...",
+    "from": "of",
+    "students": "students",
+    "previous": "Previous",
+    "next": "Next"
   },
   "profile": {
     "title": "Profile",

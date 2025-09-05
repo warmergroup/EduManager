@@ -1,49 +1,58 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useTeacherStore } from '@/stores/teacher'
+import { ref, computed, onMounted, watch } from 'vue'
 import PageHeader from '@/components/common/PageHeader.vue'
+import api from '@/services/api'
 
-const teacherStore = useTeacherStore()
-
-const loading = computed(() => teacherStore.loading)
-const students = computed(() => teacherStore.students)
+const loading = ref(false)
+const students = ref<any[]>([])
 const searchQuery = ref('')
-const filterRole = ref('')
 const currentPage = ref(1)
 const pageSize = ref<number>(10)
+const totalStudents = ref(0)
+const totalPages = ref(0)
 
-const filteredStudents = computed(() => {
-    let filtered = students.value
-
-    if (searchQuery.value) {
-        const query = searchQuery.value.toLowerCase()
-        filtered = filtered.filter(student =>
-            student.fullName.toLowerCase().includes(query) ||
-            student.email.toLowerCase().includes(query)
-        )
-    }
-
-    if (filterRole.value) {
-        filtered = filtered.filter(student => student.role === filterRole.value)
-    }
-
-    return filtered
-})
-
-const totalPages = computed(() => Math.ceil(filteredStudents.value.length / pageSize.value))
-
-const paginatedStudents = computed(() => {
-    const start = (currentPage.value - 1) * pageSize.value
-    const end = start + pageSize.value
-    return filteredStudents.value.slice(start, end)
-})
+const paginatedStudents = computed(() => students.value)
 
 const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('uz-UZ')
 }
 
+const fetchStudentsWithStats = async () => {
+    try {
+        loading.value = true
+        const response = await api.get('/api/users/students/stats', {
+            params: {
+                page: currentPage.value,
+                limit: pageSize.value,
+                search: searchQuery.value
+            }
+        })
+
+        if (response.data.success) {
+            students.value = response.data.data.students
+            totalStudents.value = response.data.data.pagination.totalStudents
+            totalPages.value = response.data.data.pagination.totalPages
+        }
+    } catch (error) {
+        console.error('Error fetching students:', error)
+    } finally {
+        loading.value = false
+    }
+}
+
+// Watch for search query changes
+watch(searchQuery, () => {
+    currentPage.value = 1
+    fetchStudentsWithStats()
+})
+
+// Watch for page changes
+watch(currentPage, () => {
+    fetchStudentsWithStats()
+})
+
 onMounted(async () => {
-    await teacherStore.fetchStudents()
+    await fetchStudentsWithStats()
 })
 </script>
 
@@ -73,7 +82,7 @@ onMounted(async () => {
                 <p class="mt-2 text-gray-600">{{ $t('students.loading') }}</p>
             </div>
 
-            <div v-else-if="filteredStudents.length === 0" class="p-6 text-center">
+            <div v-else-if="students.length === 0" class="p-6 text-center">
                 <p class="text-gray-500">{{ $t('students.noStudentsFound') }}</p>
             </div>
 
@@ -91,22 +100,30 @@ onMounted(async () => {
                                 <p class="text-sm text-gray-600">{{ student.email }}</p>
                                 <p class="text-xs text-gray-500">{{ $t('students.regestered') }}: {{
                                     formatDate(student.createdAt)
-                                }}</p>
+                                    }}</p>
                             </div>
                         </div>
 
-                        <div class="flex items-center space-x-4">
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-gray-900">{{ student.totalSubmissions || 0 }}</p>
+                        <div class="flex items-center space-x-6">
+                            <div class="text-center">
+                                <p class="text-lg font-semibold text-blue-600">{{ student.totalSubmissions || 0 }}</p>
                                 <p class="text-xs text-gray-500">{{ $t('students.tasks') }}</p>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-gray-900">{{ student.averageScore || 0 }}/100</p>
+                            <div class="text-center">
+                                <p class="text-lg font-semibold text-green-600">{{ student.averageScore || 0 }}/100</p>
                                 <p class="text-xs text-gray-500">{{ $t('students.averageScore') }}</p>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-medium text-gray-900">{{ student.completionRate || 0 }}%</p>
+                            <div class="text-center">
+                                <p class="text-lg font-semibold text-purple-600">{{ student.completionRate || 0 }}%</p>
                                 <p class="text-xs text-gray-500">{{ $t('students.completed') }}</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm font-medium text-orange-600">{{ student.gradedSubmissions || 0 }}</p>
+                                <p class="text-xs text-gray-500">{{ $t('students.graded') }}</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-sm font-medium text-red-600">{{ student.pendingSubmissions || 0 }}</p>
+                                <p class="text-xs text-gray-500">{{ $t('students.pending') }}</p>
                             </div>
                         </div>
                     </div>
@@ -117,20 +134,19 @@ onMounted(async () => {
             <div v-if="totalPages > 1" class="px-6 py-4 border-t border-gray-200">
                 <div class="flex items-center justify-between">
                     <div class="text-sm text-gray-700">
-                        {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize,
-                            filteredStudents.length) }}
-                        {{ $t('students.from') }} {{ filteredStudents.length }} {{ $t('students.students') }}
+                        {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalStudents) }}
+                        {{ $t('students.from') }} {{ totalStudents }} {{ $t('students.students') }}
                     </div>
                     <div class="flex space-x-2">
                         <button @click="currentPage--" :disabled="currentPage === 1"
-                            class="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50">
+                            class="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 hover:bg-gray-50">
                             {{ $t('students.previous') }}
                         </button>
                         <span class="px-3 py-1 text-sm text-gray-700">
                             {{ currentPage }} / {{ totalPages }}
                         </span>
                         <button @click="currentPage++" :disabled="currentPage === totalPages"
-                            class="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50">
+                            class="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50 hover:bg-gray-50">
                             {{ $t('students.next') }}
                         </button>
                     </div>
