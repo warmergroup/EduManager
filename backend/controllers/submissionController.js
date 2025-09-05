@@ -71,7 +71,6 @@ export const submitAssignment = async (req, res) => {
       data: { submission },
     })
   } catch (error) {
-    console.error("Submit assignment error:", error)
     res.status(500).json({ message: "Server error while submitting assignment" })
   }
 }
@@ -118,7 +117,6 @@ export const getAllSubmissions = async (req, res) => {
       }
     })
   } catch (error) {
-    console.error('Get all submissions error:', error)
     res.status(500).json({ 
       success: false,
       message: 'Server error while fetching submissions' 
@@ -177,7 +175,6 @@ export const getSubmissions = async (req, res) => {
       },
     })
   } catch (error) {
-    console.error("Get submissions error:", error)
     res.status(500).json({ message: "Server error while fetching submissions" })
   }
 }
@@ -210,7 +207,6 @@ export const getSubmissionById = async (req, res) => {
       data: { submission },
     })
   } catch (error) {
-    console.error("Get submission by ID error:", error)
     res.status(500).json({ message: "Server error while fetching submission" })
   }
 }
@@ -281,7 +277,7 @@ export const gradeSubmission = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Grade submission error:", error);
+    // console.error("Grade submission error:", error);
     res.status(500).json({
       success: false,
       message: "Server error while grading submission"
@@ -336,7 +332,6 @@ export const getStudentProgress = async (req, res) => {
       },
     })
   } catch (error) {
-    console.error("Get student progress error:", error)
     res.status(500).json({ message: "Server error while fetching progress" })
   }
 }
@@ -375,7 +370,6 @@ export const getMySubmissions = async (req, res) => {
       }
     })
   } catch (error) {
-    console.error('Get my submissions error:', error)
     res.status(500).json({
       success: false,
       message: 'Failed to fetch my submissions',

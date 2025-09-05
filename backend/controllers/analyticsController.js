@@ -46,8 +46,7 @@ export const getTaskAnalytics = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get task analytics error:', error);
-        res.status(500).json({
+            res.status(500).json({
             success: false,
             message: 'Internal server error'
         });
@@ -147,7 +146,6 @@ export const getMonthlyActivity = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get monthly activity error:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error'
@@ -172,7 +170,6 @@ export const getRecentTasks = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Get recent tasks error:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error'

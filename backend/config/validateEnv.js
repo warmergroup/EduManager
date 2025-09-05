@@ -1,7 +1,7 @@
 export const validateEnv = () => {
   // For development, only validate critical security variables
   if (process.env.NODE_ENV === 'development') {
-    console.log('⚠️ Development mode: Basic environment validation')
+    // console.log('⚠️ Development mode: Basic environment validation')
     
     // Only validate JWT_SECRET for security
     if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 20) {
@@ -10,7 +10,7 @@ export const validateEnv = () => {
       process.exit(1)
     }
     
-    console.log('✅ Basic validation passed for development')
+    // console.log('✅ Basic validation passed for development')
     return
   }
 
@@ -48,7 +48,7 @@ export const validateEnv = () => {
     process.exit(1)
   }
 
-  console.log('✅ Environment variables validation passed')
+  // console.log('✅ Environment variables validation passed')
 }
 
 

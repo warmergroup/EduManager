@@ -86,7 +86,6 @@ export const getTasks = async (req, res) => {
       },
     })
   } catch (error) {
-    console.error("Get tasks error:", error)
     res.status(500).json({ message: "Server error while fetching tasks" })
   }
 }
@@ -125,7 +124,6 @@ export const getTaskById = async (req, res) => {
       data: { task: taskData },
     })
   } catch (error) {
-    console.error("Get task by ID error:", error)
     res.status(500).json({ message: "Server error while fetching task" })
   }
 }
@@ -174,7 +172,6 @@ export const createTask = async (req, res) => {
       data: { task }
     });
   } catch (error) {
-    console.error("Create task error:", error);
     res.status(500).json({ 
       success: false,
       message: "Server error while creating task" 
@@ -217,7 +214,6 @@ export const updateTask = async (req, res) => {
       data: { task: updatedTask },
     })
   } catch (error) {
-    console.error("Update task error:", error)
     res.status(500).json({ message: "Server error while updating task" })
   }
 }
@@ -249,8 +245,7 @@ export const deleteTask = async (req, res) => {
       message: "Task and all related submissions deleted successfully",
     })
   } catch (error) {
-    console.error("Delete task error:", error)
-    res.status(500).json({ message: "Server error while deleting task" })
+      res.status(500).json({ message: "Server error while deleting task" })
   }
 }
 
@@ -296,7 +291,6 @@ export const getTaskStats = async (req, res) => {
       },
     })
   } catch (error) {
-    console.error("Get task stats error:", error)
     res.status(500).json({ message: "Server error while fetching task statistics" })
   }
 }

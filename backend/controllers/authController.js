@@ -75,9 +75,6 @@ export const login = async (req, res) => {
     const { email } = req.body
 
     safeLog('info', 'User login attempt', { email })
-
-    // Connection check removed for both development and production
-    // MongoDB connection is handled at the database level
     
     // Check if user exists and include password for comparison
     const user = await User.findOne({ email })

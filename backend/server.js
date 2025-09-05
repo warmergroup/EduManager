@@ -20,13 +20,6 @@ const app = express();
 // CORS middleware
 app.use(cors(corsOptions));
 
-// CORS debug middleware
-app.use((req, res, next) => {
-  console.log(`🌐 Request from: ${req.headers.origin}`);
-  console.log(`🔗 Request URL: ${req.method} ${req.url}`);
-  console.log(`📱 User-Agent: ${req.headers['user-agent']}`);
-  next();
-});
 
 // CORS Error handling
 app.use((err, req, res, next) => {
@@ -117,6 +110,8 @@ const startServer = async () => {
     
     if (!dbConnection) {
       console.warn("⚠️ Database connection failed, but server will continue");
+    } else {
+      console.log(`🔗 Database connected: ${dbConnection}`);
     }
     
     if (process.env.NODE_ENV !== "production") {
@@ -124,9 +119,7 @@ const startServer = async () => {
       const HOST = '0.0.0.0'; // Mobile qurilmalardan kirish uchun
       app.listen(PORT, HOST, () => {
         console.log(`🚀 Server running on ${HOST}:${PORT}`);
-        console.log(`📊 Environment: ${process.env.NODE_ENV}`);
-        console.log(`🔗 Health check: http://localhost:${PORT}/api/health`);
-        console.log(`📱 Mobile access: http://192.168.1.3:${PORT}/api/health`);
+        console.log(`🔗 Database connected: ${dbConnection.connection.host}`);
       });
     } else {
       console.log(`🚀 Production server ready`);

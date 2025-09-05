@@ -26,11 +26,6 @@ class FileService {
     this.storage = new Storage(this.client)
     this.bucketId = process.env.APPWRITE_BUCKET_ID
 
-    console.log('✅ FileService initialized with:', {
-      endpoint: process.env.APPWRITE_ENDPOINT,
-      projectId: process.env.APPWRITE_PROJECT_ID,
-      bucketId: this.bucketId
-    })
   }
 
   // Fayl yuklash
@@ -80,7 +75,6 @@ class FileService {
         fileUrl: `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${data.$id}/view?project=${process.env.APPWRITE_PROJECT_ID}`
       }
     } catch (error) {
-      console.error('❌ File upload error:', error)
       return { success: false, error: error.message }
     }
   }
@@ -99,7 +93,6 @@ class FileService {
       )
       return { success: true, data }
     } catch (error) {
-      console.error('❌ File deletion error:', error)
       return { success: false, error: error.message }
     }
   }
@@ -129,7 +122,6 @@ class FileService {
         }
       }
     } catch (error) {
-      console.error('❌ Get file info error:', error)
       return { success: false, error: error.message }
     }
   }
@@ -153,19 +145,11 @@ class FileService {
           }
         }
       )
-
-      console.log('✅ File token created successfully:', {
-        fileId,
-        tokenId: response.data.$id,
-        expire: response.data.expire
-      })
-
       return {
         success: true,
         token: response.data.$id
       }
     } catch (error) {
-      console.error('❌ Create file token error:', error)
       return {
         success: false,
         error: error.message
@@ -176,13 +160,13 @@ class FileService {
   // Faylni yuklab olish (token bilan)
   async downloadFile(fileId) {
     try {
-      console.log('🔄 Starting file download for fileId:', fileId)
+      
       
       // Avval file token yaratish
       const tokenResult = await this.createFileToken(fileId)
       
       if (!tokenResult.success) {
-        console.log('⚠️ Token creation failed, trying direct download')
+        
         // Token yaratishda xatolik bo'lsa, oddiy usulni sinab ko'rish
         const response = await axios.get(
           `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${fileId}/download`,
@@ -194,11 +178,11 @@ class FileService {
             responseType: 'arraybuffer'
           }
         )
-        console.log('✅ Direct download successful')
+        
         return { success: true, data: response.data, headers: response.headers }
       }
 
-      console.log('🔑 Using token for download:', tokenResult.token)
+      
       // Token bilan faylni yuklab olish
       const response = await axios.get(
         `${process.env.APPWRITE_ENDPOINT}/storage/buckets/${this.bucketId}/files/${fileId}/download?token=${tokenResult.token}`,
@@ -207,10 +191,10 @@ class FileService {
         }
       )
 
-      console.log('✅ Token-based download successful')
+
       return { success: true, data: response.data, headers: response.headers }
     } catch (error) {
-      console.error('❌ Download file error:', error)
+      
       console.error('Error details:', {
         message: error.message,
         status: error.response?.status,

@@ -27,15 +27,15 @@ export const corsOptions = {
     ];
     
     // Debug uchun log
-    console.log(`🌐 CORS check for origin: ${origin}`);
-    console.log(`✅ Allowed origins:`, allowedOrigins);
+    // console.log(`🌐 CORS check for origin: ${origin}`);
+    // console.log(`✅ Allowed origins:`, allowedOrigins);
     
     if (allowedOrigins.includes(origin)) {
-      console.log(`✅ CORS allowed for: ${origin}`);
+      // console.log(`✅ CORS allowed for: ${origin}`);
       callback(null, true);
     } else {
-      console.warn(`🚫 CORS blocked for: ${origin}`);
-      console.warn(`🔍 Available origins:`, allowedOrigins);
+      // console.warn(`🚫 CORS blocked for: ${origin}`);
+      // console.warn(`🔍 Available origins:`, allowedOrigins);
       callback(new Error(`Origin ${origin} not allowed by CORS policy`));
     }
   },

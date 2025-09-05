@@ -7,7 +7,7 @@ const connectDB = async () => {
       return null;
     }
 
-    console.log("🔌 Connecting to MongoDB...");
+    // console.log("🔌 Connecting to MongoDB...");
 
     // MongoDB Atlas uchun maxsus sozlamalar
     const options = {
@@ -30,24 +30,24 @@ const connectDB = async () => {
 
     const conn = await mongoose.connect(process.env.MONGODB_URI, options);
 
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    // console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
 
     // Connection event handlers
     mongoose.connection.on('error', (err) => {
-      console.error('❌ MongoDB connection error:', err);
+      // console.error('❌ MongoDB connection error:', err);
     });
 
     mongoose.connection.on('disconnected', () => {
-      console.warn('⚠️ MongoDB disconnected');
+      // console.warn('⚠️ MongoDB disconnected');
     });
 
     mongoose.connection.on('reconnected', () => {
-      console.log('🔄 MongoDB reconnected');
+      // console.log('🔄 MongoDB reconnected');
     });
 
     return conn;
   } catch (error) {
-    console.error("❌ Database connection error:", error.message);
+    // console.error("❌ Database connection error:", error.message);
     
     // Detailed error analysis
     if (error.code === 8000) {
