@@ -26,8 +26,25 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["student", "teacher"],
+      enum: ["super_admin", "center_admin", "teacher", "student"],
       required: [true, "Role is required"],
+    },
+    centerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "EducationCenter",
+      default: null,
+    },
+    subscriptionPlanId: {
+      type: String,
+      default: "individual_teacher",
+    },
+    subscriptionExpiresAt: {
+      type: Date,
+      default: null,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -63,5 +80,7 @@ userSchema.methods.toJSON = function () {
 // Create indexes for better performance
 userSchema.index({ email: 1 }, { unique: true })
 userSchema.index({ role: 1 })
+userSchema.index({ centerId: 1 })
+userSchema.index({ isActive: 1 })
 
 export const User = mongoose.model("User", userSchema)

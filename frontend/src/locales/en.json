@@ -39,7 +39,13 @@
     "features": "Features",
     "start": "Start",
     "demo": "Demo",
-    "email": "Email"
+    "email": "Email",
+    "allStatus": "All Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "allCenters": "All Centers",
+    "allSubjects": "All Subjects",
+    "more": "more"
   },
   "home":{
     "title": "Home",
@@ -342,5 +348,88 @@
     "notFound": "Not Found",
     "timeout": "Request Timeout",
     "unknown": "Unknown Error"
+  },
+  "groups": {
+    "title": "Groups",
+    "createGroup": "Create Group",
+    "groupName": "Group Name",
+    "subject": "Subject",
+    "maxStudents": "Max Students",
+    "currentStudents": "Current Students",
+    "schedule": "Schedule",
+    "addStudent": "Add Student",
+    "studentEmail": "Student Email",
+    "noGroups": "No groups found",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "description": "Manage groups",
+    "noGroupsDescription": "No groups have been created yet",
+    "createGroupDescription": "Group creation functionality will be added soon",
+    "students": "Students",
+    "created": "Created"
+  },
+  "subscriptionPlans": {
+    "title": "Subscription Plans",
+    "individual": "Individual Teacher",
+    "center": "Center",
+    "maxGroups": "Max Groups",
+    "maxStudents": "Max Students",
+    "maxTeachers": "Max Teachers",
+    "price": "Price",
+    "features": "Features",
+    "free": "Free",
+    "perMonth": "per month"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Panel",
+      "description": "System Management",
+      "totalCenters": "Total Centers",
+      "totalTeachers": "Total Teachers",
+      "totalStudents": "Total Students",
+      "totalGroups": "Total Groups",
+      "quickActions": "Quick Actions",
+      "recentCenters": "Recent Centers"
+    },
+    "navigation": {
+      "dashboard": "Dashboard",
+      "centers": "Centers",
+      "groups": "Groups"
+    }
+  },
+  "centers": {
+    "description": "Manage education centers",
+    "noCentersDescription": "No centers have been created yet",
+    "created": "Created",
+    "title": "Education Centers",
+    "createCenter": "Create Center",
+    "centerName": "Center Name",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "website": "Website",
+    "adminEmail": "Admin Email",
+    "subscriptionPlan": "Subscription Plan",
+    "noCenters": "No centers found",
+    "addTeacher": "Add Teacher",
+    "teacherEmail": "Teacher Email",
+    "stats": "Statistics",
+    "totalTeachers": "Total Teachers",
+    "totalGroups": "Total Groups",
+    "totalStudents": "Total Students"
+  },
+  "subjects": {
+    "mathematics": "Mathematics",
+    "physics": "Physics",
+    "chemistry": "Chemistry",
+    "biology": "Biology",
+    "english": "English",
+    "russian": "Russian",
+    "uzbek": "Uzbek"
   }
 }

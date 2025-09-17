@@ -21,6 +21,33 @@ export const protect = async (req, res, next) => {
 // Alias for backward compatibility
 export const auth = protect
 
+// Check if user is super admin
+export const superAdminOnly = (req, res, next) => {
+  if (req.user && req.user.role === "super_admin") {
+    next()
+  } else {
+    res.status(403).json({ message: "Access denied. Super admin role required." })
+  }
+}
+
+// Check if user is center admin or super admin
+export const centerAdminOrSuperAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === "center_admin" || req.user.role === "super_admin")) {
+    next()
+  } else {
+    res.status(403).json({ message: "Access denied. Center admin or super admin role required." })
+  }
+}
+
+// Check if user is teacher or center admin
+export const teacherOrCenterAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === "teacher" || req.user.role === "center_admin" || req.user.role === "super_admin")) {
+    next()
+  } else {
+    res.status(403).json({ message: "Access denied. Teacher or center admin role required." })
+  }
+}
+
 // Check if user is teacher (alias: teacherOnly)
 export const teacherOnly = (req, res, next) => {
   if (req.user && req.user.role === "teacher") {
@@ -41,4 +68,3 @@ export const isStudent = (req, res, next) => {
     res.status(403).json({ message: "Access denied. Student role required." })
   }
 }
-

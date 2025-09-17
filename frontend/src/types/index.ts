@@ -2,7 +2,7 @@ export interface User {
   _id: string
   fullName: string
   email: string
-  role: 'student' | 'teacher'
+  role: 'student' | 'teacher' | 'super_admin' | 'center_admin'
   createdAt: string
   updatedAt: string
 }
@@ -16,7 +16,7 @@ export interface RegisterData {
   fullName: string
   email: string
   password: string
-  role: 'student' | 'teacher'
+  role: 'student' | 'teacher' | 'super_admin' | 'center_admin'  
 }
 
 export interface Task {

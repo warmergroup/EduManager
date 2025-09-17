@@ -93,7 +93,8 @@ const downloadFile = async (event: Event) => {
 </script>
 
 <template>
-    <div class="bg-white rounded-lg shadow p-3 md:p-4 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div
+        class="bg-white rounded-lg shadow p-3 md:p-4 overflow-hidden hover:shadow-xl transition-shadow duration-300 min-w-0 max-w-full">
         <!-- Task Info -->
         <div class="mb-3 md:mb-4">
             <h3 class="text-base md:text-lg font-semibold mb-2">{{ task.title }}</h3>
@@ -103,7 +104,7 @@ const downloadFile = async (event: Event) => {
 
         <!-- File Preview -->
         <div v-if="task.file" class="file-preview mb-3 md:mb-4">
-            <div class="p-2 md:p-3 bg-gray-50 rounded-lg border overflow-hidden">
+            <div class="p-2 md:p-3 bg-gray-50 rounded-lg border overflow-hidden min-w-0">
                 <!-- Mobile Layout: Icon + File Info in one row, buttons below -->
                 <div class="md:hidden">
                     <div class="flex items-center mb-2">

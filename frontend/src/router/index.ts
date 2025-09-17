@@ -18,6 +18,10 @@ import TeacherProfile from '@/views/teacher/Profile.vue'
 import TeacherStudents from '@/views/teacher/Students.vue'
 import TeacherTasks from '@/views/teacher/Tasks.vue'
 import CreateTask from '@/views/teacher/CreateTask.vue'
+import AdminLayout from '@/components/layout/AdminLayout.vue'
+import AdminDashboard from '@/views/admin/Dashboard.vue'
+import AdminCenters from '@/views/admin/Centers.vue'
+import AdminGroups from '@/views/admin/Groups.vue'
 import NotFound from '../views/NotFound.vue'
 
 const routes = [
@@ -123,6 +127,32 @@ const routes = [
         path: 'create-task',
         name: 'CreateTask',
         component: CreateTask
+      }
+    ]
+  },
+  {
+    path: '/admin',
+    component: AdminLayout,
+    meta: { requiresAuth: true, role: 'super_admin' },
+    children: [
+      {
+        path: '',
+        redirect: { name: 'AdminDashboard' }
+      },
+      {
+        path: 'dashboard',
+        name: 'AdminDashboard',
+        component: AdminDashboard
+      },
+      {
+        path: 'centers',
+        name: 'AdminCenters',
+        component: AdminCenters
+      },
+      {
+        path: 'groups',
+        name: 'AdminGroups',
+        component: AdminGroups
       }
     ]
   },

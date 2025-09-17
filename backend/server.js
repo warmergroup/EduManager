@@ -14,32 +14,20 @@ import submissionRoutes from "./routes/submissions.js";
 import videoRoutes from "./routes/videos.js";
 import userRoutes from "./routes/users.js";
 import analyticsRoutes from "./routes/analytics.js";
+import centerRoutes from "./routes/centers.js";
+import groupRoutes from "./routes/groups.js";
+import subscriptionPlanRoutes from "./routes/subscriptionPlans.js";
 
 const app = express();
 
 // CORS middleware
 app.use(cors(corsOptions));
 
-
-// CORS Error handling
-app.use((err, req, res, next) => {
-  if (err.message && err.message.includes('CORS')) {
-    console.error('🚫 CORS Error:', err.message);
-    return res.status(403).json({
-      success: false,
-      message: 'CORS policy violation',
-      error: err.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-  next(err);
-});
-
-// Body parsing middleware
+// Body parser middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Request logging
+// Request logging middleware
 app.use((req, res, next) => {
   // Faqat production'da request logging
   if (process.env.NODE_ENV === 'production') {
@@ -48,14 +36,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check
+// Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
-    message: "EduManager API is running",
+    message: "🎓 EduManager Backend API is running!",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
-    cors: "enabled"
+    version: "1.0.0",
   });
 });
 
@@ -74,6 +62,9 @@ app.get("/", (req, res) => {
       users: "/api/users",
       ai: "/api/ai",
       analytics: "/api/analytics",
+      centers: "/api/centers",
+      groups: "/api/groups",
+      subscriptionPlans: "/api/subscription-plans",
     },
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
@@ -89,6 +80,9 @@ app.use("/api/submissions", submissionRoutes);
 app.use("/api/videos", videoRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/centers", centerRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/subscription-plans", subscriptionPlanRoutes);
 
 // Error handling
 app.use(errorHandler);
@@ -97,15 +91,17 @@ app.use(errorHandler);
 app.use("*", (req, res) => {
   res.status(404).json({
     success: false,
-    message: `Route ${req.originalUrl} not found`,
+    message: "Route not found",
+    path: req.originalUrl,
+    method: req.method,
     timestamp: new Date().toISOString(),
   });
 });
 
-// ✅ DB ulanishini productionda ham qo'shamiz
+// Start server
 const startServer = async () => {
   try {
-    // Database connection attempt
+    // Connect to database
     const dbConnection = await connectDB();
     
     if (!dbConnection) {
@@ -114,7 +110,8 @@ const startServer = async () => {
       console.log(`🔗 Database connected: ${dbConnection}`);
     }
     
-    if (process.env.NODE_ENV !== "production") {
+    // Start server
+    if (process.env.NODE_ENV !== 'production') {
       const PORT = process.env.PORT || 5000;
       const HOST = '0.0.0.0'; // Mobile qurilmalardan kirish uchun
       app.listen(PORT, HOST, () => {
@@ -137,6 +134,3 @@ const startServer = async () => {
 };
 
 startServer();
-
-// Vercel uchun
-export default app;

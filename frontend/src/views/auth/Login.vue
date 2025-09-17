@@ -22,6 +22,10 @@ const handleLogin = async () => {
       router.push('/student/dashboard')
     } else if (user.role === 'teacher') {
       router.push('/teacher/dashboard')
+    } else if (user.role === 'super_admin') {
+      router.push('/admin/dashboard')
+    } else if (user.role === 'center_admin') {
+      router.push('/admin/dashboard') // Center admin ham admin paneliga
     } else {
       // Agar role aniqlanmagan bo'lsa, home'ga qaytarish
       router.push('/')

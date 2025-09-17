@@ -39,7 +39,13 @@
     "features": "Xususiyatlar",
     "start": "Boshlash",
     "demo": "Demo ko'rish",
-    "email": "Email manzil"
+    "email": "Email manzil",
+    "allStatus": "Barcha holatlar",
+    "active": "Faol",
+    "inactive": "Nofaol",
+    "allCenters": "Barcha markazlar",
+    "allSubjects": "Barcha fanlar",
+    "more": "boshqalar"
   },
   "home":{
     "title": "Bosh sahifa",
@@ -332,5 +338,88 @@
     "notFound": "Topilmadi",
     "timeout": "Vaqt tugadi",
     "unknown": "Noma'lum xatolik"
+  },
+  "centers": {
+    "title": "O'quv Markazlari",
+    "createCenter": "Markaz Yaratish",
+    "centerName": "Markaz nomi",
+    "description": "O'quv markazlarini boshqaring",
+    "address": "Manzil",
+    "phone": "Telefon",
+    "email": "Email",
+    "website": "Veb-sayt",
+    "adminEmail": "Admin email",
+    "subscriptionPlan": "Obuna rejasi",
+    "noCenters": "Markazlar topilmadi",
+    "addTeacher": "O'qituvchi qo'shish",
+    "teacherEmail": "O'qituvchi email",
+    "stats": "Statistika",
+    "totalTeachers": "Jami o'qituvchilar",
+    "totalGroups": "Jami guruhlar",
+    "totalStudents": "Jami talabalar",
+    "noCentersDescription": "Hali hech qanday markaz yaratilmagan",
+    "created": "Yaratilgan"
+  },
+  "groups": {
+    "title": "Guruhlar",
+    "createGroup": "Guruh Yaratish",
+    "description": "Guruhlarni boshqaring",
+    "groupName": "Guruh nomi",
+    "subject": "Fan",
+    "maxStudents": "Maksimal talabalar",
+    "currentStudents": "Joriy talabalar",
+    "schedule": "Dars jadvali",
+    "addStudent": "Talaba qo'shish",
+    "studentEmail": "Talaba email",
+    "noGroups": "Guruhlar topilmadi",
+    "monday": "Dushanba",
+    "tuesday": "Seshanba",
+    "wednesday": "Chorshanba",
+    "thursday": "Payshanba",
+    "friday": "Juma",
+    "saturday": "Shanba",
+    "sunday": "Yakshanba",
+    "noGroupsDescription": "Hali hech qanday guruh yaratilmagan",
+    "createGroupDescription": "Yangi guruh yaratish funksiyasi tez orada qo'shiladi",
+    "students": "Talabalar",
+    "created": "Yaratilgan"
+  },
+  "subscriptionPlans": {
+    "title": "Obuna Rejalari",
+    "individual": "Yakka o'qituvchi",
+    "center": "Markaz",
+    "maxGroups": "Maksimal guruhlar",
+    "maxStudents": "Maksimal talabalar",
+    "maxTeachers": "Maksimal o'qituvchilar",
+    "price": "Narx",
+    "features": "Imkoniyatlar",
+    "free": "Bepul",
+    "perMonth": "oyiga"
+  },
+  "admin": {
+    "dashboard": {
+      "title": "Admin Panel",
+      "description": "Tizim boshqaruvi",
+      "totalCenters": "Jami markazlar",
+      "totalTeachers": "Jami o'qituvchilar",
+      "totalStudents": "Jami talabalar",
+      "totalGroups": "Jami guruhlar",
+      "quickActions": "Tezkor amallar",
+      "recentCenters": "So'nggi markazlar"
+    },
+    "navigation": {
+      "dashboard": "Boshqaruv paneli",
+      "centers": "Markazlar",
+      "groups": "Guruhlar"
+    }
+  },
+  "subjects": {
+    "mathematics": "Matematika",
+    "physics": "Fizika",
+    "chemistry": "Kimyo",
+    "biology": "Biologiya",
+    "english": "Ingliz tili",
+    "russian": "Rus tili",
+    "uzbek": "O'zbek tili"
   }
 }

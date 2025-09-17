@@ -39,7 +39,8 @@ const formatFileSize = (bytes: number | undefined | null): string => {
 </script>
 
 <template>
-    <div class="bg-white rounded-lg shadow p-3 md:p-6 overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div
+        class="bg-white rounded-lg shadow p-3 md:p-6 overflow-hidden hover:shadow-xl transition-shadow duration-300 min-w-0 max-w-full">
         <!-- Header -->
         <div
             class="flex flex-col md:flex-row md:justify-between md:items-start mb-3 md:mb-4 gap-2 md:gap-0 overflow-hidden">
@@ -60,7 +61,7 @@ const formatFileSize = (bytes: number | undefined | null): string => {
         </div>
 
         <!-- File Info -->
-        <div class="flex items-center mb-3 md:mb-4 p-2 md:p-3 bg-gray-50 rounded-lg overflow-hidden">
+        <div class="flex items-center mb-3 md:mb-4 p-2 md:p-3 bg-gray-50 rounded-lg overflow-hidden min-w-0">
             <div class="flex-shrink-0 mr-2 md:mr-3">
                 <FileIcon :file="{
                     fileName: submission.fileName,
@@ -83,7 +84,7 @@ const formatFileSize = (bytes: number | undefined | null): string => {
         </div>
 
         <!-- Grade Info -->
-        <div v-if="submission.isGraded" class="border-t pt-3 md:pt-4">
+        <div v-if="submission.isGraded" class="border-t border-b pt-3 md:pt-4">
             <div class="flex justify-between items-center mb-2">
                 <span class="text-sm md:text-base text-gray-600">{{ $t('tasks.score') }}:</span>
                 <span class="text-sm md:text-base font-semibold text-green-600">{{ submission.score }}/100</span>
@@ -94,7 +95,7 @@ const formatFileSize = (bytes: number | undefined | null): string => {
         </div>
 
         <!-- Grade Button -->
-        <div v-if="showGradeButton" class="border-t pt-3 md:pt-4">
+        <div v-if="showGradeButton" class="w-40 mx-auto md:mx-0 pt-3 md:pt-4">
             <button @click="$emit('grade', submission)"
                 class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm md:text-base">
                 {{ submission.isGraded ? '✏️ ' + $t('tasks.editGrade') : '📝 ' + $t('tasks.gradeSubmission') }}

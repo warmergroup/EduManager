@@ -12,6 +12,9 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value)
   const isStudent = computed(() => user.value?.role === 'student')
   const isTeacher = computed(() => user.value?.role === 'teacher')
+  const isSuperAdmin = computed(() => user.value?.role === 'super_admin')
+  const isCenterAdmin = computed(() => user.value?.role === 'center_admin')
+  const isAdmin = computed(() => isSuperAdmin.value || isCenterAdmin.value)
 
   const login = async (credentials: LoginData) => {
     loading.value = true
@@ -122,6 +125,9 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     isStudent,
     isTeacher,
+    isSuperAdmin,
+    isCenterAdmin,
+    isAdmin,
     login,
     register,
     fetchCurrentUser,
