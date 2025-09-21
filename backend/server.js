@@ -103,6 +103,7 @@ const startServer = async () => {
   try {
     // Connect to database
     const dbConnection = await connectDB();
+    console.log("frontend domain:", process.env.CORS_ORIGIN);
     
     if (!dbConnection) {
       console.warn("⚠️ Database connection failed, but server will continue");

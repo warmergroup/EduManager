@@ -15,9 +15,7 @@ export const corsOptions = {
       'http://192.168.1.3:5173',
 
       // Vercel frontend domains
-      'https://edu-manager-three.vercel.app',
-      'https://edu-manager-frontend.vercel.app',
-      
+      'https://edu-manager-three.vercel.app',  
       // Yangi subdomain
       'https://edumanager.sultonovdev.uz',
       'http://edumanager.sultonovdev.uz', // HTTP ham qo'shildi
