@@ -1,7 +1,11 @@
 export const corsOptions = {
   origin: function (origin, callback) {
+    // Log the origin for debugging
+    console.log('Request origin:', origin);
+    
     // Development va testing uchun
     if (!origin || process.env.NODE_ENV === 'development') {
+      console.log('Development mode: allowing all origins');
       return callback(null, true);
     }
     
@@ -31,11 +35,13 @@ export const corsOptions = {
     // console.log(`✅ Allowed origins:`, allowedOrigins);
     
     if (allowedOrigins.includes(origin)) {
-      // console.log(`✅ CORS allowed for: ${origin}`);
+      console.log(`✅ CORS allowed for: ${origin}`);
       callback(null, true);
     } else {
-      // console.warn(`🚫 CORS blocked for: ${origin}`);
-      // console.warn(`🔍 Available origins:`, allowedOrigins);
+      console.warn(`🚫 CORS blocked for: ${origin}`);
+      console.warn(`🔍 Available origins:`, allowedOrigins);
+      console.warn(`🔍 Environment:`, process.env.NODE_ENV);
+      console.warn(`🔍 CORS_ORIGIN:`, process.env.CORS_ORIGIN);
       callback(new Error(`Origin ${origin} not allowed by CORS policy`));
     }
   },
