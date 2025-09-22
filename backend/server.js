@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
+
 import express from "express";
 import cors from "cors";
 import connectDB from "./config/database.js";
@@ -20,38 +21,22 @@ import subscriptionPlanRoutes from "./routes/subscriptionPlans.js";
 
 const app = express();
 
-// CORS middleware
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin);
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Max-Age', '86400');
-    return res.status(200).json({});
-  }
-  
-  next();
-});
-
+// ✅ CORS middleware (faqat bitta)
 app.use(cors(corsOptions));
 
-// Body parser middleware
+// ✅ Body parser
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Request logging middleware
+// ✅ Request logger (faqat production’da)
 app.use((req, res, next) => {
-  // Faqat production'da request logging
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     console.log(`${req.method} ${req.path}`);
   }
   next();
 });
 
-// Health check endpoint
+// ✅ Health check
 app.get("/api/health", (req, res) => {
   res.json({
     success: true,
@@ -62,7 +47,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// Root endpoint
+// ✅ Root endpoint
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -82,12 +67,11 @@ app.get("/", (req, res) => {
       subscriptionPlans: "/api/subscription-plans",
     },
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "development",
-    cors: "enabled"
+    cors: "enabled",
   });
 });
 
-// API Routes
+// ✅ API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/tasks", taskRoutes);
@@ -99,10 +83,10 @@ app.use("/api/centers", centerRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/subscription-plans", subscriptionPlanRoutes);
 
-// Error handling
+// ✅ Error handling
 app.use(errorHandler);
 
-// 404 handler
+// ✅ 404 handler
 app.use("*", (req, res) => {
   res.status(404).json({
     success: false,
@@ -113,40 +97,31 @@ app.use("*", (req, res) => {
   });
 });
 
-// Start server
-const startServer = async () => {
-  try {
-    // Connect to database
-    const dbConnection = await connectDB();
-    console.log("frontend domain:", process.env.CORS_ORIGIN);
-    
-    if (!dbConnection) {
-      console.warn("⚠️ Database connection failed, but server will continue");
-    } else {
-      console.log(`🔗 Database connected: ${dbConnection}`);
-    }
-    
-    // Start server
-    if (process.env.NODE_ENV !== 'production') {
-      const PORT = process.env.PORT || 5000;
-      const HOST = '0.0.0.0'; // Mobile qurilmalardan kirish uchun
-      app.listen(PORT, HOST, () => {
-        console.log(`🚀 Server running on ${HOST}:${PORT}`);
-        console.log(`🔗 Database connected: ${dbConnection.connection.host}`);
-      });
-    } else {
-      console.log(`🚀 Production server ready`);
-    }
-  } catch (error) {
-    console.error("❌ Server startup error:", error);
-    
-    // Production'da server crash qilmaslik
-    if (process.env.NODE_ENV === 'production') {
-      console.log("🔄 Server will continue without database connection");
-    } else {
-      process.exit(1);
-    }
-  }
-};
+// ✅ Local development server
+if (process.env.NODE_ENV !== "production") {
+  const PORT = process.env.PORT || 5000;
+  const HOST = "0.0.0.0";
 
-startServer();
+  connectDB()
+    .then(() => {
+      app.listen(PORT, HOST, () => {
+        console.log(`🚀 Server running on http://${HOST}:${PORT}`);
+      });
+    })
+    .catch((err) => {
+      console.error("❌ Database connection failed:", err.message);
+      process.exit(1);
+    });
+} else {
+  // Production’da Vercel serverless sifatida ishlaydi
+  connectDB()
+    .then(() => {
+      console.log("🚀 Production server ready, DB connected");
+    })
+    .catch((err) => {
+      console.error("⚠️ DB connection failed in production:", err.message);
+    });
+}
+
+// ✅ Vercel uchun export
+export default app;
